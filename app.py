@@ -1003,7 +1003,7 @@ elif option == "Dew point and bubble point information":
 
         # LIMS
         ax1.set_xlim(0, 1)
-        ax2.set_xlim(0.9, 1)
+        ax2.set_xlim(0.85, 1)
         ax1.set_ylim(279.9, 400.1)
         ax2.set_ylim(279.9, 400.1)
         st.pyplot(fig)
