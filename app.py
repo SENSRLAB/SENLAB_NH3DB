@@ -245,7 +245,7 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="EESLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 
 # Streamlit app layout
-st.title("EESLAB 암모니아 물성 데이터베이스 V1.0.1 (@last updated 2024-03-19)")
+st.title("EESLAB 암모니아 물성 데이터베이스 V1.0.1 (@last updated 2024-04-02)")
 
 
 # Sidebar to show app info.
