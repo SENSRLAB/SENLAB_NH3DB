@@ -936,7 +936,7 @@ elif option == "Dew point and bubble point information":
         st.dataframe(df_nh3n2)
 
         # Visualization of P-x curve for NH3 + H2 mixture
-        st.markdown("### 2. NH₃ + H₂ 혼합물에 대한 P-x 정보 ([문헌](https://pubs.acs.org/doi/pdf/10.1021/je60004a005) 발췌):")
+        st.markdown("### 2. NH₃ + N₂ 혼합물에 대한 P-x 정보 ([문헌](https://pubs.acs.org/doi/pdf/10.1021/je60004a005) 발췌):")
         st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
 
         # Plot
@@ -1026,7 +1026,7 @@ elif option == "Dew point and bubble point information":
 
             # Display the download link
             st.markdown(
-                f'<a href="nh3+h2_interpolated.csv" download="nh3+n2_interpolated.csv">nh3+h2_interpolated 다운받기.csv</a>',
+                f'<a href="nh3+n2_interpolated.csv" download="nh3+n2_interpolated.csv">nh3+n2_interpolated 다운받기.csv</a>',
                 unsafe_allow_html=True
             )
 
