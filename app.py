@@ -962,7 +962,7 @@ elif option == "Dew point and bubble point information":
         ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1), fontsize=11)
         st.pyplot(fig)
 
-        st.markdown("### 3. NH₃ + H₂ 혼합물에 대한 P-x 내삽 그래프:")
+        st.markdown("### 3. NH₃ + N₂ 혼합물에 대한 P-x 내삽 그래프:")
 
         # Adjusting the temperature and ammonia mass fraction range as requested
         temperature_range = np.linspace(277.6, 394.2, 1000)
@@ -974,7 +974,7 @@ elif option == "Dew point and bubble point information":
             (df_nh3n2['T_Kel'], df_nh3n2['DewP_NH3_mass']),
             df_nh3n2['P_MPa'],
             (temperature_grid, ammonia_mass_fraction_grid),
-            method='cubic'
+            method='linear'
         )
 
         bubble_point_pressure_grid = griddata(
