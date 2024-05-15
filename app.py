@@ -985,7 +985,7 @@ elif option == "Dew point and bubble point information":
         )
 
         # Plotting the updated interpolated data
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 4))
 
         # Dew Point Pressure plot
         c1 = ax1.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, dew_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
