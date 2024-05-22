@@ -901,10 +901,10 @@ elif option == "Dew point and bubble point information":
             This program calculates the mass fraction from the mole fraction using the molecular weights of nitrogen and ammonia. The conversion is performed as follows:
 
             1. Calculate the mole fraction of NH₃ ($x_{NH_3}$) as the complement of the nitrogen mole fraction:
-            $$ x_{NH_3} = 1 - x_{H_2} $$
+            $$ x_{NH_3} = 1 - x_{N_2} $$
 
             2. Convert the mole fractions to mass fractions. The mass fraction of ammonia (NH₃) in the mixture can be calculated using the formula:        
-                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{N_2} \\times MW_{H_2} + x_{NH_3} \\times MW_{NH_3}} $$
+                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{N_2} \\times MW_{N_2} + x_{NH_3} \\times MW_{NH_3}} $$
                         
             <br> where:
             - $w_{NH_3}$ is the mass fraction of ammonia,
@@ -919,17 +919,17 @@ elif option == "Dew point and bubble point information":
 
         df_nh3n2 = pd.read_csv("./nh3+n2.csv")
 
-        # Data processing for NH3 + H2 mixture
+        # Data processing for NH3 + N2 mixture
         df_nh3n2['T_Kel'] = round((df_nh3n2['T_F'] - 32) * (5/9) + 273.15, 3)
         df_nh3n2['P_MPa'] = round(df_nh3n2['P_psi'] * 0.00689476, 3)
 
         # Convert mole fraction to mass fraction
-        mw_h2 = 14.006  # g/mol for H2
+        mw_n2 = 14.006  # g/mol for N2
         mw_nh3 = 17.031  # g/mol for NH3
         df_nh3n2['DewP_NH3'] = 1 - df_nh3n2['DewP']
         df_nh3n2['BubbleP_NH3'] = 1 - df_nh3n2['BubbleP']
-        df_nh3n2['DewP_NH3_mass'] = (df_nh3n2['DewP_NH3'] * mw_nh3) / (df_nh3n2['DewP'] * mw_h2 + df_nh3n2['DewP_NH3'] * mw_nh3)
-        df_nh3n2['BubbleP_NH3_mass'] = (df_nh3n2['BubbleP_NH3'] * mw_nh3) / (df_nh3n2['BubbleP'] * mw_h2 + df_nh3n2['BubbleP_NH3'] * mw_nh3)
+        df_nh3n2['DewP_NH3_mass'] = (df_nh3n2['DewP_NH3'] * mw_nh3) / (df_nh3n2['DewP'] * mw_n2 + df_nh3n2['DewP_NH3'] * mw_nh3)
+        df_nh3n2['BubbleP_NH3_mass'] = (df_nh3n2['BubbleP_NH3'] * mw_nh3) / (df_nh3n2['BubbleP'] * mw_n2 + df_nh3n2['BubbleP_NH3'] * mw_nh3)
 
         # Display initial data
         st.markdown("### 1. 가공된 데이터 미리보기:")
