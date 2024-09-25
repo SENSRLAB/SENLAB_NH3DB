@@ -256,7 +256,7 @@ st.sidebar.markdown("""
                     
     ### **Contributors**
     - 고우진 (woojingo@snu.ac.kr)
-    - 민채 (asd578300@snu.ac.kr)
+    - 민채림 (asd578300@snu.ac.kr)
     - 정건우 (gw.jeong@snu.ac.kr)
     - 강태현 (kang990925@pusan.ac.kr)
     
@@ -491,7 +491,7 @@ elif option == "Dew point and bubble point information":
 
     mixture_choice = st.radio(
         "원하시는 항목을 아래에서 선택해주세요:",
-        ('1. Pure $NH_3$', '2. $NH_3 + H_2O$ 혼합물', '3. $NH_3 + H_2$ 혼합물', '4. $NH_3 + N_2$ 혼합물', '5.$NH_3 + CH_4$ 혼합물')
+        ('1. Pure $NH_3$', '2. $NH_3 + H_2O$ 혼합물', '3. $NH_3 + H_2$ 혼합물', '4. $NH_3 + N_2$ 혼합물', '5. $NH_3 + CH_4$ 혼합물')
     )
 
     if mixture_choice == "1. Pure $NH_3$": 
