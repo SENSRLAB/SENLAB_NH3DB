@@ -1092,9 +1092,223 @@ elif option == "Dew point and bubble point information":
                 st.error("해당 압력과 암모니아 분율에 대한 거품점 온도를 찾을 수 없어요.")
             else:
                 st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {round(bubble_point_temperature, 2)} K 이에요.")
+                
+    elif mixture_choice == "5. $NH_3 + CH_4$ 혼합물":
+        st.markdown("""
+        ------
+        ## $NH_3 + CH_4$ 혼합물의 거품점 및 이슬점 정보
+        > **Reference**: [P, V, T, x values of the gas-liquid phase equilibria in the binary system methane-ammonia at high pressures (Lentz et al.)](https://pdf.sciencedirectassets.com/271415/1-s2.0-S0378381200X01823/1-s2.0-0378381294870195/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIBxDnnHXwAQyfbPeLE5QNHcRIyXOndDleEfXDm7%2FKJw1AiEA7PclTYPEnsvKngsHYcMWYmG5Zzh5Ck7OB62s1nC9yF4qvAUI6f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwwNTkwMDM1NDY4NjUiDE2oy%2BKXk2IST0zFriqQBVInQXYghRd%2B0cvMxI2e6Alp710iPyNu7GskMNxQACca%2Fe%2FiVkmxrLwxpScoPqR12Y%2BrODvsILmj29cAJmwqV6kI%2BubwqT%2BP7JbLeYQBNbvPcJZnV67UoCl9gz1q7JiRcgbYbsTEZOGlwBpv2ZIzpMO8MlrKQPQc6cSK0LAwd%2BHtDos%2Bx9f60odfnn1qKoHbXnpKho%2FWrFGoyz9Kz%2BlqQo3hIUvvo443WBcgPyhITi7sqzWnZ%2Bb37dBnECfYwPLp5eTHPj3QlWxf%2BORPcwaeynfl2q5gANcelWpACL%2B8RsAyKZWHGDIaWXaLULYwIY%2FMuKF8zuWB7cLpYNLlVe8wSR66dFPA597kJDOGcBILlq6BkkwV7Hieu6Ir2ey8UZ24iInsXw2L6Uq%2BKRROOii4sTlh%2BW%2BdeARFWyW9hg6LyLAh5xc5GALml03jII55BtF0ybtkvj%2Ba1Iq4VOyqRPNK5TEZt0TEH4S56WIVg6g%2FDadhFCze8KRJu57Tdk4k1NagJeCXSSLNraWLHDw5Tf5uRTY7O9t8Jrt8IrfgJ4tyzJqBGI6kKW3OkDpQqmwM3Uydoy%2BDHRrkKplcZrl1UegU1z5gC1I0fChqYTNdt3eNVLT2Di1LcYOmrZ35Lg8GBg8QrNVO976NVf9LcAnIBwWbQU%2FRcYyxXRTBTEBSr8gjYUKuerO0W%2FW7m0srUgxiZcF90k%2BCYRxrKMSNJHeB5rmUnamvfLVremKImVHjI%2B1qoB37a0UjjJE25HDgSkJnc9MidYN%2FU%2Ba%2Fu%2Bg%2B0xU3kIF2adTPFMSEmaFxgM3%2FOUQ6dQI2ORS3UcVnDvylwI%2BFiBTRtyzY4qjyRDKRZMtHGwQXNeqr9Pmn4lrBhVCSiRGeOEGIMPqFz7cGOrEBNQ8Q%2FQXic4PEH5a54dnNgOb9RI0OWQyUWRiuQ0vsBCFhSgp7xfy%2BzgzPGqAvuHI9QmjROCM1g7x8bgmQzwzyZ2x8sqHhaLXmidT8q8A0MPBfXJR6XL0sDz%2BRpPrA5QYx%2B%2FBmjmEiZHq4wRDfoEwS0QWhk3YoI54eGAH2Amf6KrONwaXZ1OR5HU8GgEaFiR2gRg2%2B6aMMfwQH2U07achlpxWz%2FQ7IBtXddD4YGJiAPtDT&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240925T081249Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTY67K2QQPQ%2F20240925%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=ee51be1d39756cc80803cc37aafcdb8ec2920b14c6435c6ec6858457685ad507&hash=2bb84536ed675287c92b1cb7f3aeae90233ac915030d564587302e1f7fc4ddd7&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=0378381294870195&tid=spdf-cc800f0a-d304-4106-b69a-dd5bbf9bbc24&sid=265355109734c340785bcef16b0ed09d1e18gxrqa&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=05165a035f5d59015d&rr=8c898d243f4ad1df&cc=kr)""", unsafe_allow_html=True
+        )
+
+        st.markdown("NOTE: 해당 문헌에서는 암모니아의 몰 분율에 따른 거품점과 이슬점 정보를 제공하고 있습니다. 이를 질량 분율로 변환하기 위해, 아래와 같은 환산과정을 사용했어요.")
+        # Create a checkbox
+        if st.checkbox('**체크박스 눌러 환산 과정 확인하기**'):
+            # Display the markdown text when the checkbox is checked
+            st.markdown("""
+            ----
+                        
+            ## **Mass fraction conversion**
+
+            This code converts the __mole fractions of *ammonia* at both dew / bubble points to mass fractions__. This conversion is crucial when working with mixtures of gases, like ammonia and nitrogen, as it allows for the representation of the composition in terms of mass instead of moles.
+
+            This program calculates the mass fraction from the mole fraction using the molecular weights of nitrogen and ammonia. The conversion is performed as follows:
+
+            1. Calculate the mole fraction of NH₃ ($x_{NH_3}$) as the complement of the nitrogen mole fraction:
+            $$ x_{NH_3} = 1 - x_{CH_4} $$
+
+            2. Convert the mole fractions to mass fractions. The mass fraction of ammonia (NH₃) in the mixture can be calculated using the formula:        
+                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{CH_4} \\times MW_{CH_4} + x_{NH_3} \\times MW_{NH_3}} $$
+                        
+            <br> where:
+            - $w_{NH_3}$ is the mass fraction of ammonia,
+            - $x_{CH_4}$ is the mole fraction of nitrogen,
+            - $x_{NH_3}$ is the mole fraction of ammonia,
+            - $MW_{CH_4}$ is the molecular weight of nitrogen (**16.04 g/mol**),
+            - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
+                        
+            ----
+                        
+            """, unsafe_allow_html=True)
+
+        df_nh3ch4 = pd.read_csv("./nh3+ch4.csv")
+
+        # Data processing for NH3 + CH4 mixture
+        df_nh3ch4['T_Kel'] = round((df_nh3ch4['T_F'] - 32) * (5/9) + 273.15, 3)
+        df_nh3ch4['P_MPa'] = round(df_nh3ch4['P_psi'] * 0.00689476, 3)
+
+        # Convert mole fraction to mass fraction
+        mw_ch4 = 16.04  # g/mol for CH4
+        mw_nh3 = 17.031  # g/mol for NH3
+        df_nh3ch4['DewP_NH3'] = 1 - df_nh3ch4['DewP']
+        df_nh3ch4['BubbleP_NH3'] = 1 - df_nh3ch4['BubbleP']
+        df_nh3ch4['DewP_NH3_mass'] = (df_nh3ch4['DewP_NH3'] * mw_nh3) / (df_nh3ch4['DewP'] * mw_ch4 + df_nh3ch4['DewP_NH3'] * mw_nh3)
+        df_nh3ch4['BubbleP_NH3_mass'] = (df_nh3ch4['BubbleP_NH3'] * mw_nh3) / (df_nh3ch4['BubbleP'] * mw_ch4 + df_nh3ch4['BubbleP_NH3'] * mw_nh3)
+
+        # Display initial data
+        st.markdown("### 1. 가공된 데이터 미리보기:")
+        st.dataframe(df_nh3ch4)
+
+        # Visualization of P-x curve for NH3 + CH4 mixture
+        st.markdown("### 2. NH₃ + CH4 혼합물에 대한 P-x 정보 ([문헌](https://pubs.acs.org/doi/pdf/10.1021/je60004a005) 발췌):")
+        st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
+
+        # Plot
+        fig, ax = plt.subplots(figsize=(5, 4))
+
+        # Define the temperature values for which you want to plot the P-x curve
+        temperatures = [273.15, 298.15, 323.15, 348.15, 373.15]
+
+        # Color dic
+        color_dict = {273.15: 'blue', 298.15: 'green', 323.15: 'r', 348.15: 'orange', 394.261: 'purple'}
+
+        for temp in sorted(df_nh3ch4['T_Kel'].unique()):
+            df_temp = df_nh3ch4[df_nh3n2['T_Kel'] == temp]
+            ax.scatter(df_temp['DewP_NH3_mass'], df_temp['P_MPa'], marker='o', label=f'{temp} K', color=color_dict[temp], alpha=0.6, s=20)
+            ax.scatter(df_temp['BubbleP_NH3_mass'], df_temp['P_MPa'], marker='D', color=color_dict[temp], alpha=0.6, s=20)
+
+        ax.set_xlabel('Ammonia Mass Fraction, $x_{\\mathrm{NH}_3}$')
+        ax.set_ylabel('Pressure (MPa)')
+
+        # LIMS
+        ax.set_xlim(0, 1)
+
+        ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1), fontsize=11)
+        st.pyplot(fig)
+
+        st.markdown("### 3. NH₃ + CH4 혼합물에 대한 P-x 내삽 그래프:")
+
+        # Adjusting the temperature and ammonia mass fraction range as requested
+        temperature_range = np.linspace(273.15, 373.15, 1000)
+        ammonia_mass_fraction_range = np.linspace(0, 1, 1000)
+        ammonia_mass_fraction_grid, temperature_grid = np.meshgrid(ammonia_mass_fraction_range, temperature_range)
+
+        # Re-interpolating the data with the updated grid
+        dew_point_pressure_grid = griddata(
+            (df_nh3ch4['T_Kel'], df_nh3ch4['DewP_NH3_mass']),
+            df_nh3ch4['P_MPa'],
+            (temperature_grid, ammonia_mass_fraction_grid),
+            method='linear'
+        )
+
+        bubble_point_pressure_grid = griddata(
+            (df_nh3ch4['T_Kel'], df_nh3ch4['BubbleP_NH3_mass']),
+            df_nh3ch4['P_MPa'],
+            (temperature_grid, ammonia_mass_fraction_grid),
+            method='cubic'
+        )
+
+        # Plotting the updated interpolated data
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 4))
+
+        # Dew Point Pressure plot
+        c1 = ax1.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, dew_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
+        ax1.set_title(r'$P_{\mathrm{dew}}$')
+        ax1.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
+        ax1.set_ylabel('Temperature (K)')
+        fig.colorbar(c1, ax=ax1).set_label('Pressure (MPa)')
+
+        # Bubble Point Pressure plot
+        c2 = ax2.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, bubble_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
+        ax2.set_title(r'$P_{\mathrm{bubble}}$')
+        ax2.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
+        ax2.set_ylabel('Temperature (K)')
+        fig.colorbar(c2, ax=ax2).set_label('Pressure (MPa)')
+
+        # LIMS
+        ax1.set_xlim(0, 1)
+        ax2.set_xlim(0.85, 1)
+        ax1.set_ylim(273.15, 373.15)
+        ax2.set_ylim(273.15, 373.15)
+        st.pyplot(fig)
+
+        st.markdown("### 4. 내삽 데이터 다운로드 받기:")
+        st.markdown("> 아래 버튼을 눌러 내삽 데이터를 확인해볼 수 있어요 (용량: 약 45 mb).")
+
+        # Create a download button
+        if st.button('**클릭하여 내삽 데이터 (CSV) 만들기**'):
+            # Save the interpolated data to a DataFrame
+            df_interpolated = pd.DataFrame({
+                'T_Kel': temperature_grid.flatten(),
+                'x_nh3': ammonia_mass_fraction_grid.flatten(),
+                'DewP': dew_point_pressure_grid.flatten(),
+                'BubbleP': bubble_point_pressure_grid.flatten()
+            })
+
+            # Save the DataFrame to a CSV file
+            df_interpolated.to_csv('nh3+ch4_interpolated.csv', index=False)
+
+            # Display the download link
+            st.markdown(
+                f'<a href="nh3+ch4_interpolated.csv" download="nh3+ch4_interpolated.csv">nh3+ch4_interpolated 다운받기.csv</a>',
+                unsafe_allow_html=True
+            )
+
+        # Interactive user inputs and results
+        st.markdown("### 5. 사용자 입력 및 결과 확인")
+        # User input and calculation
+        user_choice = st.radio(
+            "온도 (Temperature) 또는 압력 (Pressure) 중 어떤 것을 입력하시겠어요?",
+            ('Temperature', 'Pressure')
+        )
+
+        if user_choice == 'Temperature':
+            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3ch4['T_Kel'].min()), max_value=float(df_nh3ch4['T_Kel'].max()), value=330.0, step=50.0)
+            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
+
+            # Find the nearest indices in the grid for the user's input
+            temp_idx = (np.abs(temperature_range - user_temp)).argmin()
+            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
+
+            # Get the corresponding pressure values
+            dew_point_pressure = dew_point_pressure_grid[temp_idx, mass_frac_idx]
+            bubble_point_pressure = bubble_point_pressure_grid[temp_idx, mass_frac_idx]
+
+            # Display the results
+            if np.isnan(dew_point_pressure): 
+                st.error("해당 온도와 암모니아 분율에 대한 이슬점 압력을 찾을 수 없어요.")
+            else:
+                st.write(f"해당 온도와 암모니아 분율에 대한 이슬점 압력은 {round(dew_point_pressure, 2)} MPa 이에요.")
+
+            if np.isnan(bubble_point_pressure):
+                st.error("해당 온도와 암모니아 분율에 대한 거품점 압력을 찾을 수 없어요.")
+            else:
+                st.write(f"해당 온도와 암모니아 분율에 대한 거품점 압력은 {round(bubble_point_pressure, 2)} MPa 이에요.")
+
+        elif user_choice == 'Pressure':
+            user_pressure = st.number_input("원하시는 압력을 입력하세요 (MPa):", min_value=0.0, max_value=40.0, value=10.0, step=1.0)
+            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.98, step=0.1)
+
+            # Find the nearest indices in the grid for the user's input
+            pressure_idx = (np.abs(np.linspace(0, 40, 1000) - user_pressure)).argmin()
+            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
+
+            # Get the corresponding temperature for dew point and bubble point
+            dew_point_slice = np.abs(dew_point_pressure_grid[:, mass_frac_idx] - user_pressure)
+            if np.all(np.isnan(dew_point_slice)):
+                dew_point_temperature = np.nan
+            else:
+                dew_point_temperature = temperature_range[np.nanargmin(dew_point_slice)]
+
+            bubble_point_slice = np.abs(bubble_point_pressure_grid[:, mass_frac_idx] - user_pressure)
+            if np.all(np.isnan(bubble_point_slice)):
+                bubble_point_temperature = np.nan
+            else:
+                bubble_point_temperature = temperature_range[np.nanargmin(bubble_point_slice)]
+
+            # Check if the values are nan and print the results
+            if np.isnan(dew_point_temperature):
+                st.error("해당 압력과 암모니아 분율에 대한 이슬점 온도를 찾을 수 없어요.")
+            else:
+                st.write(f"해당 압력과 암모니아 분율에 대한 이슬점 온도는 {round(dew_point_temperature, 2)} K 이에요.")
+
+            if np.isnan(bubble_point_temperature):
+                st.error("해당 압력과 암모니아 분율에 대한 거품점 온도를 찾을 수 없어요.")
+            else:
+                st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {round(bubble_point_temperature, 2)} K 이에요.")
 
         else:
             st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
+            
 
     else:
         st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
