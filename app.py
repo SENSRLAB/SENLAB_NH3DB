@@ -1159,7 +1159,7 @@ elif option == "Dew point and bubble point information":
         temperatures = [273.15, 298.15, 323.15, 348.15, 373.15]
 
         # Color dic
-        color_dict = {273.15: 'blue', 298.15: 'green', 323.15: 'r', 348.15: 'orange', 394.261: 'purple'}
+        color_dict = {273.15: 'blue', 298.15: 'green', 323.15: 'r', 348.15: 'orange', 373.15: 'purple'}
 
         for temp in sorted(df_nh3ch4['T_Kel'].unique()):
             df_temp = df_nh3ch4[df_nh3ch4['T_Kel'] == temp]
