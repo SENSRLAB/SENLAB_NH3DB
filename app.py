@@ -1097,7 +1097,7 @@ elif option == "Dew point and bubble point information":
         st.markdown("""
         ------
         ## $NH_3 + CH_4$ 혼합물의 거품점 및 이슬점 정보
-        > **Reference**: [P, V, T, x values of the gas-liquid phase equilibria in the binary system methane-ammonia at high pressures (Lentz et al.)](https://pdf.sciencedirectassets.com/271415/1-s2.0-S0378381200X01823/1-s2.0-0378381294870195/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIBxDnnHXwAQyfbPeLE5QNHcRIyXOndDleEfXDm7%2FKJw1AiEA7PclTYPEnsvKngsHYcMWYmG5Zzh5Ck7OB62s1nC9yF4qvAUI6f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwwNTkwMDM1NDY4NjUiDE2oy%2BKXk2IST0zFriqQBVInQXYghRd%2B0cvMxI2e6Alp710iPyNu7GskMNxQACca%2Fe%2FiVkmxrLwxpScoPqR12Y%2BrODvsILmj29cAJmwqV6kI%2BubwqT%2BP7JbLeYQBNbvPcJZnV67UoCl9gz1q7JiRcgbYbsTEZOGlwBpv2ZIzpMO8MlrKQPQc6cSK0LAwd%2BHtDos%2Bx9f60odfnn1qKoHbXnpKho%2FWrFGoyz9Kz%2BlqQo3hIUvvo443WBcgPyhITi7sqzWnZ%2Bb37dBnECfYwPLp5eTHPj3QlWxf%2BORPcwaeynfl2q5gANcelWpACL%2B8RsAyKZWHGDIaWXaLULYwIY%2FMuKF8zuWB7cLpYNLlVe8wSR66dFPA597kJDOGcBILlq6BkkwV7Hieu6Ir2ey8UZ24iInsXw2L6Uq%2BKRROOii4sTlh%2BW%2BdeARFWyW9hg6LyLAh5xc5GALml03jII55BtF0ybtkvj%2Ba1Iq4VOyqRPNK5TEZt0TEH4S56WIVg6g%2FDadhFCze8KRJu57Tdk4k1NagJeCXSSLNraWLHDw5Tf5uRTY7O9t8Jrt8IrfgJ4tyzJqBGI6kKW3OkDpQqmwM3Uydoy%2BDHRrkKplcZrl1UegU1z5gC1I0fChqYTNdt3eNVLT2Di1LcYOmrZ35Lg8GBg8QrNVO976NVf9LcAnIBwWbQU%2FRcYyxXRTBTEBSr8gjYUKuerO0W%2FW7m0srUgxiZcF90k%2BCYRxrKMSNJHeB5rmUnamvfLVremKImVHjI%2B1qoB37a0UjjJE25HDgSkJnc9MidYN%2FU%2Ba%2Fu%2Bg%2B0xU3kIF2adTPFMSEmaFxgM3%2FOUQ6dQI2ORS3UcVnDvylwI%2BFiBTRtyzY4qjyRDKRZMtHGwQXNeqr9Pmn4lrBhVCSiRGeOEGIMPqFz7cGOrEBNQ8Q%2FQXic4PEH5a54dnNgOb9RI0OWQyUWRiuQ0vsBCFhSgp7xfy%2BzgzPGqAvuHI9QmjROCM1g7x8bgmQzwzyZ2x8sqHhaLXmidT8q8A0MPBfXJR6XL0sDz%2BRpPrA5QYx%2B%2FBmjmEiZHq4wRDfoEwS0QWhk3YoI54eGAH2Amf6KrONwaXZ1OR5HU8GgEaFiR2gRg2%2B6aMMfwQH2U07achlpxWz%2FQ7IBtXddD4YGJiAPtDT&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240925T081249Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTY67K2QQPQ%2F20240925%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=ee51be1d39756cc80803cc37aafcdb8ec2920b14c6435c6ec6858457685ad507&hash=2bb84536ed675287c92b1cb7f3aeae90233ac915030d564587302e1f7fc4ddd7&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=0378381294870195&tid=spdf-cc800f0a-d304-4106-b69a-dd5bbf9bbc24&sid=265355109734c340785bcef16b0ed09d1e18gxrqa&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=05165a035f5d59015d&rr=8c898d243f4ad1df&cc=kr)""", unsafe_allow_html=True
+        > **Reference**: [P, V, T, x values of the gas-liquid phase equilibria in the binary system methane-ammonia at high pressures (Lentz et al.)](https://www.sciencedirect.com/science/article/pii/0378381294870195?ref=pdf_download&fr=RR-2&rr=8c8accfaaf69305b)""", unsafe_allow_html=True
         )
 
         st.markdown("NOTE: 해당 문헌에서는 암모니아의 몰 분율에 따른 거품점과 이슬점 정보를 제공하고 있습니다. 이를 질량 분율로 변환하기 위해, 아래와 같은 환산과정을 사용했어요.")
@@ -1149,7 +1149,7 @@ elif option == "Dew point and bubble point information":
         st.dataframe(df_nh3ch4)
 
         # Visualization of P-x curve for NH3 + CH4 mixture
-        st.markdown("### 2. NH₃ + CH4 혼합물에 대한 P-x 정보 ([문헌](https://pubs.acs.org/doi/pdf/10.1021/je60004a005) 발췌):")
+        st.markdown("### 2. NH₃ + CH4 혼합물에 대한 P-x 정보 ([문헌](https://www.sciencedirect.com/science/article/pii/0378381294870195?ref=pdf_download&fr=RR-2&rr=8c8accfaaf69305b) 발췌):")
         st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
 
         # Plot
@@ -1162,7 +1162,7 @@ elif option == "Dew point and bubble point information":
         color_dict = {273.15: 'blue', 298.15: 'green', 323.15: 'r', 348.15: 'orange', 394.261: 'purple'}
 
         for temp in sorted(df_nh3ch4['T_Kel'].unique()):
-            df_temp = df_nh3ch4[df_nh3n2['T_Kel'] == temp]
+            df_temp = df_nh3ch4[df_nh3ch4['T_Kel'] == temp]
             ax.scatter(df_temp['DewP_NH3_mass'], df_temp['P_MPa'], marker='o', label=f'{temp} K', color=color_dict[temp], alpha=0.6, s=20)
             ax.scatter(df_temp['BubbleP_NH3_mass'], df_temp['P_MPa'], marker='D', color=color_dict[temp], alpha=0.6, s=20)
 
