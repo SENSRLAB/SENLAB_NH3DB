@@ -245,14 +245,14 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="EESLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 
 # Streamlit app layout
-st.title("EESLAB 암모니아 물성 데이터베이스")
+st.title("SENLAB 암모니아 물성 데이터베이스")
 
 
 # Sidebar to show app info.
 st.sidebar.markdown("""
                     
-    ### **EESLAB**
-    - [EESLAB Homepage](https://sites.google.com/view/ees-snu/home)
+    ### **SENLAB**
+    - [SENLAB (Sustainable Energy Network Lab.) Homepage](https://sites.google.com/view/ees-snu/home)
                     
     ### **Contributors**
     - 고우진 (woojingo@snu.ac.kr)
