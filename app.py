@@ -56,7 +56,7 @@ def rcparams():
     rcParams['ytick.direction'] = 'in'
 
 #######################################################################
-# Data 1: Ammonia - Vapour Pressure at Gas-Liquid Equilibrium (K, MPa)
+# Data 1: Ammonia - Vapor Pressure at Gas-Liquid Equilibrium (K, MPa)
 #######################################################################
     
 text_1 = """
@@ -245,7 +245,7 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="EESLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 
 # Streamlit app layout
-st.title("EESLAB 암모니아 물성 데이터베이스 V1.0.1 (@last updated 2024-04-02)")
+st.title("EESLAB 암모니아 물성 데이터베이스")
 
 
 # Sidebar to show app info.
@@ -268,17 +268,17 @@ st.sidebar.markdown("""
 option = st.selectbox(
     "원하시는 암모니아 물성을 선택하세요:",
     (
-        "Vapour Pressure at Gas-Liquid Equilibrium",
+        "Vapor Pressure at Gas-Liquid Equilibrium",
         "Density vs. Temperature",
         "Specific heat vs. Temperature",
         "Dew point and bubble point information"
     )
 )
 
-if option == "Vapour Pressure at Gas-Liquid Equilibrium":
+if option == "Vapor Pressure at Gas-Liquid Equilibrium":
     st.write("**Vapor Pressure at Gas-Liquid Equilibrium**을 선택하셨네요.")
 
-    st.markdown("#### **Data 1: Vapour Pressure at Gas-Liquid Equilibrium**", unsafe_allow_html=True)
+    st.markdown("#### **Data 1: Vapor Pressure at Gas-Liquid Equilibrium**", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)  # Creates two columns
 
