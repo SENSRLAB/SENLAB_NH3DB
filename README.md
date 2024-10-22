@@ -6,4 +6,4 @@
 - @2024/4/2 '4. $NH_3 + N_2$' mixture 내용 업데이트 완료 (@채림)
 
 ## **Streamlit 애플리케이션 링크**
-- __링크__: https://eeslab-nh3db.streamlit.app/ (비공개; _접속 권한 있는 사람만 접속 가능_)
+- __링크__: https://senlab-nh3db.streamlit.app/ (비공개; _접속 권한 있는 사람만 접속 가능_)
