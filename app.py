@@ -252,7 +252,7 @@ st.title("SENLAB 암모니아 물성 데이터베이스")
 st.sidebar.markdown("""
                     
     ### **SENLAB**
-    - [SENLAB (Sustainable Energy Network Lab.) Homepage](https://sites.google.com/view/ees-snu/home)
+    - [SENLAB (Sustainable Energy Network Lab.) Homepage](https://sensr.snu.ac.kr/)
                     
     ### **Contributors**
     - 고우진 (woojingo@snu.ac.kr)
