@@ -256,7 +256,7 @@ st.sidebar.markdown("""
                     
     ### **Contributors**
     - 고우진 (woojingo@snu.ac.kr)
-    - 민채림 (asd578300@snu.ac.kr)
+    - ㅁㅁ민채림 (asd578300@snu.ac.kr)
     - 정건우 (gw.jeong@snu.ac.kr)
     - 강태현 (kang990925@pusan.ac.kr)
     
