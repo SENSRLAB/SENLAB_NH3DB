@@ -1252,8 +1252,8 @@ elif option == "Dew point and bubble point information":
         )
 
         if user_choice == 'Temperature':
-            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3ch4['T_Kel'].min()), max_value=float(df_nh3ch4['T_Kel'].max()), value=340.0, step=50.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.8, step=0.1)
+            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3ch4['T_Kel'].min()), max_value=float(df_nh3ch4['T_Kel'].max()), value=320.0, step=50.0)
+            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.4, step=0.1)
 
             # Find the nearest indices in the grid for the user's input
             temp_idx = (np.abs(temperature_range - user_temp)).argmin()
