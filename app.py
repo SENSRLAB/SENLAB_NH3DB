@@ -245,7 +245,7 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 
 # Streamlit app layout
-st.title("수정 왜 않되? SENLAB 암모니아 물성 데이터베이스")
+st.title("SENLAB 암모니아 물성 데이터베이스")
 
 
 # Sidebar to show app info.
@@ -256,7 +256,7 @@ st.sidebar.markdown("""
                     
     ### **Contributors**
     - 고우진 (woojingo@snu.ac.kr)
-    - ㅁ민채림 (asd578300@snu.ac.kr)
+    - 민채림 (asd578300@snu.ac.kr)
     - 정건우 (gw.jeong@snu.ac.kr)
     - 강태현 (kang990925@pusan.ac.kr)
     
