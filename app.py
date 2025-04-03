@@ -245,7 +245,7 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 
 # Streamlit app layout
-st.title("SENLAB 암모니아 물성 데이터베이스")
+st.title("암모니아 물성 데이터베이스")
 
 
 # Sidebar to show app info.
@@ -579,7 +579,7 @@ elif option == "Dew point and bubble point information":
     elif mixture_choice == "2. $NH_3 + H_2O$ 혼합물":
         st.markdown("""
         ------
-        ## $NH_3 + H_2O$ 혼합물의 거품점 및 이슬점 정보
+        ## Bubble point and Dew point of $NH_3 + H_2O$ Mixture
         > **Reference**: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)
         """)
 
@@ -652,8 +652,8 @@ elif option == "Dew point and bubble point information":
                     pressure_bubble = find_pressure(temperature_k, x_nh3, interp_bubble, pressure_range=(0.0, 10.0))
                     pressure_dew = find_pressure(temperature_k, x_nh3, interp_dew, pressure_range=(0.0, 10.0))
 
-                    st.write(f"해당 온도와 암모니아 분율에 대한 거품점 압력은 {pressure_bubble:.2f} MPa 입니다.")
-                    st.write(f"해당 온도와 암모니아 분율에 대한 이슬점 압력은 {pressure_dew:.2f} MPa 입니다.")
+                    st.write(f"해당 온도와 암모니아 분율에 대한 Bubble point 압력은 {pressure_bubble:.2f} MPa 입니다.")
+                    st.write(f"해당 온도와 암모니아 분율에 대한 Dew point 압력은 {pressure_dew:.2f} MPa 입니다.")
 
             elif user_choice == 'Pressure':
                 pressure_mpa = st.number_input('압력을 메가파스칼 (MPa) 단위로 입력해주세요 (0 ~ 10).', min_value=0.0, max_value=10.0)
@@ -664,8 +664,8 @@ elif option == "Dew point and bubble point information":
                     temperature_bubble = interp_bubble(x_nh3, pressure_mpa, grid=False)
                     temperature_dew = interp_dew(x_nh3, pressure_mpa, grid=False)
 
-                    st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {temperature_bubble:.2f} K 입니다.")
-                    st.write(f"해당 압력과 암모니아 분율에 대한 이슬점 온도는 {temperature_dew:.2f} K 입니다.")
+                    st.write(f"해당 압력과 암모니아 분율에 대한 Bubble point 온도는 {temperature_bubble:.2f} K 입니다.")
+                    st.write(f"해당 압력과 암모니아 분율에 대한 Dew point 온도는 {temperature_dew:.2f} K 입니다.")
     
     elif mixture_choice == "3. $NH_3 + H_2$ 혼합물":
         st.markdown("""
