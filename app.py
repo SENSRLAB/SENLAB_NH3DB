@@ -243,9 +243,56 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 
 # Streamlit 초기셋팅 (좁게, 사이드바 펼쳐진 상태, 제목, 아이콘)
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
+st.markdown("""
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-# Streamlit app layout
-st.title("암모니아 물성 데이터베이스")
+html, body, [class*="css"], .stApp, .stMarkdown {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #8E9DCC 0%, #D9DBF1 50%, #F9F9ED 100%);
+}
+
+[data-testid="stHeader"] { background: transparent; }
+
+.stMain .block-container {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 2.5rem 3rem 3rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 12px 40px rgba(125, 132, 178, 0.22);
+}
+
+[data-testid="stSidebar"] {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+}
+
+h1 { font-weight: 800; letter-spacing: -0.02em; }
+
+[data-testid="stMetric"] {
+    background: #F9F9ED;
+    border: 1px solid #D9DBF1;
+    border-left: 5px solid #DBF4A7;
+    border-radius: 14px;
+    padding: 16px 20px;
+}
+
+.stButton > button {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.title("🧪 암모니아 물성 데이터베이스")
+st.caption("SENLAB · Sustainable Energy Network Laboratory")
+st.markdown("암모니아와 혼합물의 주요 물성을 검색하고 시각화하는 데이터베이스입니다.")
+st.divider()
 
 
 # Sidebar to show app info.
