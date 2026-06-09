@@ -255,21 +255,30 @@ h1 { font-weight: 800; letter-spacing: -0.02em; }
 if "stage" not in st.session_state:
     st.session_state.stage = 0
 
-# ===== 단계 0: 첫 화면 =====
+# ===== 단계 0: 첫 화면 (남색 + 별) =====
 if st.session_state.stage == 0:
     st.markdown("""
     <style>
     .stApp {
         background:
-          radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(2px 2px at 85% 70%, rgba(255,255,255,0.45), transparent),
-          radial-gradient(1.5px 1.5px at 25% 80%, rgba(255,255,255,0.4), transparent),
+          radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.7), transparent),
+          radial-gradient(1px 1px at 25% 15%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 40% 25%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1px 1px at 55% 10%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(2px 2px at 70% 22%, rgba(255,255,255,0.65), transparent),
+          radial-gradient(1px 1px at 85% 12%, rgba(255,255,255,0.45), transparent),
+          radial-gradient(1.5px 1.5px at 15% 45%, rgba(255,255,255,0.55), transparent),
+          radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(2px 2px at 60% 50%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,0.45), transparent),
+          radial-gradient(1.5px 1.5px at 20% 75%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1px 1px at 45% 80%, rgba(255,255,255,0.45), transparent),
+          radial-gradient(2px 2px at 65% 78%, rgba(255,255,255,0.55), transparent),
+          radial-gradient(1px 1px at 88% 72%, rgba(255,255,255,0.4), transparent),
+          radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.5), transparent),
           linear-gradient(160deg, #0E1B2E 0%, #16314F 55%, #1E456E 100%);
     }
     .stMain .block-container { background: transparent; box-shadow: none; }
-    .stButton { display:flex; justify-content:center; }
     .stButton > button {
         background: transparent; color: rgba(255,255,255,0.85);
         border: 2px solid rgba(255,255,255,0.4);
@@ -277,61 +286,69 @@ if st.session_state.stage == 0:
     }
     .stButton > button:hover { background: rgba(255,255,255,0.12); color:white; border-color:white; }
     </style>
-    <div style="text-align:center; padding: 20vh 1rem 1.5rem;">
+    <div style="text-align:center; padding: 18vh 1rem 1.5rem;">
         <div style="font-size:3rem;">🧪</div>
         <h1 style="color:white; font-size:3rem; font-weight:800; margin:0.5rem 0; text-shadow:0 2px 12px rgba(0,0,0,0.4);">암모니아 물성 데이터베이스</h1>
-        <p style="color:rgba(255,255,255,0.75); font-size:1.2rem; letter-spacing:0.05em; margin:0.5rem 0 2.5rem;">SENLAB · Sustainable Energy Network Laboratory</p>
+        <p style="color:rgba(255,255,255,0.75); font-size:1.2rem; letter-spacing:0.05em; margin:0.5rem 0 2rem;">SENLAB · Sustainable Energy Network Laboratory</p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("더 알아보기  ▼"):
-        st.session_state.stage = 1
-        st.rerun()
+    c1, c2, c3 = st.columns([1, 1.2, 1])
+    with c2:
+        if st.button("더 알아보기  ▼", use_container_width=True):
+            st.session_state.stage = 1
+            st.rerun()
     st.stop()
 
-# ===== 단계 1: 랩 + DB 소개 =====
+# ===== 단계 1: 소개 (크림) =====
 if st.session_state.stage == 1:
     st.markdown("""
     <style>
-    .stApp { background: linear-gradient(135deg, #3D6FB4 0%, #6E96CC 45%, #DCE9F6 100%); }
+    .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
     .stMain .block-container {
         background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
         margin-top:2.5rem; margin-bottom:2.5rem; max-width:900px;
-        box-shadow:0 12px 40px rgba(40,80,150,0.18);
+        box-shadow:0 12px 40px rgba(120,100,70,0.15);
     }
-    .stButton > button { border-radius:10px; font-weight:600; padding:0.6rem 1.7rem; }
+    .stButton > button { border-radius:10px; font-weight:600; padding:0.6rem 1.4rem; }
     </style>
     """, unsafe_allow_html=True)
-    st.markdown("""
-    ## 🔬 SENLAB 소개
-    **SENLAB (Sustainable Energy Network Laboratory)** 는 (여기에 연구실 소개 문구를 적으세요. 예: 지속가능 에너지 및 암모니아 관련 연구를 수행하는 서울대학교 연구실입니다.)
-
-    ## 📊 암모니아 물성 데이터베이스란?
-    암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성 — 증기압, 밀도, 비열, 이슬점·거품점 — 을
-    검색하고 시각화할 수 있는 데이터베이스입니다. 문헌 데이터를 내삽하여 원하는 조건의 값을 바로 확인할 수 있어요.
-    """)
+    st.markdown("## 📊 암모니아 물성 데이터베이스")
+    st.markdown("암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성 — 증기압, 밀도, 비열, 이슬점·거품점 — 을 검색하고 시각화할 수 있는 데이터베이스입니다. 문헌 데이터를 내삽하여 원하는 조건의 값을 바로 확인할 수 있어요.")
     st.write("")
-    if st.button("데이터베이스 시작하기  →"):
-        st.session_state.stage = 2
-        st.rerun()
+    st.link_button("🔗 About Lab — SENLAB 홈페이지 바로가기", "https://sensr.snu.ac.kr/")
+    st.write("")
+    col_back, col_next = st.columns(2)
+    with col_back:
+        if st.button("←  처음으로", use_container_width=True, key="back_home_1"):
+            st.session_state.stage = 0
+            st.rerun()
+    with col_next:
+        if st.button("데이터베이스 시작하기  →", use_container_width=True, key="go_db"):
+            st.session_state.stage = 2
+            st.rerun()
     st.stop()
 
-# ===== 단계 2: 데이터베이스 =====
+# ===== 단계 2: 데이터베이스 (크림) =====
 st.markdown("""
 <style>
-.stApp { background: linear-gradient(135deg, #3D6FB4 0%, #6E96CC 45%, #DCE9F6 100%); }
+.stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
 .stMain .block-container {
     background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
     margin-top:2rem; margin-bottom:2rem; max-width:1100px;
-    box-shadow:0 12px 40px rgba(40,80,150,0.18);
+    box-shadow:0 12px 40px rgba(120,100,70,0.15);
 }
-[data-testid="stSidebar"] { background: rgba(255,255,255,0.55); backdrop-filter: blur(6px); }
+[data-testid="stSidebar"] { background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); }
 [data-testid="stMetric"] {
-    background:#EEF4FB; border:1px solid #CFE0F2; border-left:5px solid #3D6FB4;
+    background:#FBF7EE; border:1px solid #ECE3D2; border-left:5px solid #C2A878;
     border-radius:14px; padding:16px 20px;
 }
 .stButton > button { border-radius:10px; font-weight:600; padding:0.5rem 1.2rem; }
 </style>
 """, unsafe_allow_html=True)
+
+if st.button("←  처음으로", key="back_home_2"):
+    st.session_state.stage = 0
+    st.rerun()
 
 st.title("🧪 암모니아 물성 데이터베이스")
 st.caption("SENLAB · Sustainable Energy Network Laboratory")
