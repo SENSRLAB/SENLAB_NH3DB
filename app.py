@@ -245,10 +245,10 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 st.markdown("""
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-html, body, [class*="css"], .stApp, .stMarkdown { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap');
+html, body, [class*="css"], .stApp, .stMarkdown { font-family: 'IBM Plex Sans KR', sans-serif; }
 [data-testid="stHeader"] { background: transparent; }
-h1 { font-weight: 800; letter-spacing: -0.02em; }
+h1 { font-weight: 700; letter-spacing: -0.01em; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -261,35 +261,45 @@ if st.session_state.stage == 0:
     <style>
     .stApp {
         background:
-          radial-gradient(circle 3px at 10% 20%, #ffffff, transparent),
-          radial-gradient(circle 2px at 25% 14%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(circle 4px at 40% 26%, #ffffff, transparent),
-          radial-gradient(circle 2.5px at 55% 9%, rgba(255,255,255,0.9), transparent),
-          radial-gradient(circle 3.5px at 70% 22%, #ffffff, transparent),
-          radial-gradient(circle 2px at 86% 13%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(circle 3px at 15% 46%, #ffffff, transparent),
-          radial-gradient(circle 2.5px at 34% 56%, rgba(255,255,255,0.9), transparent),
-          radial-gradient(circle 4px at 60% 50%, #ffffff, transparent),
-          radial-gradient(circle 2px at 80% 44%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(circle 3px at 20% 76%, #ffffff, transparent),
-          radial-gradient(circle 2.5px at 45% 82%, rgba(255,255,255,0.9), transparent),
-          radial-gradient(circle 3.5px at 65% 78%, #ffffff, transparent),
-          radial-gradient(circle 2px at 88% 72%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(circle 3px at 92% 36%, #ffffff, transparent),
+          radial-gradient(1.5px 1.5px at 6% 14%, rgba(255,255,255,0.9), transparent),
+          radial-gradient(1px 1px at 14% 32%, rgba(255,255,255,0.55), transparent),
+          radial-gradient(2px 2px at 22% 8%, #ffffff, transparent),
+          radial-gradient(1px 1px at 30% 48%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1.5px 1.5px at 38% 22%, rgba(255,255,255,0.8), transparent),
+          radial-gradient(1px 1px at 46% 64%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(2px 2px at 52% 12%, #ffffff, transparent),
+          radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1.5px 1.5px at 68% 18%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(1px 1px at 74% 56%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(2px 2px at 82% 26%, #ffffff, transparent),
+          radial-gradient(1px 1px at 88% 44%, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1.5px 1.5px at 94% 16%, rgba(255,255,255,0.8), transparent),
+          radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 20% 78%, rgba(255,255,255,0.75), transparent),
+          radial-gradient(1px 1px at 34% 88%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(2px 2px at 44% 82%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(1px 1px at 58% 90%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 66% 74%, rgba(255,255,255,0.75), transparent),
+          radial-gradient(1px 1px at 78% 86%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 90% 70%, rgba(255,255,255,0.8), transparent),
+          radial-gradient(1px 1px at 96% 58%, rgba(255,255,255,0.55), transparent),
           linear-gradient(160deg, #0E1B2E 0%, #16314F 55%, #1E456E 100%);
     }
-    .stMain .block-container { background: transparent; box-shadow: none; }
-    .stButton > button {
-        background: transparent; color: rgba(255,255,255,0.85);
-        border: 2px solid rgba(255,255,255,0.4);
-        border-radius: 50px; padding: 0.6rem 1.9rem; font-weight: 600;
+    .stMain .block-container {
+        background: transparent; box-shadow: none;
+        min-height: 88vh; display: flex; flex-direction: column; justify-content: center;
     }
-    .stButton > button:hover { background: rgba(255,255,255,0.12); color:white; border-color:white; }
+    .stButton > button {
+        background: transparent; color: rgba(255,255,255,0.9);
+        border: 1.5px solid rgba(255,255,255,0.45);
+        border-radius: 50px; padding: 0.85rem 2.6rem; font-size: 1.05rem; font-weight: 500; letter-spacing: 0.02em;
+    }
+    .stButton > button:hover { background: rgba(255,255,255,0.12); color:#fff; border-color:#fff; }
     </style>
-    <div style="text-align:center; padding: 16vh 1rem 1.5rem;">
-        <p style="color:#8FB0DE; font-size:0.95rem; font-weight:600; letter-spacing:0.25em; text-transform:uppercase; margin:0 0 1.1rem;">SENLAB · Sustainable Energy Network Lab.</p>
-        <h1 style="color:white; font-size:3.3rem; font-weight:800; margin:0 0 0.6rem; text-shadow:0 2px 12px rgba(0,0,0,0.4);">암모니아 물성 데이터베이스</h1>
-        <p style="color:rgba(255,255,255,0.72); font-size:1.3rem; font-weight:400; letter-spacing:0.04em; margin:0 0 2.2rem;">Thermophysical Properties of Ammonia</p>
+    <div style="text-align:center; margin-bottom: 2.6rem;">
+        <p style="color:#8FB0DE; font-size:1rem; font-weight:600; letter-spacing:0.28em; text-transform:uppercase; margin:0 0 1.6rem;">SENLAB · Sustainable Energy Network Lab.</p>
+        <h1 style="color:white; font-size:clamp(2.4rem, 5.5vw, 4rem); font-weight:700; line-height:1.12; letter-spacing:-0.01em; max-width:800px; margin:0 auto 1rem; text-shadow:0 2px 16px rgba(0,0,0,0.3);">Thermophysical Properties of Ammonia Systems</h1>
+        <p style="color:rgba(255,255,255,0.78); font-size:clamp(1.3rem, 3vw, 1.9rem); font-weight:400; letter-spacing:0.02em; margin:0;">암모니아 물성 데이터베이스</p>
     </div>
     """, unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1, 1.2, 1])
