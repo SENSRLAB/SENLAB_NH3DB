@@ -321,7 +321,7 @@ if st.session_state.stage == 1:
     <style>
     .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
     .stMain .block-container {
-        background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
+        background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
         margin-top:2.5rem; margin-bottom:2.5rem; max-width:900px;
         box-shadow:0 12px 40px rgba(120,100,70,0.15);
     }
@@ -349,7 +349,7 @@ st.markdown("""
 <style>
 .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
 .stMain .block-container {
-    background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
+    background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
     margin-top:2rem; margin-bottom:2rem; max-width:1100px;
     box-shadow:0 12px 40px rgba(120,100,70,0.15);
 }
