@@ -245,8 +245,9 @@ df_density['Kelvin'] = df_density['Celsius'] + 273.15
 st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap');
-html, body, [class*="css"], .stApp, .stMarkdown { font-family: 'IBM Plex Sans KR', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+html, body, [class*="css"], .stApp, .stMarkdown { font-family: 'Pretendard', sans-serif; }
 [data-testid="stHeader"] { background: transparent; }
 h1 { font-weight: 700; letter-spacing: -0.01em; }
 </style>
@@ -272,41 +273,46 @@ if st.session_state.stage == 0:
           radial-gradient(1.5px 1.5px at 68% 18%, rgba(255,255,255,0.85), transparent),
           radial-gradient(1px 1px at 74% 56%, rgba(255,255,255,0.5), transparent),
           radial-gradient(2px 2px at 82% 26%, #ffffff, transparent),
-          radial-gradient(1px 1px at 88% 44%, rgba(255,255,255,0.6), transparent),
           radial-gradient(1.5px 1.5px at 94% 16%, rgba(255,255,255,0.8), transparent),
-          radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.5), transparent),
           radial-gradient(1.5px 1.5px at 20% 78%, rgba(255,255,255,0.75), transparent),
-          radial-gradient(1px 1px at 34% 88%, rgba(255,255,255,0.5), transparent),
           radial-gradient(2px 2px at 44% 82%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(1px 1px at 58% 90%, rgba(255,255,255,0.5), transparent),
           radial-gradient(1.5px 1.5px at 66% 74%, rgba(255,255,255,0.75), transparent),
           radial-gradient(1px 1px at 78% 86%, rgba(255,255,255,0.5), transparent),
           radial-gradient(1.5px 1.5px at 90% 70%, rgba(255,255,255,0.8), transparent),
-          radial-gradient(1px 1px at 96% 58%, rgba(255,255,255,0.55), transparent),
+          radial-gradient(1px 1px at 12% 60%, rgba(255,255,255,0.5), transparent),
           linear-gradient(160deg, #0E1B2E 0%, #16314F 55%, #1E456E 100%);
     }
     .stMain .block-container {
-        background: transparent; box-shadow: none;
-        min-height: 88vh; display: flex; flex-direction: column; justify-content: center;
+        background: transparent !important; box-shadow: none !important;
+        min-height: 90vh !important; display: flex !important;
+        flex-direction: column !important; justify-content: center !important;
     }
-    .stButton > button {
-        background: transparent; color: rgba(255,255,255,0.9);
-        border: 1.5px solid rgba(255,255,255,0.45);
-        border-radius: 50px; padding: 0.85rem 2.6rem; font-size: 1.05rem; font-weight: 500; letter-spacing: 0.02em;
+    .stButton > button, .stLinkButton a {
+        background: transparent !important; color: rgba(255,255,255,0.9) !important;
+        border: 1.5px solid rgba(255,255,255,0.45) !important;
+        border-radius: 50px !important; padding: 0.8rem 1.5rem !important;
+        font-size: 1rem !important; font-weight: 500 !important;
+        font-family: 'Pretendard', sans-serif !important;
     }
-    .stButton > button:hover { background: rgba(255,255,255,0.12); color:#fff; border-color:#fff; }
+    .stButton > button:hover, .stLinkButton a:hover {
+        background: rgba(255,255,255,0.12) !important; border-color: #fff !important; color: #fff !important;
+    }
     </style>
     <div style="text-align:center; margin-bottom: 2.6rem;">
-        <p style="color:#8FB0DE; font-size:1rem; font-weight:600; letter-spacing:0.28em; text-transform:uppercase; margin:0 0 1.6rem;">SENLAB · Sustainable Energy Network Lab.</p>
-        <h1 style="color:white; font-size:clamp(2.4rem, 5.5vw, 4rem); font-weight:700; line-height:1.12; letter-spacing:-0.01em; max-width:800px; margin:0 auto 1rem; text-shadow:0 2px 16px rgba(0,0,0,0.3);">Thermophysical Properties of Ammonia Systems</h1>
-        <p style="color:rgba(255,255,255,0.78); font-size:clamp(1.3rem, 3vw, 1.9rem); font-weight:400; letter-spacing:0.02em; margin:0;">암모니아 물성 데이터베이스</p>
+        <p style="font-family:'Space Grotesk',sans-serif; color:#8FB0DE; font-size:1rem; font-weight:600; letter-spacing:0.28em; text-transform:uppercase; margin:0 0 1.6rem;">SENLAB · Sustainable Energy Network Lab.</p>
+        <h1 style="font-family:'Space Grotesk',sans-serif; color:white; font-size:clamp(2.4rem, 5.5vw, 4rem); font-weight:700; line-height:1.15; letter-spacing:-0.01em; margin:0 0 1rem; text-shadow:0 2px 16px rgba(0,0,0,0.3);">Thermophysical Properties<br>of Ammonia Systems</h1>
+        <p style="font-family:'Pretendard',sans-serif; color:rgba(255,255,255,0.78); font-size:clamp(1.3rem, 3vw, 1.9rem); font-weight:400; letter-spacing:0.02em; margin:0;">암모니아 물성 데이터베이스</p>
     </div>
     """, unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 1.2, 1])
+    c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
-        if st.button("더 알아보기  ▼", use_container_width=True):
-            st.session_state.stage = 1
-            st.rerun()
+        bc1, bc2 = st.columns(2)
+        with bc1:
+            if st.button("더 알아보기  ▼", use_container_width=True):
+                st.session_state.stage = 1
+                st.rerun()
+        with bc2:
+            st.link_button("About Lab", "https://sensr.snu.ac.kr/", use_container_width=True)
     st.stop()
 
 # ===== 단계 1: 소개 (크림) =====
@@ -315,7 +321,7 @@ if st.session_state.stage == 1:
     <style>
     .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
     .stMain .block-container {
-        background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
+        background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
         margin-top:2.5rem; margin-bottom:2.5rem; max-width:900px;
         box-shadow:0 12px 40px rgba(120,100,70,0.15);
     }
@@ -343,7 +349,7 @@ st.markdown("""
 <style>
 .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
 .stMain .block-container {
-    background:#FFFFFF; border-radius:24px; padding:2.5rem 3rem 3rem;
+    background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
     margin-top:2rem; margin-bottom:2rem; max-width:1100px;
     box-shadow:0 12px 40px rgba(120,100,70,0.15);
 }
