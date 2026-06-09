@@ -328,14 +328,27 @@ if st.session_state.stage == 1:
     .stButton > button { border-radius:10px; font-weight:600; padding:0.6rem 1.4rem; }
     </style>
     """, unsafe_allow_html=True)
-    st.markdown("## 📊 암모니아 물성 데이터베이스")
-    st.markdown("암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성 — 증기압, 밀도, 비열, 이슬점·거품점 — 을 검색하고 시각화할 수 있는 데이터베이스입니다. 문헌 데이터를 내삽하여 원하는 조건의 값을 바로 확인할 수 있어요.")
-    st.write("")
-    st.link_button("🔗 About Lab — SENLAB 홈페이지 바로가기", "https://sensr.snu.ac.kr/")
-    st.write("")
+    st.markdown("## About Ammonia Properties Database")
+    st.markdown("암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성을 문헌 데이터 기반으로 검색하고 시각화할 수 있는 데이터베이스입니다.")
+    st.markdown("")
+    st.markdown("##### What's Included")
+    st.markdown("""
+- 증기압 (Vapor Pressure) : 특정 온도에서 액체와 평형을 이루는 포화 증기의 압력
+- 밀도 (Density) : 온도에 따른 단위 부피당 질량
+- 비열 (Specific Heat) : 온도를 1 °C 올리는 데 필요한 열량
+- 이슬점 / 거품점 (Dew Point / Bubble Point) : 혼합물이 응축·기화하기 시작하는 상평형 조건
+""")
+    st.markdown("")
+    st.markdown("##### How to Use")
+    st.markdown("""
+1. 물성을 선택하고
+2. 온도·압력 등 조건을 입력하면
+3. 해당 조건의 값과 그래프를 바로 확인할 수 있습니다.
+""")
+    st.markdown("")
     col_back, col_next = st.columns(2)
     with col_back:
-        if st.button("←  처음으로", use_container_width=True, key="back_home_1"):
+        if st.button("←  이전으로", use_container_width=True, key="back_home_1"):
             st.session_state.stage = 0
             st.rerun()
     with col_next:
