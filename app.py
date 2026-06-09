@@ -261,21 +261,21 @@ if st.session_state.stage == 0:
     <style>
     .stApp {
         background:
-          radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.7), transparent),
-          radial-gradient(1px 1px at 25% 15%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1.5px 1.5px at 40% 25%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1px 1px at 55% 10%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(2px 2px at 70% 22%, rgba(255,255,255,0.65), transparent),
-          radial-gradient(1px 1px at 85% 12%, rgba(255,255,255,0.45), transparent),
-          radial-gradient(1.5px 1.5px at 15% 45%, rgba(255,255,255,0.55), transparent),
-          radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(2px 2px at 60% 50%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,0.45), transparent),
-          radial-gradient(1.5px 1.5px at 20% 75%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1px 1px at 45% 80%, rgba(255,255,255,0.45), transparent),
-          radial-gradient(2px 2px at 65% 78%, rgba(255,255,255,0.55), transparent),
-          radial-gradient(1px 1px at 88% 72%, rgba(255,255,255,0.4), transparent),
-          radial-gradient(1.5px 1.5px at 92% 35%, rgba(255,255,255,0.5), transparent),
+          radial-gradient(circle 3px at 10% 20%, #ffffff, transparent),
+          radial-gradient(circle 2px at 25% 14%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(circle 4px at 40% 26%, #ffffff, transparent),
+          radial-gradient(circle 2.5px at 55% 9%, rgba(255,255,255,0.9), transparent),
+          radial-gradient(circle 3.5px at 70% 22%, #ffffff, transparent),
+          radial-gradient(circle 2px at 86% 13%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(circle 3px at 15% 46%, #ffffff, transparent),
+          radial-gradient(circle 2.5px at 34% 56%, rgba(255,255,255,0.9), transparent),
+          radial-gradient(circle 4px at 60% 50%, #ffffff, transparent),
+          radial-gradient(circle 2px at 80% 44%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(circle 3px at 20% 76%, #ffffff, transparent),
+          radial-gradient(circle 2.5px at 45% 82%, rgba(255,255,255,0.9), transparent),
+          radial-gradient(circle 3.5px at 65% 78%, #ffffff, transparent),
+          radial-gradient(circle 2px at 88% 72%, rgba(255,255,255,0.85), transparent),
+          radial-gradient(circle 3px at 92% 36%, #ffffff, transparent),
           linear-gradient(160deg, #0E1B2E 0%, #16314F 55%, #1E456E 100%);
     }
     .stMain .block-container { background: transparent; box-shadow: none; }
@@ -286,10 +286,10 @@ if st.session_state.stage == 0:
     }
     .stButton > button:hover { background: rgba(255,255,255,0.12); color:white; border-color:white; }
     </style>
-    <div style="text-align:center; padding: 18vh 1rem 1.5rem;">
-        <div style="font-size:3rem;">🧪</div>
-        <h1 style="color:white; font-size:3rem; font-weight:800; margin:0.5rem 0; text-shadow:0 2px 12px rgba(0,0,0,0.4);">암모니아 물성 데이터베이스</h1>
-        <p style="color:rgba(255,255,255,0.75); font-size:1.2rem; letter-spacing:0.05em; margin:0.5rem 0 2rem;">SENLAB · Sustainable Energy Network Laboratory</p>
+    <div style="text-align:center; padding: 16vh 1rem 1.5rem;">
+        <p style="color:#8FB0DE; font-size:0.95rem; font-weight:600; letter-spacing:0.25em; text-transform:uppercase; margin:0 0 1.1rem;">SENLAB · Sustainable Energy Network Lab.</p>
+        <h1 style="color:white; font-size:3.3rem; font-weight:800; margin:0 0 0.6rem; text-shadow:0 2px 12px rgba(0,0,0,0.4);">암모니아 물성 데이터베이스</h1>
+        <p style="color:rgba(255,255,255,0.72); font-size:1.3rem; font-weight:400; letter-spacing:0.04em; margin:0 0 2.2rem;">Thermophysical Properties of Ammonia</p>
     </div>
     """, unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1, 1.2, 1])
