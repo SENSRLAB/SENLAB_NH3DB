@@ -91,7 +91,7 @@ def compute_blend(df, w_H2, T, x):
 # 4) 페이지 UI
 # ============================================================
 def render_lhv_page():
-    st.markdown("## ⛽ 암모니아·수소 혼소 연료 발열량 계산기")
+    st.markdown("## 암모니아·수소 혼소 연료 발열량 계산기")
     st.caption("수소 비율과 온도·상태를 입력하면 발열량과 밀도를 계산합니다.")
 
     df = load_data()
@@ -146,7 +146,7 @@ def render_lhv_page():
         )
 
     # ---- (보너스) 수소 비율에 따른 경향 그래프 (인터랙티브: hover·확대) ----
-    with st.expander("📈 수소 비율에 따른 변화 보기 (마우스로 확대·값 확인)"):
+    with st.expander("수소 비율에 따른 변화 보기 (마우스로 확대·값 확인)"):
         import plotly.graph_objects as go
         from plotly.subplots import make_subplots
 
