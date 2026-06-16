@@ -380,7 +380,7 @@ if st.button("←  처음으로", key="back_home_2"):
     st.session_state.stage = 0
     st.rerun()
 
-st.title("🧪 암모니아 물성 데이터베이스")
+st.title("암모니아 물성 데이터베이스")
 st.caption("SENLAB · Sustainable Energy Network Laboratory")
 st.markdown("암모니아와 혼합물의 주요 물성을 검색하고 시각화하는 데이터베이스입니다.")
 st.divider()
