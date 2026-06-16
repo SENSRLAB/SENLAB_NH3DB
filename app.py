@@ -6,6 +6,7 @@ from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
 from scipy.interpolate import RectBivariateSpline
 from scipy.optimize import brentq
+from lhv_calculator import render_lhv_page
 
 # To assign the plot settings to all plots
 # Simply typing `rcparams()` in other python scripts will do the job.
@@ -408,7 +409,8 @@ option = st.selectbox(
         "Vapor Pressure at Gas-Liquid Equilibrium",
         "Density vs. Temperature",
         "Specific heat vs. Temperature",
-        "Dew point and bubble point information"
+        "Dew point and bubble point information",
+        "LHV & Density of NH3-H2 Fuel"
     )
 )
 
@@ -1449,6 +1451,10 @@ elif option == "Dew point and bubble point information":
 
     else:
         st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
+
+
+elif option == "LHV & Density of NH3-H2 Fuel":
+    render_lhv_page()
 
 else:
     st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
