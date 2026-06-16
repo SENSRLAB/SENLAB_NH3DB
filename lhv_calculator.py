@@ -113,7 +113,7 @@ def render_lhv_page():
     elif state == "기체":
         x = 1.0
     else:
-        x = st.slider("vapor fraction (0 = 액체, 1 = 기체)", 0.0, 1.0, 0.5, 0.05)
+        x = st.slider("vapor fraction (0 = 액체, 1 = 기체)", 0.0, 1.0, 0.5, 0.01)
 
     # ---- 계산 ----
     r = compute_blend(df, w_H2, T, x)
@@ -145,32 +145,39 @@ def render_lhv_page():
             """
         )
 
-    # ---- (보너스) 수소 비율에 따른 경향 그래프 ----
-    with st.expander("📈 수소 비율에 따른 변화 보기"):
-        fracs = np.linspace(0, 1, 51)
-        lhv_list, vol_list = [], []
-        for w in fracs:
-            rr = compute_blend(df, w, T, x)
-            lhv_list.append(rr["lhv_std"])
-            vol_list.append(rr["vol_energy"])
+    # ---- (보너스) 수소 비율에 따른 경향 그래프 (인터랙티브: hover·확대) ----
+    with st.expander("📈 수소 비율에 따른 변화 보기 (마우스로 확대·값 확인)"):
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
 
         state_en = {"액체": "liquid", "기체": "gas", "직접 입력": "custom"}.get(state, state)
-        fig, ax1 = plt.subplots(figsize=(6, 3.5))
-        ax1.plot(fracs * 100, lhv_list, color="#1f3a5f", lw=2)
-        ax1.set_xlabel("H2 mass fraction (%)")
-        ax1.set_ylabel("Standard LHV (MJ/kg)", color="#1f3a5f")
-        ax1.tick_params(axis="y", labelcolor="#1f3a5f")
+        fracs = np.linspace(0, 1, 101)
+        lhv_list = [compute_blend(df, w, T, x)["lhv_std"] for w in fracs]
+        vol_list = [compute_blend(df, w, T, x)["vol_energy"] for w in fracs]
 
-        ax2 = ax1.twinx()
-        ax2.plot(fracs * 100, vol_list, color="#c0792e", lw=2, ls="--")
-        ax2.set_ylabel("Volumetric energy (MJ/L)", color="#c0792e")
-        ax2.tick_params(axis="y", labelcolor="#c0792e")
-
-        ax1.set_title(f"T = {T} °C, {state_en}", fontsize=10)
-        fig.tight_layout()
-        st.pyplot(fig)
-        plt.close(fig)
-        st.caption("H₂ 비율↑ → 질량당 발열량(LHV)↑, 하지만 가벼워져 부피당 에너지↓ 경향.")
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            go.Scatter(x=fracs * 100, y=lhv_list, name="Standard LHV",
+                       line=dict(color="#1f3a5f", width=2),
+                       hovertemplate="H2 %{x:.0f}% → LHV %{y:.2f} MJ/kg<extra></extra>"),
+            secondary_y=False)
+        fig.add_trace(
+            go.Scatter(x=fracs * 100, y=vol_list, name="Volumetric energy",
+                       line=dict(color="#c0792e", width=2, dash="dash"),
+                       hovertemplate="H2 %{x:.0f}% → %{y:.2f} MJ/L<extra></extra>"),
+            secondary_y=True)
+        fig.update_xaxes(title_text="H2 mass fraction (%)")
+        fig.update_yaxes(title_text="Standard LHV (MJ/kg)", color="#1f3a5f", secondary_y=False)
+        fig.update_yaxes(title_text="Volumetric energy (MJ/L)", color="#c0792e", secondary_y=True)
+        fig.update_layout(
+            title=f"T = {T} °C, {state_en}",
+            hovermode="x unified",
+            height=400, margin=dict(l=10, r=10, t=40, b=10),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        )
+        # scrollZoom=True → 마우스 휠로 줌 / 드래그 → 영역 확대 / 더블클릭 → 리셋
+        st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
+        st.caption("드래그로 영역 확대 · 마우스 휠로 줌 · 더블클릭으로 원래대로 · 선 위에 올리면 값 표시.")
 
 
 # 단독 실행용
