@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 암모니아·수소 혼소 연료 발열량(LHV)·밀도 계산기
-- 연료 상태: 기체(연소) / 액체(저장)
-  · 기체(연소): NH3 증기 + H2 기체 혼합물 → 조성·온도에 따른 LHV·밀도
-  · 액체(저장): 순수 액체 NH3 (H2는 -240°C 이하에서만 액체라 저장 시 H2 비율 무의미)
+- 연료 상태: 기체 / 액체
+  · 기체: NH3 증기 + H2 기체 혼합물 → 조성·온도에 따른 LHV·밀도
+  · 액체: 순수 액체 NH3 (H2는 -240°C 이하에서만 액체라 저장 시 H2 비율 무의미)
 - 출력: 표준 LHV(헤드라인) + 밀도 / 유효 LHV / 부피당 에너지 + CSV 다운로드
 
 데이터: NIST 순물질 물성 (nh3_h2_blend_data.csv, -50~130°C)
@@ -143,17 +143,21 @@ def _styled_axes(fig, x_title, y1_title, y1_color, y2_title, y2_color, title):
 # 4) 페이지 UI
 # ============================================================
 def render_lhv_page():
-    st.markdown("## 암모니아·수소 혼소 연료 발열량 계산기")
-    st.caption("연료 상태를 고르고 수소 비율·온도를 입력하면 발열량과 밀도를 계산합니다.")
+    # 글자 크기 18px (이 페이지)
+    st.markdown("<style>html { font-size: 18px; }</style>", unsafe_allow_html=True)
+
+    st.markdown("## NH₃·H₂ 혼소 연료 발열량 계산기")
+    st.caption("연료 상태 선택 후 수소 비율·온도 입력 시 발열량과 밀도가 계산됩니다.")
 
     df = load_data()
 
     # ----- 연료 상태 토글 -----
-    mode = st.radio("연료 상태", ["기체 (연소)", "액체 (저장)"],
+    mode = st.radio("연료 상태", ["기체(Vapor)", "액체(Liquid)"],
                     horizontal=True, index=0,
                     help="연소 시엔 NH₃·H₂ 기체 혼합물, 저장 시엔 액체 암모니아입니다.")
+    is_gas = mode.startswith("기체")   # 라벨이 바뀌어도 안전하게 판단
 
-    if mode == "기체 (연소)":
+    if is_gas:
         # 조성
         basis = st.radio("수소 비율 입력 기준", ["질량분율", "몰분율"], horizontal=True)
         frac_pct = _slider_input(f"수소 비율 ({basis}, %)", 0.0, 100.0, 0.0, 0.1, "h2")
@@ -169,8 +173,8 @@ def render_lhv_page():
         T = _temp_input()
         x = 1.0  # 기체 혼합물
     else:  # 액체 (저장)
-        st.info("저장 탱크엔 **순수 액체 암모니아**만 들어갑니다. 수소는 임계온도가 −240 °C라 "
-                "이 온도 범위에서 액체로 존재할 수 없어, **액체 저장 시 H₂ 비율은 의미가 없습니다.**")
+        st.info("액체 상태에서는 **순수 암모니아**만 존재함.\n\n"
+                "수소의 임계온도는 −240 °C로 해당 온도 범위(-50 °C~130 °C)에서 액체로 존재할 수 없어, **H₂ 비율은 고려하지 않음.**")
         w_H2 = 0.0
         T = _temp_input()
         x = 0.0  # 순수 액체 NH3
@@ -180,16 +184,20 @@ def render_lhv_page():
 
     # ----- 출력 -----
     st.markdown("### 결과")
-    st.metric("표준 LHV (저위발열량)", f"{r['lhv_std']:.2f} MJ/kg",
-              help="성분 LHV의 질량가중 평균. 조성에만 의존하며 온도·상태와 무관합니다.")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("밀도", f"{r['rho_mix']:.2f} kg/m³")
-    m2.metric("유효 LHV", f"{r['lhv_eff']:.2f} MJ/kg",
-              help="표준값에 온도·상태를 보정한 값 (25 °C 기체 기준).")
-    m3.metric("부피당 에너지", f"{r['vol_energy']:.3f} MJ/L",
-              help="표준 LHV × 밀도.")
+    st.caption("대표 KPI — 질량당 LHV · 부피당 에너지")
+    k1, k2 = st.columns(2)
+    k1.metric("표준 LHV (질량당)", f"{r['lhv_std']:.2f} MJ/kg",
+              help="연료 1 kg을 태울 때 나오는 에너지. 조성에 따라 정해지며 온도와는 무관함.")
+    k2.metric("부피당 에너지", f"{r['vol_energy']:.3f} MJ/L",
+              help="단위 부피당 에너지. 표준 LHV × 밀도.")
 
-    if mode == "기체 (연소)":
+    st.caption("보조 지표")
+    s1, s2 = st.columns(2)
+    s1.metric("밀도", f"{r['rho_mix']:.2f} kg/m³")
+    s2.metric("유효 LHV", f"{r['lhv_eff']:.2f} MJ/kg",
+              help="표준 LHV의 온도·상태 보정값 (25 °C 기체 기준).")
+
+    if is_gas:
         st.caption(
             f"입력 요약 — 기체 · H₂(질량) {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}% · "
             f"{T:.1f} °C · (NH₃ 포화압력 ≈ {r['P_sat']:.2f} bar)"
@@ -200,7 +208,7 @@ def render_lhv_page():
 
     # ----- 결과 CSV 다운로드 -----
     rows = [
-        ("연료 상태", "기체(연소)" if mode == "기체 (연소)" else "액체(저장)"),
+        ("연료 상태", "기체(연소)" if is_gas else "액체(저장)"),
         ("수소 질량분율 (%)", f"{w_H2*100:.2f}"),
         ("암모니아 질량분율 (%)", f"{(1-w_H2)*100:.2f}"),
         ("온도 (C)", f"{T:.1f}"),
@@ -235,7 +243,7 @@ def render_lhv_page():
         )
 
     # ----- 그래프 -----
-    if mode == "기체 (연소)":
+    if is_gas:
         with st.expander("📈 수소 비율에 따른 변화 (마우스로 확대·값 확인)"):
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots
