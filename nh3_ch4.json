@@ -1,0 +1,326 @@
+{
+ "schema_version": "1.0",
+ "system": "NH3-CH4",
+ "display_name": "NH₃ + CH₄",
+ "solvent": "NH3",
+ "solute": "CH4",
+ "status": "validated",
+ "generated": "2026-09-01",
+ "method": "EOS/BIP agent workflow (Thermopack): per-case 9-point local sampling, Henry-surface reference ln(1-x)=a+b/T+c·P, single-kij regression per EOS per band on the union samples (train/validation split), x-AARD vs reference. 데이터 정제: Cannon X-라벨 보정, Petukhov 제외, 연구실 CSV(Reamer bubble line) LAB 증강.",
+ "source": {
+  "bkp_file": "NH3_CH4.bkp",
+  "n_datasets": 6,
+  "n_points": 52,
+  "provenance": "Aspen TDE 문헌 VLE — Krichevskii & Efremova 1953 (298/313 K, 55–790 bar), Lentz & Weber 1994 FPE (273–373 K, 75–1000 bar; 연구실 nh3+ch4.csv와 동일 데이터로 교차검증 일치). TDE Petukhov 세트는 동일 (T,P)에 최대 11개의 서로 다른 x 공존(이성분 2상 상률 위배) + 1 atm에서 액상 NH3 부재로 제외"
+ },
+ "excluded_eos": [
+  {
+   "eos": "GERG-2008",
+   "reason": "NH3는 GERG-2008 구성 성분이 아님"
+  },
+  {
+   "eos": "LK / LK-Plöcker / PeTS / SPUNG / NIST-MEOS / tcRK",
+   "reason": "인터페이스 없음 또는 회귀 파라미터 미노출"
+  },
+  {
+   "eos": "VdW",
+   "reason": "계산 실패: abort rc=1: c6 // #30  0x63ee28 // #31  0x63eb9e // #32  0x639876 // #33  0x60098c // #34  0x7f46ec02a1c9 // #35  0x7f46"
+  }
+ ],
+ "condition_bands": [
+  {
+   "band_id": "B1",
+   "label": "연료공급 저온 대역 (~275 K / 2 °C)",
+   "T_K": [
+    265.0,
+    285.0
+   ],
+   "P_bar": [
+    10.0,
+    100.0
+   ],
+   "cases": [
+    {
+     "T_K": 275.0,
+     "P_bar": 10.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (P* outside sample range 55.2-150.0 bar; widened ±15 K, 0.25–4·P*; insufficient local data - nearest-9 fallback; KK-referenced (R2=0.782, leave-low-out 23%))"
+    },
+    {
+     "T_K": 275.0,
+     "P_bar": 30.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 273.2-273.2 K; P* outside sample range 75.0-200.0 bar; widened ±15 K, 0.25–4·P*; only 4 T-local points available; KK-referenced (R2=0.782, leave-low-out 23%))"
+    },
+    {
+     "T_K": 275.0,
+     "P_bar": 50.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 273.2-273.2 K; P* outside sample range 75.0-300.0 bar; widened ±15 K, 0.25–4·P*; only 5 T-local points available; KK-referenced (R2=0.782, leave-low-out 23%))"
+    },
+    {
+     "T_K": 275.0,
+     "P_bar": 100.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 273.2-273.2 K; widened ±15 K, 0.25–4·P*; only 6 T-local points available)"
+    }
+   ],
+   "warnings": [
+    "실측 압력 하한이 75 bar(Lentz 273.2 K)라 10·30·50 bar 기준값은 전부 Krichevsky–Kasarnovsky 외삽 — CH4는 용해도가 커서(x~0.03) 희박 가정이 한계에 가깝고 저압단 실측도 비단조라 기준값 불확도 ±20~35% (KK R²=0.78, leave-out 최대 37%)",
+    "T-국소 표본이 273.2 K 단일 등온선이라 T* = 275 K는 약한 T-외삽",
+    "저온·저압(가압 저장) 영역은 CH4도 실측 공백 — 실측 보강 가치 있음",
+    "VdW는 이 조건에서 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.0030494776556353465,
+     "use_fitted": false,
+     "x_aard_base": 0.106,
+     "x_aard_fit": 0.1105,
+     "validation_improvement_pct": -0.1,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.1644,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 2
+    },
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.2586804185261217,
+     "use_fitted": true,
+     "x_aard_base": 2.8062,
+     "x_aard_fit": 0.1821,
+     "validation_improvement_pct": 71.3,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.0496597106392678,
+     "use_fitted": false,
+     "x_aard_base": 0.2095,
+     "x_aard_fit": 0.2501,
+     "validation_improvement_pct": -24.0,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.14338643144966284,
+     "use_fitted": true,
+     "x_aard_base": 1.3011,
+     "x_aard_fit": 0.2174,
+     "validation_improvement_pct": 57.2,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.12170804782095207,
+     "use_fitted": true,
+     "x_aard_base": 0.7902,
+     "x_aard_fit": 0.2369,
+     "validation_improvement_pct": 36.2,
+     "note": "",
+     "rank": 6
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.15647728346859818,
+     "use_fitted": true,
+     "x_aard_base": 1.4881,
+     "x_aard_fit": 0.2459,
+     "validation_improvement_pct": 62.8,
+     "note": "",
+     "rank": 7
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.14861701332149496,
+     "use_fitted": true,
+     "x_aard_base": 1.1969,
+     "x_aard_fit": 0.2549,
+     "validation_improvement_pct": 54.7,
+     "note": "",
+     "rank": 8
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.15892692381181475,
+     "use_fitted": true,
+     "x_aard_base": 1.2567,
+     "x_aard_fit": 0.267,
+     "validation_improvement_pct": 57.0,
+     "note": "",
+     "rank": 9
+    }
+   ]
+  },
+  {
+   "band_id": "B2",
+   "label": "연료공급 상온 대역 (~305 K / 32 °C)",
+   "T_K": [
+    295.0,
+    315.0
+   ],
+   "P_bar": [
+    30.0,
+    50.0
+   ],
+   "cases": [
+    {
+     "T_K": 305.0,
+     "P_bar": 30.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (P* outside sample range 55.2-222.9 bar; widened ±15 K, 0.25–4·P*; only 11 T-local points available; KK-referenced (R2=0.817, leave-low-out 20%))"
+    },
+    {
+     "T_K": 305.0,
+     "P_bar": 50.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (P* outside sample range 55.2-222.9 bar; T-local ±10 K, P 0.05–6·P*; KK-referenced (R2=0.817, leave-low-out 20%))"
+    }
+   ],
+   "warnings": [
+    "305 K에서 10 bar는 NH3 증기압(≈12.4 bar) 미만이라 액상 부재로 케이스 제외. 30·50 bar 기준값은 KK 외삽(R²=0.82, leave-out ~20~29%) — 참고 수준. 개선하려면 Krichevsky–Ilinskaya 식 또는 저압 실측 필요",
+    "VdW는 이 조건에서 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.022135126773326626,
+     "use_fitted": false,
+     "x_aard_base": 0.0483,
+     "x_aard_fit": 0.1121,
+     "validation_improvement_pct": -6.1,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.26478677692451524,
+     "use_fitted": true,
+     "x_aard_base": 2.244,
+     "x_aard_fit": 0.0824,
+     "validation_improvement_pct": 65.1,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.1714930975324827,
+     "use_fitted": true,
+     "x_aard_base": 1.4448,
+     "x_aard_fit": 0.0872,
+     "validation_improvement_pct": 65.2,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.15889364114423163,
+     "use_fitted": true,
+     "x_aard_base": 1.2171,
+     "x_aard_fit": 0.0953,
+     "validation_improvement_pct": 57.3,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.17679693972696942,
+     "use_fitted": true,
+     "x_aard_base": 1.2794,
+     "x_aard_fit": 0.1019,
+     "validation_improvement_pct": 62.4,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.16583504493916287,
+     "use_fitted": true,
+     "x_aard_base": 1.2178,
+     "x_aard_fit": 0.1023,
+     "validation_improvement_pct": 60.3,
+     "note": "",
+     "rank": 6
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.13994041777426922,
+     "use_fitted": true,
+     "x_aard_base": 0.8218,
+     "x_aard_fit": 0.1229,
+     "validation_improvement_pct": 42.9,
+     "note": "",
+     "rank": 7
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.04051921401169428,
+     "use_fitted": false,
+     "x_aard_base": 0.1497,
+     "x_aard_fit": 0.1416,
+     "validation_improvement_pct": -5.5,
+     "note": "",
+     "rank": 8
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.2436,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 9
+    }
+   ]
+  }
+ ]
+}

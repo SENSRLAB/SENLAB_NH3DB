@@ -7,6 +7,7 @@ from scipy.interpolate import griddata
 from scipy.interpolate import RectBivariateSpline
 from scipy.optimize import brentq
 from lhv_calculator import render_lhv_page
+from eos_recommender import render_eos_page
 
 # To assign the plot settings to all plots
 # Simply typing `rcparams()` in other python scripts will do the job.
@@ -410,7 +411,8 @@ option = st.selectbox(
         "Density vs. Temperature",
         "Specific heat vs. Temperature",
         "Dew point and bubble point information",
-        "LHV & Density of NH3-H2 Fuel"
+        "LHV & Density of NH3-H2 Fuel",
+        "EOS Recommendation (Binary Mixtures)"
     )
 )
 
@@ -1049,7 +1051,7 @@ elif option == "Dew point and bubble point information":
             - $w_{NH_3}$ is the mass fraction of ammonia,
             - $x_{N_2}$ is the mole fraction of nitrogen,
             - $x_{NH_3}$ is the mole fraction of ammonia,
-            - $MW_{N_2}$ is the molecular weight of nitrogen (**14.006 g/mol**),
+            - $MW_{N_2}$ is the molecular weight of nitrogen (**28.014 g/mol**),
             - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
                         
             ----
@@ -1063,7 +1065,7 @@ elif option == "Dew point and bubble point information":
         df_nh3n2['P_MPa'] = round(df_nh3n2['P_psi'] * 0.00689476, 3)
 
         # Convert mole fraction to mass fraction
-        mw_n2 = 14.006  # g/mol for N2
+        mw_n2 = 28.014  # g/mol for N2 (molecular weight; 14.006 is the atomic weight of N)
         mw_nh3 = 17.031  # g/mol for NH3
         df_nh3n2['DewP_NH3'] = 1 - df_nh3n2['DewP']
         df_nh3n2['BubbleP_NH3'] = 1 - df_nh3n2['BubbleP']
@@ -1260,9 +1262,9 @@ elif option == "Dew point and bubble point information":
                         
             <br> where:
             - $w_{NH_3}$ is the mass fraction of ammonia,
-            - $x_{CH_4}$ is the mole fraction of nitrogen,
+            - $x_{CH_4}$ is the mole fraction of methane,
             - $x_{NH_3}$ is the mole fraction of ammonia,
-            - $MW_{CH_4}$ is the molecular weight of nitrogen (**16.04 g/mol**),
+            - $MW_{CH_4}$ is the molecular weight of methane (**16.04 g/mol**),
             - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
                         
             ----
@@ -1455,6 +1457,9 @@ elif option == "Dew point and bubble point information":
 
 elif option == "LHV & Density of NH3-H2 Fuel":
     render_lhv_page()
+
+elif option == "EOS Recommendation (Binary Mixtures)":
+    render_eos_page()
 
 else:
     st.error("뭔가 잘못되었어요. 다시 시도해주세요.")

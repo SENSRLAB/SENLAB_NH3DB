@@ -1,0 +1,264 @@
+{
+ "schema_version": "1.0",
+ "system": "NH3-H2",
+ "display_name": "NH₃ + H₂",
+ "solvent": "NH3",
+ "solute": "H2",
+ "status": "validated",
+ "generated": "2026-09-01",
+ "method": "EOS/BIP agent workflow (Thermopack): per-case 9-point local sampling from TDE literature VLE, Henry-surface reference ln(1-x)=a+b/T+c·P, single-kij regression per EOS per band on the union samples (train/validation split), x-AARD vs reference. BVLE016 1-atm isobaric rows excluded (liquid NH3 cannot exist at 1 atm above ~240 K).",
+ "source": {
+  "bkp_file": "NH3_H2.bkp",
+  "n_datasets": 13,
+  "n_points": 131,
+  "provenance": "Aspen Plus TDE (NIST) literature binary VLE — Wiebe & Tremearne 1934 (JACS), Wiebe & Gaddy 1937, Augood 1957, Reamer & Sage 1959 (JCED), Heise 1972, Moore & Otto 1972"
+ },
+ "excluded_eos": [
+  {
+   "eos": "PC-SAFT",
+   "reason": "H2 파라미터 없음 (Thermopack)"
+  },
+  {
+   "eos": "GERG-2008",
+   "reason": "NH3는 GERG-2008 구성 성분이 아님"
+  },
+  {
+   "eos": "PT",
+   "reason": "solver failure at dilute fuel-range conditions (bubble-point iteration)"
+  },
+  {
+   "eos": "SW",
+   "reason": "Thermopack solver abort (sat_wilsonK did not converge)"
+  },
+  {
+   "eos": "VdW",
+   "reason": "Thermopack numerical abort (cbCalcDerivatives_svol)"
+  },
+  {
+   "eos": "LK / LK-Plöcker / PeTS / SPUNG / NIST-MEOS / tcRK",
+   "reason": "인터페이스 없음 또는 회귀 파라미터 미노출"
+  }
+ ],
+ "condition_bands": [
+  {
+   "band_id": "B1",
+   "label": "연료공급 저온 대역 (~275 K / 2 °C)",
+   "T_K": [
+    265.0,
+    285.0
+   ],
+   "P_bar": [
+    10.0,
+    50.0
+   ],
+   "cases": [
+    {
+     "T_K": 275.0,
+     "P_bar": 10.0,
+     "scored": true,
+     "interp_status": "INTERP (widened ±15 K, 0.25–4·P*; insufficient local data - nearest-9 fallback; KK-referenced (R2=0.948, leave-low-out 13%))"
+    },
+    {
+     "T_K": 275.0,
+     "P_bar": 30.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (P* outside sample range 34.5-206.8 bar; widened ±15 K, 0.25–4·P*; only 8 T-local points available; KK-referenced (R2=0.948, leave-low-out 13%))"
+    },
+    {
+     "T_K": 275.0,
+     "P_bar": 50.0,
+     "scored": true,
+     "interp_status": "INTERP (T-local ±6 K, P 0.05–6·P*)"
+    }
+   ],
+   "warnings": [
+    "실측 최저압(34.5 bar) 미만인 10·30 bar 케이스의 기준값은 Krichevsky–Kasarnovsky 물리 외삽으로 재구성 (KK fit R²=0.95, 최저압 leave-out 검증 오차 ~13%) — 기준값 불확도 ±15~20% (Wiebe 1934 vs Reamer 1959 소스 간 산포)",
+    "저압(가압 저장 ~10 bar) 실측은 여전히 문헌 공백 — KK 외삽의 실측 검증 자체가 논문 아이템",
+    "PT·SW·VdW는 이 조건에서 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.17633723142678492,
+     "use_fitted": true,
+     "x_aard_base": 0.3376,
+     "x_aard_fit": 0.0402,
+     "validation_improvement_pct": 90.8,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.24112786491877733,
+     "use_fitted": true,
+     "x_aard_base": 0.7223,
+     "x_aard_fit": 0.0418,
+     "validation_improvement_pct": 95.6,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.0452,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 3
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.6282311472689369,
+     "use_fitted": true,
+     "x_aard_base": 0.5104,
+     "x_aard_fit": 0.052,
+     "validation_improvement_pct": 90.7,
+     "note": "회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "rank": 4
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.10656352413118032,
+     "use_fitted": true,
+     "x_aard_base": 0.2571,
+     "x_aard_fit": 0.069,
+     "validation_improvement_pct": 78.3,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.011224933047094644,
+     "use_fitted": true,
+     "x_aard_base": 0.0943,
+     "x_aard_fit": 0.0705,
+     "validation_improvement_pct": 4.6,
+     "note": "",
+     "rank": 6
+    }
+   ]
+  },
+  {
+   "band_id": "B2",
+   "label": "연료공급 상온 대역 (~305 K / 32 °C)",
+   "T_K": [
+    295.0,
+    315.0
+   ],
+   "P_bar": [
+    30.0,
+    85.0
+   ],
+   "cases": [
+    {
+     "T_K": 305.0,
+     "P_bar": 30.0,
+     "scored": true,
+     "interp_status": "INTERP (T-local ±10 K, P 0.05–6·P*)"
+    },
+    {
+     "T_K": 305.0,
+     "P_bar": 50.0,
+     "scored": true,
+     "interp_status": "INTERP"
+    },
+    {
+     "T_K": 305.0,
+     "P_bar": 85.0,
+     "scored": true,
+     "interp_status": "INTERP"
+    }
+   ],
+   "warnings": [
+    "PT·SW·VdW는 이 조건에서 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.0592,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 1
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.3266663735911982,
+     "use_fitted": true,
+     "x_aard_base": 0.7363,
+     "x_aard_fit": 0.0711,
+     "validation_improvement_pct": 94.2,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.30437448955119994,
+     "use_fitted": true,
+     "x_aard_base": 0.4254,
+     "x_aard_fit": 0.0735,
+     "validation_improvement_pct": 90.2,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.6057936443345608,
+     "use_fitted": true,
+     "x_aard_base": 0.4281,
+     "x_aard_fit": 0.0762,
+     "validation_improvement_pct": 90.3,
+     "note": "회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "rank": 4
+    },
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.08533955706263503,
+     "use_fitted": true,
+     "x_aard_base": 0.2182,
+     "x_aard_fit": 0.0764,
+     "validation_improvement_pct": 94.1,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.15392699939534624,
+     "use_fitted": true,
+     "x_aard_base": 0.3065,
+     "x_aard_fit": 0.0853,
+     "validation_improvement_pct": 91.8,
+     "note": "",
+     "rank": 6
+    }
+   ]
+  }
+ ]
+}

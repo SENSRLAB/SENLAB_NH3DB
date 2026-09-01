@@ -1,0 +1,329 @@
+{
+ "schema_version": "1.0",
+ "system": "NH3-H2O",
+ "display_name": "NH₃ + H₂O",
+ "solvent": "H2O",
+ "solute": "NH3",
+ "status": "validated",
+ "generated": "2026-09-01",
+ "metric_label": "bubble-P AARD",
+ "method": "변형 평가(전조성 혼화계): 밴드 내 TPXY 실측점 전체에 대해 EOS 기포압을 직접 계산해 bubble-P AARD로 채점. kij는 ln(P_calc/P_exp) RMSE 최소화로 밴드당 1개 회귀 (train/validation split). y_NH3 절대오차는 참고 지표로 병기. 물리 상한 필터로 비정합 세트(BVLE144, 기포압>18 bar) 제외.",
+ "source": {
+  "bkp_file": "NH3_H2O.bkp",
+  "n_datasets": 134,
+  "n_points": 2981,
+  "provenance": "Aspen Plus TDE (NIST) 문헌 이성분 VLE — 등온·등압 데이터셋 134개(190~454 K), 밴드별 8~9개 문헌 교차 사용"
+ },
+ "excluded_eos": [
+  {
+   "eos": "GERG-2008",
+   "reason": "NH3는 GERG-2008 구성 성분이 아님"
+  },
+  {
+   "eos": "VdW",
+   "reason": "계산 실패 (numerical abort)"
+  },
+  {
+   "eos": "LK / LK-Plöcker / PeTS / SPUNG / NIST-MEOS / tcRK",
+   "reason": "인터페이스 없음 또는 회귀 파라미터 미노출"
+  }
+ ],
+ "condition_bands": [
+  {
+   "band_id": "B1",
+   "label": "저온 대역 (~275 K / 2 °C)",
+   "T_K": [
+    263.0,
+    287.0
+   ],
+   "P_bar": [
+    0.02,
+    4.05
+   ],
+   "cases": [
+    {
+     "T_K": 283.19,
+     "P_bar": 0.203,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.21)",
+     "scored": true
+    },
+    {
+     "T_K": 273.2,
+     "P_bar": 1.01,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.49)",
+     "scored": true
+    },
+    {
+     "T_K": 263.21,
+     "P_bar": 2.03,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.76)",
+     "scored": true
+    }
+   ],
+   "warnings": [
+    "전조성 혼화계 — 평가 기준은 희박용질 x-내삽이 아니라 실측 기포압 직접 비교 (bubble-P AARD, 17점·8개 문헌, x_NH3 0.018~0.95)",
+    "최적 EOS도 오차 ~25–30% — 단일 kij로는 전 조성 강비이상성 커버에 한계. 정밀 계산은 활성계수 모델(e-NRTL/NRTL) 또는 본 DB Data 4의 문헌 보간 권장",
+    "기본 kij=0의 cubic EOS는 기포압을 5~20배 과대예측 — 반드시 회귀 kij(−0.20~−0.27)와 함께 사용",
+    "VdW는 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": -0.25,
+     "bip_fitted": -0.14745781263926727,
+     "use_fitted": false,
+     "x_aard_base": 0.2467,
+     "x_aard_fit": 0.3193,
+     "validation_improvement_pct": 25.2,
+     "note": "y_NH3 절대오차 평균 0.037",
+     "rank": 1
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2648387099147126,
+     "use_fitted": true,
+     "x_aard_base": 19.3466,
+     "x_aard_fit": 0.2823,
+     "validation_improvement_pct": -3.1,
+     "note": "검증 ln-RMSE 개선 미확인(-3%) — 표본 적어 참고; y_NH3 절대오차 평균 0.028",
+     "rank": 2
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij_a",
+     "bip_default": 0.0,
+     "bip_fitted": -0.4362212150188014,
+     "use_fitted": true,
+     "x_aard_base": 5.054,
+     "x_aard_fit": 0.294,
+     "validation_improvement_pct": -122.7,
+     "note": "검증 ln-RMSE 개선 미확인(-123%) — 표본 적어 참고; y_NH3 절대오차 평균 0.028",
+     "rank": 3
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2655221701237158,
+     "use_fitted": true,
+     "x_aard_base": 21.278,
+     "x_aard_fit": 0.2946,
+     "validation_improvement_pct": 1.9,
+     "note": "y_NH3 절대오차 평균 0.034",
+     "rank": 4
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.26681766900697756,
+     "use_fitted": true,
+     "x_aard_base": 21.8076,
+     "x_aard_fit": 0.2952,
+     "validation_improvement_pct": 3.1,
+     "note": "y_NH3 절대오차 평균 0.035",
+     "rank": 5
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.27433549542067626,
+     "use_fitted": true,
+     "x_aard_base": 23.5088,
+     "x_aard_fit": 0.3027,
+     "validation_improvement_pct": 7.2,
+     "note": "y_NH3 절대오차 평균 0.039",
+     "rank": 6
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2705823980632458,
+     "use_fitted": true,
+     "x_aard_base": 24.3314,
+     "x_aard_fit": 0.3047,
+     "validation_improvement_pct": 7.1,
+     "note": "y_NH3 절대오차 평균 0.039",
+     "rank": 7
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.09620390499272398,
+     "use_fitted": false,
+     "x_aard_base": 0.4743,
+     "x_aard_fit": 0.5514,
+     "validation_improvement_pct": 27.5,
+     "note": "y_NH3 절대오차 평균 0.052",
+     "rank": 8
+    },
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.10860463536998188,
+     "use_fitted": false,
+     "x_aard_base": 0.5241,
+     "x_aard_fit": 0.5778,
+     "validation_improvement_pct": 30.2,
+     "note": "y_NH3 절대오차 평균 0.048",
+     "rank": 9
+    }
+   ]
+  },
+  {
+   "band_id": "B2",
+   "label": "상온 대역 (~305 K / 32 °C)",
+   "T_K": [
+    293.0,
+    317.0
+   ],
+   "P_bar": [
+    0.23,
+    14.76
+   ],
+   "cases": [
+    {
+     "T_K": 303.15,
+     "P_bar": 0.505,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.21)",
+     "scored": true
+    },
+    {
+     "T_K": 306.89,
+     "P_bar": 5.2,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.50)",
+     "scored": true
+    },
+    {
+     "T_K": 310.0,
+     "P_bar": 13.0,
+     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.80)",
+     "scored": true
+    }
+   ],
+   "warnings": [
+    "전조성 혼화계 — 평가 기준은 희박용질 x-내삽이 아니라 실측 기포압 직접 비교 (bubble-P AARD, 24점·9개 문헌, x_NH3 0.011~0.949)",
+    "최적 EOS도 오차 ~25–30% — 단일 kij로는 전 조성 강비이상성 커버에 한계. 정밀 계산은 활성계수 모델(e-NRTL/NRTL) 또는 본 DB Data 4의 문헌 보간 권장",
+    "기본 kij=0의 cubic EOS는 기포압을 5~20배 과대예측 — 반드시 회귀 kij(−0.20~−0.27)와 함께 사용",
+    "VdW는 계산 실패로 순위 제외"
+   ],
+   "ranking": [
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": -0.25,
+     "bip_fitted": -0.04569023241298715,
+     "use_fitted": false,
+     "x_aard_base": 0.2473,
+     "x_aard_fit": 0.3187,
+     "validation_improvement_pct": 50.2,
+     "note": "y_NH3 절대오차 평균 0.074",
+     "rank": 1
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2062496664921401,
+     "use_fitted": true,
+     "x_aard_base": 4.1327,
+     "x_aard_fit": 0.2906,
+     "validation_improvement_pct": 80.4,
+     "note": "y_NH3 절대오차 평균 0.059",
+     "rank": 2
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij_a",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2982824456664645,
+     "use_fitted": true,
+     "x_aard_base": 1.5577,
+     "x_aard_fit": 0.304,
+     "validation_improvement_pct": 67.5,
+     "note": "y_NH3 절대오차 평균 0.059",
+     "rank": 3
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.20423635196486617,
+     "use_fitted": true,
+     "x_aard_base": 4.441,
+     "x_aard_fit": 0.3215,
+     "validation_improvement_pct": 79.6,
+     "note": "y_NH3 절대오차 평균 0.057",
+     "rank": 4
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.20557280018121313,
+     "use_fitted": true,
+     "x_aard_base": 4.5474,
+     "x_aard_fit": 0.3256,
+     "validation_improvement_pct": 79.6,
+     "note": "y_NH3 절대오차 평균 0.057",
+     "rank": 5
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2062971420842772,
+     "use_fitted": true,
+     "x_aard_base": 4.7811,
+     "x_aard_fit": 0.3387,
+     "validation_improvement_pct": 79.4,
+     "note": "y_NH3 절대오차 평균 0.056",
+     "rank": 6
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.21246117974981082,
+     "use_fitted": true,
+     "x_aard_base": 4.855,
+     "x_aard_fit": 0.3468,
+     "validation_improvement_pct": 79.2,
+     "note": "y_NH3 절대오차 평균 0.056",
+     "rank": 7
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.24764307005194838,
+     "use_fitted": true,
+     "x_aard_base": 0.4864,
+     "x_aard_fit": 0.4209,
+     "validation_improvement_pct": 64.5,
+     "note": "y_NH3 절대오차 평균 0.039",
+     "rank": 8
+    },
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.2560676476210024,
+     "use_fitted": true,
+     "x_aard_base": 0.5179,
+     "x_aard_fit": 0.4528,
+     "validation_improvement_pct": 63.2,
+     "note": "y_NH3 절대오차 평균 0.037",
+     "rank": 9
+    }
+   ]
+  }
+ ]
+}
