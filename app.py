@@ -1,67 +1,44 @@
-import streamlit as st
-import pandas as pd
+# -*- coding: utf-8 -*-
+"""
+SENLAB · Ammonia Properties Database
+Thermophysical Properties of Ammonia Systems
+"""
+import os
+
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
-from scipy.interpolate import griddata
-from scipy.interpolate import RectBivariateSpline
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
+from plotly.subplots import make_subplots
+from scipy.interpolate import RectBivariateSpline, griddata
 from scipy.optimize import brentq
+
 from lhv_calculator import render_lhv_page
 from eos_recommender import render_eos_page
 
-# To assign the plot settings to all plots
-# Simply typing `rcparams()` in other python scripts will do the job.
+HERE = os.path.dirname(os.path.abspath(__file__))
+ACCENT = "#F2A65A"  # 그래프에서 '입력 조건'을 표시하는 색
 
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
+# =====================================================================
+# 페이지 설정
+# =====================================================================
+st.set_page_config(
+    page_title="Ammonia Properties DB · SENLAB",
+    page_icon=":material/science:",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        "Get help": None,
+        "Report a bug": None,
+        "About": "SENLAB · Sustainable Energy Network Lab. (Seoul National University)",
+    },
+)
 
-def rcparams():
-    rcParams['figure.figsize'] = 5, 4
-    rcParams['font.family'] = 'sans-serif'
-
-    # Label should be far away from the axes
-    rcParams['axes.labelpad'] = 8
-    rcParams['xtick.major.pad'] = 7
-    rcParams['ytick.major.pad'] = 7
-
-    # Add minor ticks
-    rcParams['xtick.minor.visible'] = True
-    rcParams['ytick.minor.visible'] = True
-
-    # Tick width
-    rcParams['xtick.major.width'] = 1
-    rcParams['ytick.major.width'] = 1
-    rcParams['xtick.minor.width'] = 0.5
-    rcParams['ytick.minor.width'] = 0.5
-
-    # Tick length
-    rcParams['xtick.major.size'] = 5
-    rcParams['ytick.major.size'] = 5
-    rcParams['xtick.minor.size'] = 3
-    rcParams['ytick.minor.size'] = 3
-
-    # Tick color
-    rcParams['xtick.color'] = 'black'
-    rcParams['ytick.color'] = 'black'
-
-    rcParams['font.size'] = 14
-    rcParams['axes.titlepad'] = 10
-    rcParams['axes.titleweight'] = 'normal'
-    rcParams['axes.titlesize'] = 18
-
-    # Axes settings
-    rcParams['axes.labelweight'] = 'normal'
-    rcParams['xtick.labelsize'] = 12
-    rcParams['ytick.labelsize'] = 12
-    rcParams['axes.labelsize'] = 16
-    rcParams['xtick.direction'] = 'in'
-    rcParams['ytick.direction'] = 'in'
-
-#######################################################################
-# Data 1: Ammonia - Vapor Pressure at Gas-Liquid Equilibrium (K, MPa)
-#######################################################################
-    
-text_1 = """
+# =====================================================================
+# Data 1: 순수 NH3 증기압 (K, MPa)
+# =====================================================================
+TEXT_VP = """
 | 240 | 0.1014 |
 | 240 | 0.1041 |
 | 241 | 0.1076 |
@@ -178,28 +155,10 @@ text_1 = """
 | 405 | 11.3 |
 """
 
-# Split the text by lines
-lines = text_1.strip().split('\n')
-
-# Initialize an empty list to store tuples
-data = []
-
-# Iterate over the lines to process each one
-for line in lines:
-    # Split the line by '|' and strip whitespace, then convert each part to the correct type
-    kelvin, mpa = line.strip("| ").split(" | ")
-    data.append((int(kelvin), float(mpa)))
-
-vapor_pressure_data = data
-
-# Make converted tuples into DataFrame
-df_vpgle = pd.DataFrame(data, columns=['Kelvin', 'MPa'])
-
-###############################################################
-# Data 2: Density of Ammonia vs. Temperature (Celsius, g_per_l)
-###############################################################
-
-text_2 = """
+# =====================================================================
+# Data 2: NH3 밀도 vs 온도 (°C, g/L)
+# =====================================================================
+TEXT_DENSITY = """
 | -35 | 0.8843 |
 | -10 | 0.7938 |
 | 0 | 0.7625 |
@@ -220,1246 +179,504 @@ text_2 = """
 | 400 | 0.3058 |
 """
 
-# Split the text by lines
-lines = text_2.strip().split('\n')
 
-# Initialize an empty list to store tuples
-data = []
-
-# Iterate over the lines to process each one
-for line in lines:
-    # Split the line by '|' and strip whitespace, then convert each part to the correct type
-    celsius, g_per_l = line.strip("| ").split(" | ")
-    data.append((float(celsius), float(g_per_l)))
-
-# Make converted tuples into DataFrame
-df_density = pd.DataFrame(data, columns=['Celsius', 'g_per_l'])
-
-# Add the column Kelvin
-df_density['Kelvin'] = df_density['Celsius'] + 273.15
+def _parse(text):
+    rows = []
+    for line in text.strip().splitlines():
+        a, b = line.strip("| ").split(" | ")
+        rows.append((float(a), float(b)))
+    return pd.DataFrame(rows, columns=["x", "y"])
 
 
-###############################################################
-# STREAMLIT
-###############################################################
+_vp = _parse(TEXT_VP).groupby("x", as_index=False)["y"].mean()
+VP_T = _vp["x"].to_numpy()
+VP_P = _vp["y"].to_numpy()
+VP_T_MIN, VP_T_MAX = float(VP_T[0]), float(VP_T[-1])
+VP_P_MIN, VP_P_MAX = float(VP_P[0]), float(VP_P[-1])
 
-# Streamlit 초기셋팅 (좁게, 사이드바 펼쳐진 상태, 제목, 아이콘)
-st.set_page_config(layout="centered", initial_sidebar_state="auto", page_title="SENLAB 암모니아 물성 데이터베이스", page_icon=":atom:")
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-html, body, [class*="css"], .stApp, .stMarkdown { font-family: 'Pretendard', sans-serif; }
-[data-testid="stHeader"] { background: transparent; }
-h1 { font-weight: 700; letter-spacing: -0.01em; }
-</style>
-""", unsafe_allow_html=True)
-
-if "stage" not in st.session_state:
-    st.session_state.stage = 0
-
-# ===== 단계 0: 첫 화면 (남색 + 별) =====
-if st.session_state.stage == 0:
-    st.markdown("""
-    <style>
-    .stApp {
-        background:
-          radial-gradient(1.5px 1.5px at 6% 14%, rgba(255,255,255,0.9), transparent),
-          radial-gradient(1px 1px at 14% 32%, rgba(255,255,255,0.55), transparent),
-          radial-gradient(2px 2px at 22% 8%, #ffffff, transparent),
-          radial-gradient(1px 1px at 30% 48%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1.5px 1.5px at 38% 22%, rgba(255,255,255,0.8), transparent),
-          radial-gradient(1px 1px at 46% 64%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(2px 2px at 52% 12%, #ffffff, transparent),
-          radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1.5px 1.5px at 68% 18%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(1px 1px at 74% 56%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(2px 2px at 82% 26%, #ffffff, transparent),
-          radial-gradient(1.5px 1.5px at 94% 16%, rgba(255,255,255,0.8), transparent),
-          radial-gradient(1.5px 1.5px at 20% 78%, rgba(255,255,255,0.75), transparent),
-          radial-gradient(2px 2px at 44% 82%, rgba(255,255,255,0.85), transparent),
-          radial-gradient(1.5px 1.5px at 66% 74%, rgba(255,255,255,0.75), transparent),
-          radial-gradient(1px 1px at 78% 86%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1.5px 1.5px at 90% 70%, rgba(255,255,255,0.8), transparent),
-          radial-gradient(1px 1px at 12% 60%, rgba(255,255,255,0.5), transparent),
-          linear-gradient(160deg, #0E1B2E 0%, #16314F 55%, #1E456E 100%);
-    }
-    .stMain .block-container {
-        background: transparent !important; box-shadow: none !important;
-        min-height: 90vh !important; display: flex !important;
-        flex-direction: column !important; justify-content: center !important;
-    }
-    .stButton > button, .stLinkButton a {
-        background: transparent !important; color: rgba(255,255,255,0.9) !important;
-        border: 1.5px solid rgba(255,255,255,0.45) !important;
-        border-radius: 50px !important; padding: 0.8rem 1.5rem !important;
-        font-size: 1rem !important; font-weight: 500 !important;
-        font-family: 'Pretendard', sans-serif !important;
-    }
-    .stButton > button:hover, .stLinkButton a:hover {
-        background: rgba(255,255,255,0.12) !important; border-color: #fff !important; color: #fff !important;
-    }
-    </style>
-    <div style="text-align:center; margin-bottom: 2.6rem;">
-        <p style="font-family:'Space Grotesk',sans-serif; color:#8FB0DE; font-size:1rem; font-weight:600; letter-spacing:0.28em; text-transform:uppercase; margin:0 0 1.6rem;">SENLAB · Sustainable Energy Network Lab.</p>
-        <h1 style="font-family:'Space Grotesk',sans-serif; color:white; font-size:clamp(2.4rem, 5.5vw, 4rem); font-weight:700; line-height:1.15; letter-spacing:-0.01em; margin:0 0 1rem; text-shadow:0 2px 16px rgba(0,0,0,0.3);">Thermophysical Properties<br>of Ammonia Systems</h1>
-        <p style="font-family:'Pretendard',sans-serif; color:rgba(255,255,255,0.78); font-size:clamp(1.3rem, 3vw, 1.9rem); font-weight:400; letter-spacing:0.02em; margin:0;">암모니아 물성 데이터베이스</p>
-    </div>
-    """, unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 2, 1])
-    with c2:
-        bc1, bc2 = st.columns(2)
-        with bc1:
-            if st.button("더 알아보기  ▼", use_container_width=True):
-                st.session_state.stage = 1
-                st.rerun()
-        with bc2:
-            st.link_button("About Lab", "https://sensr.snu.ac.kr/", use_container_width=True)
-    st.stop()
-
-# ===== 단계 1: 소개 (크림) =====
-if st.session_state.stage == 1:
-    st.markdown("""
-    <style>
-    .stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
-    .stMain .block-container {
-        background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
-        margin-top:2.5rem; margin-bottom:2.5rem; max-width:900px;
-        box-shadow:0 12px 40px rgba(120,100,70,0.15);
-    }
-    .stButton > button { border-radius:10px; font-weight:600; padding:0.6rem 1.4rem; }
-    </style>
-    """, unsafe_allow_html=True)
-    st.markdown("## About Ammonia Properties Database")
-    st.markdown("암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성을 문헌 데이터 기반으로 검색하고 시각화할 수 있는 데이터베이스입니다.")
-    st.markdown("")
-    st.markdown("##### What's Included")
-    st.markdown("""
-- 증기압 (Vapor Pressure) : 특정 온도에서 액체와 평형을 이루는 포화 증기의 압력
-- 밀도 (Density) : 온도에 따른 단위 부피당 질량
-- 비열 (Specific Heat) : 온도를 1 °C 올리는 데 필요한 열량
-- 이슬점 / 거품점 (Dew Point / Bubble Point) : 혼합물이 응축·기화하기 시작하는 상평형 조건
-""")
-    st.markdown("")
-    st.markdown("##### How to Use")
-    st.markdown("""
-1. 물성을 선택하고
-2. 온도·압력 등 조건을 입력하면
-3. 해당 조건의 값과 그래프를 바로 확인할 수 있습니다.
-""")
-    st.markdown("")
-    col_back, col_next = st.columns(2)
-    with col_back:
-        if st.button("←  이전으로", use_container_width=True, key="back_home_1"):
-            st.session_state.stage = 0
-            st.rerun()
-    with col_next:
-        if st.button("데이터베이스 시작하기  →", use_container_width=True, key="go_db"):
-            st.session_state.stage = 2
-            st.rerun()
-    st.stop()
-
-# ===== 단계 2: 데이터베이스 (크림) =====
-st.markdown("""
-<style>
-.stApp { background: linear-gradient(135deg, #F2EADA 0%, #FBF7EE 55%, #FFFFFF 100%); }
-.stMain .block-container {
-    background:#FFFFFF; border-radius:0; padding:2.5rem 3rem 3rem;
-    margin-top:2rem; margin-bottom:2rem; max-width:1100px;
-    box-shadow:0 12px 40px rgba(120,100,70,0.15);
-}
-[data-testid="stSidebar"] { background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); }
-[data-testid="stMetric"] {
-    background:#FBF7EE; border:1px solid #ECE3D2; border-left:5px solid #C2A878;
-    border-radius:14px; padding:16px 20px;
-}
-.stButton > button { border-radius:10px; font-weight:600; padding:0.5rem 1.2rem; }
-</style>
-""", unsafe_allow_html=True)
-
-if st.button("←  처음으로", key="back_home_2"):
-    st.session_state.stage = 0
-    st.rerun()
-
-st.title("암모니아 물성 데이터베이스")
-st.caption("SENLAB · Sustainable Energy Network Laboratory")
-st.markdown("암모니아와 혼합물의 주요 물성을 검색하고 시각화하는 데이터베이스입니다.")
-st.divider()
+_den = _parse(TEXT_DENSITY)
+DEN_T = (_den["x"] + 273.15).to_numpy()
+DEN_RHO = _den["y"].to_numpy()
+DEN_T_MIN, DEN_T_MAX = float(DEN_T[0]), float(DEN_T[-1])
 
 
-# Sidebar to show app info.
-st.sidebar.markdown("""
-                    
-    ### **SENLAB**
-    - [SENLAB (Sustainable Energy Network Lab.) Homepage](https://sensr.snu.ac.kr/)
-                    
-    ### **Contributors**
-    - 고우진 (woojingo@snu.ac.kr)
-    - 민채림 (asd578300@snu.ac.kr)
-    - 정건우 (gw.jeong@snu.ac.kr)
-    - 강태현 (kang990925@pusan.ac.kr)
-    
-    ### **Supervisor**
-    - 서유택 (yutaek.seo@snu.ac.kr)
-    """)
+def p_sat(T):
+    return float(np.interp(T, VP_T, VP_P))
 
-# User selects the desired property
-option = st.selectbox(
-    "원하시는 암모니아 물성을 선택하세요:",
-    (
-        "Vapor Pressure at Gas-Liquid Equilibrium",
-        "Density vs. Temperature",
-        "Specific heat vs. Temperature",
-        "Dew point and bubble point information",
-        "LHV & Density of NH3-H2 Fuel",
-        "EOS Recommendation (Binary Mixtures)"
-    )
+
+def t_sat(P):
+    return float(np.interp(P, VP_P, VP_T))
+
+
+def rho_nh3(T_K):
+    return float(np.interp(T_K, DEN_T, DEN_RHO))
+
+
+# =====================================================================
+# Data 3: Shomate (NIST)
+# =====================================================================
+SH_A, SH_B, SH_C, SH_D, SH_E, SH_F, SH_G, SH_H = (
+    19.99563, 49.77119, -15.37599, 1.921168, 0.189174, -53.30667, 203.8591, -45.89806,
 )
 
-if option == "Vapor Pressure at Gas-Liquid Equilibrium":
-    st.write("**Vapor Pressure at Gas-Liquid Equilibrium**을 선택하셨네요.")
 
-    st.markdown("#### **Data 1: Vapor Pressure at Gas-Liquid Equilibrium**", unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)  # Creates two columns
+def shomate(T):
+    t = np.asarray(T, dtype=float) / 1000.0
+    Cp = SH_A + SH_B * t + SH_C * t**2 + SH_D * t**3 + SH_E / t**2
+    dH = SH_A * t + SH_B * t**2 / 2 + SH_C * t**3 / 3 + SH_D * t**4 / 4 - SH_E / t + SH_F - SH_H
+    S = SH_A * np.log(t) + SH_B * t + SH_C * t**2 / 2 + SH_D * t**3 / 3 - SH_E / (2 * t**2) + SH_G
+    return Cp, dH, S
 
-    with col1:
-        with st.expander("클릭하여 문헌 데이터를 확인해보세요."):
-            # Create an interactive plot
-            fig, ax = plt.subplots()
-            rcparams()
 
-            # Plot the data
-            ax.plot(df_vpgle['Kelvin'], df_vpgle['MPa'], 'o', color='black')
+SHOMATE_MD = r"""
+**Shomate 방정식** ($t = T/1000$)
 
-            ax.set_xlabel('Temperature (K)')
-            ax.set_ylabel('Pressure (MPa)')
-            st.pyplot(fig)
-            st.markdown("이 문헌 값을 interpolation하여 값을 제시한답니다.", unsafe_allow_html=True)
-    
-    with col2: 
-        user_choice = st.radio(
-            "'온도 (temperature)'와 '압력 (pressure)' 중에서 알고 계신 값을 선택해주세요:",
-            ('temperature', 'pressure')
+$$C_p^{o} = A + Bt + Ct^{2} + Dt^{3} + \frac{E}{t^{2}}$$
+
+$$H^{o} - H^{o}_{298.15} = At + \frac{Bt^{2}}{2} + \frac{Ct^{3}}{3} + \frac{Dt^{4}}{4} - \frac{E}{t} + F - H$$
+
+$$S^{o} = A\ln t + Bt + \frac{Ct^{2}}{2} + \frac{Dt^{3}}{3} - \frac{E}{2t^{2}} + G$$
+
+| A | B | C | D | E | F | G | H |
+|---|---|---|---|---|---|---|---|
+| 19.99563 | 49.77119 | −15.37599 | 1.921168 | 0.189174 | −53.30667 | 203.8591 | −45.89806 |
+
+출처: [NIST Chemistry WebBook](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1) · Data last reviewed June 1977
+"""
+
+# =====================================================================
+# Data 4: 이성분 혼합물 설정
+# =====================================================================
+MIX_CFG = {
+    "NH₃ + H₂": dict(
+        file="nh3+h2_modified.csv", sym="H_2", mw=2.016,
+        dew_method="cubic", bubble_method="cubic",
+        T_range=(277.6, 394.2), ylim=(279.9, 400.1), zoom_x=(0.95, 1.0),
+        T_default=330.0, x_default=0.7,
+        ref=("Phase Behavior in the Hydrogen-Ammonia System (Reamer et al.)",
+             "https://doi.org/10.1021/je60002a012"),
+    ),
+    "NH₃ + N₂": dict(
+        file="nh3+n2.csv", sym="N_2", mw=28.014,
+        dew_method="linear", bubble_method="cubic",
+        T_range=(277.6, 394.2), ylim=(279.9, 400.1), zoom_x=(0.85, 1.0),
+        T_default=330.0, x_default=0.7,
+        ref=("Phase Behavior in the Nitrogen-Ammonia System (Reamer et al.)",
+             "https://pubs.acs.org/doi/pdf/10.1021/je60004a005"),
+    ),
+    "NH₃ + CH₄": dict(
+        file="nh3+ch4.csv", sym="CH_4", mw=16.04,
+        dew_method="linear", bubble_method="cubic",
+        T_range=(273.15, 373.15), ylim=(273.15, 373.15), zoom_x=(0.0, 1.0),
+        T_default=320.0, x_default=0.4,
+        ref=("P, V, T, x values of the gas-liquid phase equilibria in the binary system methane-ammonia at high pressures (Lentz et al.)",
+             "https://www.sciencedirect.com/science/article/pii/0378381294870195"),
+    ),
+}
+
+CONVERSION_MD = r"""
+문헌은 NH₃ **몰분율** 기준이므로 아래 식으로 **질량분율**로 환산했습니다.
+
+$$x_{NH_3} = 1 - x_{__SYM__}$$
+
+$$w_{NH_3} = \frac{x_{NH_3}\, MW_{NH_3}}{x_{__SYM__}\, MW_{__SYM__} + x_{NH_3}\, MW_{NH_3}}$$
+
+- $MW_{NH_3}$ = 17.031 g/mol · $MW_{__SYM__}$ = __MW__ g/mol
+"""
+
+
+@st.cache_data(show_spinner=False)
+def load_binary(file, mw_partner):
+    df = pd.read_csv(os.path.join(HERE, file))
+    mw_nh3 = 17.031
+    df["T_Kel"] = round((df["T_F"] - 32) * (5 / 9) + 273.15, 3)
+    df["P_MPa"] = round(df["P_psi"] * 0.00689476, 3)
+    df["DewP_NH3"] = 1 - df["DewP"]
+    df["BubbleP_NH3"] = 1 - df["BubbleP"]
+    df["DewP_NH3_mass"] = (df["DewP_NH3"] * mw_nh3) / (df["DewP"] * mw_partner + df["DewP_NH3"] * mw_nh3)
+    df["BubbleP_NH3_mass"] = (df["BubbleP_NH3"] * mw_nh3) / (df["BubbleP"] * mw_partner + df["BubbleP_NH3"] * mw_nh3)
+    return df
+
+
+@st.cache_data(show_spinner="내삽 격자 계산 중…")
+def binary_grid(file, mw_partner, dew_method, bubble_method, T_range):
+    df = load_binary(file, mw_partner)
+    T_axis = np.linspace(T_range[0], T_range[1], 1000)
+    x_axis = np.linspace(0.0, 1.0, 1000)
+    X, TT = np.meshgrid(x_axis, T_axis)
+    dew = griddata((df["T_Kel"], df["DewP_NH3_mass"]), df["P_MPa"], (TT, X), method=dew_method)
+    bub = griddata((df["T_Kel"], df["BubbleP_NH3_mass"]), df["P_MPa"], (TT, X), method=bubble_method)
+    return T_axis, x_axis, dew, bub
+
+
+@st.cache_data(show_spinner=False)
+def load_h2o():
+    bubble = pd.read_csv(os.path.join(HERE, "NH3+H2O_bubbleline.csv"), index_col=0) + 273.15
+    dew = pd.read_csv(os.path.join(HERE, "NH3+H2O_dewline.csv"), index_col=0) + 273.15
+    return bubble, dew
+
+
+# =====================================================================
+# 공통 UI 헬퍼
+# =====================================================================
+def panels():
+    """왼쪽 입력/결과 · 오른쪽 그래프 (주식 앱과 같은 배치)"""
+    return st.columns([1, 2.3], gap="medium")
+
+
+def _fmt(v, unit, nd=2):
+    return "—" if v is None or np.isnan(v) else f"{v:.{nd}f} {unit}"
+
+
+def line_chart(x, y, x_title, y_title, point=None, name="문헌값", mode="lines+markers", height=420):
+    fig = go.Figure()
+    fig.add_scatter(x=x, y=y, mode=mode, name=name, marker=dict(size=7), line=dict(width=2.5))
+    if point is not None and not np.isnan(point[1]):
+        fig.add_scatter(
+            x=[point[0]], y=[point[1]], mode="markers", name="입력 조건",
+            marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")),
         )
-        
-        # Interpolation functions
-        interp_pressure = interp1d(df_vpgle['Kelvin'], df_vpgle['MPa'], bounds_error=False, fill_value="extrapolate")
-        interp_temperature = interp1d(df_vpgle['MPa'], df_vpgle['Kelvin'], bounds_error=False, fill_value="extrapolate")
-        
-        if user_choice == 'temperature':
-            temperature = st.number_input('온도를 켈빈 (K) 단위로 입력해주세요.', min_value=241, max_value=410)
-            if temperature:
-                pressure = interp_pressure(temperature)
-                st.write(f"해당 온도에 따른 압력은 {pressure} MPa 입니다.")
-                
-        elif user_choice == 'pressure':
-            pressure = st.number_input('압력을 메가파스칼 (MPa) 단위로 입력해주세요.', min_value=0.0, max_value=12.0)
-            if pressure:
-                temperature = interp_temperature(pressure)
-                st.write(f"해당 압력에 따른 온도는 {temperature} K 입니다.")
-
-elif option == "Density vs. Temperature":
-    st.write("**Density vs. Temperature**을 선택하셨네요.")
-
-    st.markdown("#### **Data 2: Density of Ammonia vs. Temperature**", unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        with st.expander("클릭하여 문헌 데이터를 확인해보세요."):
-            # Create an interactive plot
-            fig, ax = plt.subplots()
-            rcparams()
-
-            # Plot the data
-            ax.plot(df_density['Kelvin'], df_density['g_per_l'], 'o', color='black')
-
-            ax.set_xlabel('Temperature (K)')
-            ax.set_ylabel('Density (g/L)')
-            st.pyplot(fig)
-
-            st.markdown("이 문헌 값을 interpolation하여 값을 제시한답니다.", unsafe_allow_html=True)
-
-    with col2:
-        user_choice = st.radio(
-            "어떤 단위의 온도를 사용하시겠어요?",
-            ('Kelvin', 'Celsius')
-        )
-
-        # Interpolation functions
-        interp_density = interp1d(df_density['Kelvin'], df_density['g_per_l'], bounds_error=False, fill_value="extrapolate")
-
-        if user_choice == 'Kelvin':
-            temperature = st.number_input('온도를 켈빈 (K) 단위로 입력해주세요.', min_value=200, max_value = 700)
-            if temperature:
-                density = interp_density(temperature)
-                st.write(f"온도에 따른 밀도는 {density} g/L 입니다.")
-
-        elif user_choice == 'Celsius':
-            temperature = st.number_input('온도를 섭씨 (Celsius) 단위로 입력해주세요.', min_value=-73, max_value=427)
-            if temperature:
-                density = interp_density(temperature + 273.15)
-                st.write(f"온도에 따른 밀도는 {density} g/L 입니다.")
-
-###############################################################
-# Data 3: Specific heat vs. Temperature
-###############################################################
-
-elif option == "Specific heat vs. Temperature":
-    st.write("**Specific heat vs. Temperature**을 선택하셨네요.")
-
-    # Display information using markdown
-    st.markdown("""
-    #### **Data 3: Specific heat vs. Temperature**
-
-    이 프로그램에서는 보다 넓은 온도 범위에서 암모니아의 Specific heat을 계산하기 위해, [NIST](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1)에서 제공하는 바와 같이, Shomate 방정식을 사용합니다. 
-
-    - **Shomate 방정식**: 
-        $$
-        C_{p}^{o} = A + Bt + Ct^{2} + Dt^{3} + \\frac{E}{t^{2}}
-        $$
-
-        $$
-        H^{o} - H^{o}_{298.15} = At + \\frac{Bt^{2}}{2} + \\frac{Ct^{3}}{3} + \\frac{Dt^{4}}{4} - \\frac{E}{t} + F - H
-        $$
-
-        $$
-        S^{o} = A\\ln{t} + Bt + \\frac{Ct^{2}}{2} + \\frac{Dt^{3}}{3} - \\frac{E}{2t^{2}} + G
-        $$
-
-    - **암모니아의 Shomate 방정식에 대한 계수들은 다음과 같습니다.**
-        - $t$: temperature (K) / 1000.0
-        - $A$: 19.99563
-        - $B$: 49.77119
-        - $C$: -15.37599
-        - $D$: 1.921168
-        - $E$: 0.189174
-        - $F$: -53.30667
-        - $G$: 203.8591
-        - $H$: -45.89806
-        - **Comment**: Data last reviewed in June, 1977
-    """, unsafe_allow_html=True)
-
-    def shomate_equation(T, A, B, C, D, E, F, G, H):
-        t = T / 1000.0
-        Cp = A + B*t + C*t**2 + D*t**3 + E/t**2
-        Delta_H = A*t + B*t**2/2 + C*t**3/3 + D*t**4/4 - E/t + F - H #Delta_H = H^o - H^o_298.15
-        S = A*np.log(t) + B*t + C*t**2/2 + D*t**3/3 - E/(2*t**2) + G
-        return Cp, Delta_H, S
-
-    # Shomate Equation Constants for NH3 (from the provided table)
-    A, B, C, D, E, F, G, H = 19.99563, 49.77119, -15.37599, 1.921168, 0.189174, -53.30667, 203.8591, -45.89806
-
-    # 구분선
-    st.markdown("------", unsafe_allow_html=True)
-
-    # User input for temperature
-
-    col1, col2 = st.columns(2) 
-
-    with col1:
-
-        input_temperature = st.number_input("**온도 값을 켈빈 (K) 단위로 입력해주세요 (200 ~ 1400).**", min_value=200, max_value=1400, step=50)
-
-        if input_temperature:
-            # Calculating properties
-            Cp, Delta_H, S = shomate_equation(input_temperature, A, B, C, D, E, F, G, H)
-
-            # Alert
-            st.markdown("온도에 따른 암모니아의 Specific heat, $\Delta H$, $S^{o}$ 값을 아래 표에서 확인해보세요.")
-
-            # Displaying properties
-            st.markdown("""
-                        | **Specific heat (J/mol*K)** | **$\Delta H$ (kJ/mol)** | **$S°$ (J/mol*K)** |
-                        | :---: | :---: | :---: |
-                        | {0:.2f} | {1:.2f} | {2:.2f} |
-                        """.format(Cp, Delta_H, S), unsafe_allow_html=True)
-            
-            st.markdown("------", unsafe_allow_html=True)
-            st.markdown("입력 온도에 따라 변하는 Specific heat, $\Delta H$, $S^{o}$ 값을 그래프에서 확인해보세요.", unsafe_allow_html=True)
-            
-    with col2:
-
-        # Plotting
-        T_range = np.arange(200, 1400, 1)
-        Cp_values, Delta_H_values, S_values = shomate_equation(T_range, A, B, C, D, E, F, G, H)
-
-        fig, axs = plt.subplots(3, 1, figsize=(5, 8))
-        rcparams()
-
-        ## 선형플롯 1
-        axs[0].plot(T_range, Cp_values, 'g-')
-        axs[0].set_xlabel('Temperature (K)')
-        axs[0].set_ylabel(r'$C_{p}^{o}$ (J/mol*K)')
-
-        ## 사용자의 입력 온도에 대한 Cp 값 그래프에 표시
-        axs[0].axvline(x=input_temperature, color = 'green', linestyle='--', linewidth=0.5)
-        axs[0].axhline(y=Cp, color = 'green', linestyle='--', linewidth=0.5)
-        axs[0].plot(input_temperature, Cp, 'g-', markersize=5)
-
-        ## 선형플롯 2
-        axs[1].plot(T_range, Delta_H_values, 'r')
-        axs[1].set_xlabel('Temperature (K)')
-        axs[1].set_ylabel(r'$\Delta H$ (kJ/mol)')
-        
-        ## 사용자의 입력 온도에 대한 Delta_H 값 그래프에 표시
-        axs[1].axvline(x=input_temperature, color = 'red', linestyle='--', linewidth=0.5)
-        axs[1].axhline(y=Delta_H, color = 'red', linestyle='--', linewidth=0.5)
-        axs[1].plot(input_temperature, Delta_H, 'r')
-
-        ## 선형플롯 3
-        axs[2].plot(T_range, S_values, 'b-')
-        axs[2].set_xlabel('Temperature (K)')
-        axs[2].set_ylabel(r'$S^{o}$ (J/mol*K)')
-        
-        ## 사용자의 입력 온도에 대한 S 값 그래프에 표시
-        axs[2].axvline(x=input_temperature, color = 'blue', linestyle='--', linewidth=0.5)
-        axs[2].axhline(y=S, color = 'blue', linestyle='--', linewidth=0.5)
-        axs[2].plot(input_temperature, S, 'b-')
-
-        plt.tight_layout()
-        st.pyplot(fig)
-
-###############################################################
-# Data 4: Dew point and bubble point information
-###############################################################
-
-elif option == "Dew point and bubble point information":
-    st.write("**Dew point and bubble point information**을 선택하셨네요.")
-
-    st.markdown("#### Data 4: Dew point and bubble point information", unsafe_allow_html=True)
-
-    mixture_choice = st.radio(
-        "원하시는 항목을 아래에서 선택해주세요:",
-        ('1. Pure $NH_3$', '2. $NH_3 + H_2O$ 혼합물', '3. $NH_3 + H_2$ 혼합물', '4. $NH_3 + N_2$ 혼합물', '5. $NH_3 + CH_4$ 혼합물')
+    fig.update_layout(
+        height=height, margin=dict(l=10, r=10, t=10, b=10),
+        xaxis_title=x_title, yaxis_title=y_title, hovermode="x unified",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
     )
-
-    if mixture_choice == "1. Pure $NH_3$": 
-        st.markdown("""
-                    ------
-                    ## 순수 $NH_3$의 거품점 및 이슬점 정보""", unsafe_allow_html=True)
-
-        # Convert to arrays for interpolation
-        temperatures, pressures = zip(*vapor_pressure_data)
-        temperatures = np.array(temperatures)
-        pressures = np.array(pressures)
-
-        # Remove duplicates
-        _, idx = np.unique(temperatures, return_index=True)
-        temperatures = temperatures[idx]
-        pressures = pressures[idx]
-
-        # Interpolate to find temperature for a given pressure and vice versa
-        vapor_pressure_func_temp = interp1d(pressures, temperatures, kind='cubic', fill_value="extrapolate")
-        vapor_pressure_func_press = interp1d(temperatures, pressures, kind='cubic', fill_value="extrapolate")
-
-        def calculate_dew_point(system_pressure=None, system_temperature=None):
-            try:
-                if system_pressure is not None:
-                    return vapor_pressure_func_temp(system_pressure)
-                elif system_temperature is not None:
-                    return vapor_pressure_func_press(system_temperature)
-            except ValueError as e:
-                st.error(f'Error: {e}')
-                return np.nan
-            
-        def calculate_bubble_point(system_pressure=None, system_temperature=None):
-            try:
-                if system_pressure is not None:
-                    return vapor_pressure_func_temp(system_pressure)
-                elif system_temperature is not None:
-                    return vapor_pressure_func_press(system_temperature)
-            except ValueError as e:
-                st.error(f'Error: {e}')
-                return np.nan
-            
-        col1, col2 = st.columns(2)
-
-        with col1:
-            # Plotting 
-            fig, ax = plt.subplots()
-            rcparams()
-
-            # Plot the data
-            ax.plot(df_vpgle['Kelvin'], df_vpgle['MPa'], 'o', color='black')
-
-            ax.set_xlabel('Temperature (K)')
-            ax.set_ylabel('Pressure (MPa)')
-            st.pyplot(fig)
-
-        with col2:
-            user_choice = st.radio(
-                "어떤 변수를 입력하시겠어요?", 
-                ('Pressure', 'Temperature')
-            )
-
-            if user_choice == 'Pressure':
-                system_pressure = st.number_input('압력을 메가파스칼 (MPa) 단위로 입력해주세요.', min_value=0.1, max_value=12.0, step=0.5)
-                if system_pressure:
-                    dew_point = calculate_dew_point(system_pressure=system_pressure)
-                    st.write(f"해당 압력에 대한 이슬점 온도는 {dew_point:.2f} K 입니다.")
-
-                    bubble_point = calculate_bubble_point(system_pressure=system_pressure)
-                    st.write(f"해당 압력에 대한 거품점 온도는 {bubble_point:.2f} K 입니다.")
-                    st.markdown("**INFO.** 순수 암모니아의 경우, 거품점 온도는 이슬점 온도와 같답니다.")
-
-            elif user_choice == 'Temperature':
-                system_temperature = st.number_input('온도를 켈빈 (K) 단위로 입력해주세요.', min_value=241, max_value=410, step=5)
-                if system_temperature != 0:
-                    dew_point = calculate_dew_point(system_temperature=system_temperature)
-                    bubble_point = calculate_bubble_point(system_temperature=system_temperature)
-
-                    if not np.isnan(dew_point):
-                        st.write(f"해당 온도에 대한 이슬점 압력은 {dew_point:.2f} MPa 입니다.")
-
-                    if not np.isnan(bubble_point):
-                        st.write(f"해당 온도에 대한 거품점 압력은 {bubble_point:.2f} MPa 입니다.")
-                        st.markdown("**INFO.** 순수 암모니아의 경우, 거품점 압력은 이슬점 압력과 같습니다.")
-
-    elif mixture_choice == "2. $NH_3 + H_2O$ 혼합물":
-        st.markdown("""
-        ------
-        ## Bubble point and Dew point of $NH_3 + H_2O$ Mixture
-        > **Reference**: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)
-        """)
-
-        # Load bubble and dew point data
-        df_bubble_data_celsius = pd.read_csv('./NH3+H2O_bubbleline.csv', index_col=0)
-        df_bubble_data_kelvin = df_bubble_data_celsius + 273.15
-        df_dew_data_celsius = pd.read_csv('./NH3+H2O_dewline.csv', index_col=0)
-        df_dew_data_kelvin = df_dew_data_celsius + 273.15
-
-        # Prepare the data for interpolation
-        x = df_bubble_data_kelvin.index.values.astype(float)  # Ammonia mass fraction
-        y_bubble = df_bubble_data_kelvin.columns.values.astype(float)  # Pressure for bubble line
-        y_dew = df_dew_data_kelvin.columns.values.astype(float)  # Pressure for dew line
-        z_bubble = df_bubble_data_kelvin.values  # Temperature for bubble line
-        z_dew = df_dew_data_kelvin.values  # Temperature for dew line
-
-        # Interpolation functions using RectBivariateSpline, which is suitable for grid data
-        interp_bubble = RectBivariateSpline(x, y_bubble, z_bubble)
-        interp_dew = RectBivariateSpline(x, y_dew, z_dew)
-
-        # Define a function to find pressure for a given temperature and ammonia mass fraction
-        def find_pressure(temperature, ammonia_mass_fraction, interp_func, pressure_range):
-            # Define the function whose root we want to find
-            def temp_difference(pressure):
-                return interp_func(ammonia_mass_fraction, pressure, grid=False) - temperature
-            
-            # Use brentq to find the root, which in our case is the pressure
-            try:
-                return brentq(temp_difference, *pressure_range)
-            except ValueError:
-                return np.nan  # Return NaN if the root is not bracketed
-
-        # Plotting setup
-        colors = plt.cm.jet(np.linspace(0, 1, len(df_bubble_data_kelvin.columns))) # Color map
-
-        # Create plot
-        fig, ax = plt.subplots(figsize=(5, 4))
-        rcparams()
-
-        # Plot bubble point lines
-        for i, column in enumerate(df_bubble_data_kelvin.columns):
-            ax.plot(df_bubble_data_kelvin.index, df_bubble_data_kelvin[column], color=colors[i], label=f'{column} (Bubble)', linestyle='-')
-
-        # Plot dew point lines
-        for i, column in enumerate(df_dew_data_kelvin.columns):
-            ax.plot(df_dew_data_kelvin.index, df_dew_data_kelvin[column], color=colors[i], label=f'{column} (Dew)', linestyle=':')
-
-        ax.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax.set_ylabel('Temperature (K)')
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), ncol=2, title='Pressure (MPa)')
-        ax.grid(True, linestyle=':', linewidth=1, alpha=0.8)
-        st.pyplot(fig)
-
-        col1, col2 = st.columns(2)
-        with col1: 
-        
-            # User input and calculation
-            user_choice = st.radio(
-                "온도 (Temperature) 또는 압력 (Pressure) 중 어떤 것을 입력하시겠어요?",
-                ('Temperature', 'Pressure')
-            )
-
-        with col2: 
-            if user_choice == 'Temperature':
-                temperature_k = st.number_input('온도를 켈빈 (K) 단위로 입력해주세요 (220 ~ 560 K).', min_value=220.0, max_value=560.0, step=10.0)
-                x_nh3 = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1).", min_value=0.0, max_value=1.0, step=0.1)
-
-                if temperature_k and x_nh3 is not None:
-                    # Interpolate and calculate bubble and dew points
-                    pressure_bubble = find_pressure(temperature_k, x_nh3, interp_bubble, pressure_range=(0.0, 10.0))
-                    pressure_dew = find_pressure(temperature_k, x_nh3, interp_dew, pressure_range=(0.0, 10.0))
-
-                    st.write(f"해당 온도와 암모니아 분율에 대한 Bubble point 압력은 {pressure_bubble:.2f} MPa 입니다.")
-                    st.write(f"해당 온도와 암모니아 분율에 대한 Dew point 압력은 {pressure_dew:.2f} MPa 입니다.")
-
-            elif user_choice == 'Pressure':
-                pressure_mpa = st.number_input('압력을 메가파스칼 (MPa) 단위로 입력해주세요 (0 ~ 10).', min_value=0.0, max_value=10.0)
-                x_nh3 = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1).", min_value=0.0, max_value=1.0)
-
-                if pressure_mpa and x_nh3 is not None:
-                    # Interpolate and calculate bubble and dew points
-                    temperature_bubble = interp_bubble(x_nh3, pressure_mpa, grid=False)
-                    temperature_dew = interp_dew(x_nh3, pressure_mpa, grid=False)
-
-                    st.write(f"해당 압력과 암모니아 분율에 대한 Bubble point 온도는 {temperature_bubble:.2f} K 입니다.")
-                    st.write(f"해당 압력과 암모니아 분율에 대한 Dew point 온도는 {temperature_dew:.2f} K 입니다.")
-    
-    elif mixture_choice == "3. $NH_3 + H_2$ 혼합물":
-        st.markdown("""
-        ------
-        ## $NH_3 + H_2$ 혼합물의 거품점 및 이슬점 정보
-        > **Reference**: [Phase Behavior in the Hydrogen-Ammonia System (Reamer et al.)](https://doi.org/10.1021/je60002a012)""", unsafe_allow_html=True
-        )
-
-        st.markdown("NOTE: 해당 문헌에서는 암모니아의 몰 분율에 따른 거품점과 이슬점 정보를 제공하고 있습니다. 이를 질량 분율로 변환하기 위해, 아래와 같은 환산과정을 사용했어요.")
-        # Create a checkbox
-        if st.checkbox('**체크박스 눌러 환산 과정 확인하기**'):
-            # Display the markdown text when the checkbox is checked
-            st.markdown("""
-            ----
-                        
-            ## **Mass fraction conversion**
-
-            This code converts the __mole fractions of *ammonia* at both dew / bubble points to mass fractions__. This conversion is crucial when working with mixtures of gases, like ammonia and hydrogen, as it allows for the representation of the composition in terms of mass instead of moles.
-
-            This program calculates the mass fraction from the mole fraction using the molecular weights of hydrogen and ammonia. The conversion is performed as follows:
-
-            1. Calculate the mole fraction of NH₃ ($x_{NH_3}$) as the complement of the hydrogen mole fraction:
-            $$ x_{NH_3} = 1 - x_{H_2} $$
-
-            2. Convert the mole fractions to mass fractions. The mass fraction of ammonia (NH₃) in the mixture can be calculated using the formula:        
-                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{H_2} \\times MW_{H_2} + x_{NH_3} \\times MW_{NH_3}} $$
-                        
-            <br> where:
-            - $w_{NH_3}$ is the mass fraction of ammonia,
-            - $x_{H_2}$ is the mole fraction of hydrogen,
-            - $x_{NH_3}$ is the mole fraction of ammonia,
-            - $MW_{H_2}$ is the molecular weight of hydrogen (**2.016 g/mol**),
-            - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
-                        
-            ----
-                        
-            """, unsafe_allow_html=True)
-
-        df_nh3h2 = pd.read_csv("./nh3+h2_modified.csv")
-
-        # Data processing for NH3 + H2 mixture
-        df_nh3h2['T_Kel'] = round((df_nh3h2['T_F'] - 32) * (5/9) + 273.15, 3)
-        df_nh3h2['P_MPa'] = round(df_nh3h2['P_psi'] * 0.00689476, 3)
-
-        # Convert mole fraction to mass fraction
-        mw_h2 = 2.016  # g/mol for H2
-        mw_nh3 = 17.031  # g/mol for NH3
-        df_nh3h2['DewP_NH3'] = 1 - df_nh3h2['DewP']
-        df_nh3h2['BubbleP_NH3'] = 1 - df_nh3h2['BubbleP']
-        df_nh3h2['DewP_NH3_mass'] = (df_nh3h2['DewP_NH3'] * mw_nh3) / (df_nh3h2['DewP'] * mw_h2 + df_nh3h2['DewP_NH3'] * mw_nh3)
-        df_nh3h2['BubbleP_NH3_mass'] = (df_nh3h2['BubbleP_NH3'] * mw_nh3) / (df_nh3h2['BubbleP'] * mw_h2 + df_nh3h2['BubbleP_NH3'] * mw_nh3)
-
-        # Display initial data
-        st.markdown("### 1. 가공된 데이터 미리보기:")
-        st.dataframe(df_nh3h2)
-
-        # Visualization of P-x curve for NH3 + H2 mixture
-        st.markdown("### 2. NH₃ + H₂ 혼합물에 대한 P-x 정보 ([문헌](https://doi.org/10.1021/je60002a012) 발췌):")
-        st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
-
-        # Plot
-        fig, ax = plt.subplots(figsize=(5, 4))
-
-        # Define the temperature values for which you want to plot the P-x curve
-        temperatures = [277.594, 310.928, 344.261, 377.594, 394.261]
-
-        # Color dic
-        color_dict = {277.594: 'blue', 310.928: 'green', 344.261: 'r', 377.594: 'orange', 394.261: 'purple'}
-
-        for temp in sorted(df_nh3h2['T_Kel'].unique()):
-            df_temp = df_nh3h2[df_nh3h2['T_Kel'] == temp]
-            ax.scatter(df_temp['DewP_NH3_mass'], df_temp['P_MPa'], marker='o', label=f'{temp} K', color=color_dict[temp], alpha=0.6, s=20)
-            ax.scatter(df_temp['BubbleP_NH3_mass'], df_temp['P_MPa'], marker='D', color=color_dict[temp], alpha=0.6, s=20)
-
-        ax.set_xlabel('Ammonia Mass Fraction, $x_{\\mathrm{NH}_3}$')
-        ax.set_ylabel('Pressure (MPa)')
-
-        # LIMS
-        ax.set_xlim(0, 1)
-
-        ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1), fontsize=11)
-        st.pyplot(fig)
-
-        st.markdown("### 3. NH₃ + H₂ 혼합물에 대한 P-x 내삽 그래프:")
-
-        # Adjusting the temperature and ammonia mass fraction range as requested
-        temperature_range = np.linspace(277.6, 394.2, 1000)
-        ammonia_mass_fraction_range = np.linspace(0, 1, 1000)
-        ammonia_mass_fraction_grid, temperature_grid = np.meshgrid(ammonia_mass_fraction_range, temperature_range)
-
-        # Re-interpolating the data with the updated grid
-        dew_point_pressure_grid = griddata(
-            (df_nh3h2['T_Kel'], df_nh3h2['DewP_NH3_mass']),
-            df_nh3h2['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='cubic'
-        )
-
-        bubble_point_pressure_grid = griddata(
-            (df_nh3h2['T_Kel'], df_nh3h2['BubbleP_NH3_mass']),
-            df_nh3h2['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='cubic'
-        )
-
-        # Plotting the updated interpolated data
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 4))
-
-        # Dew Point Pressure plot
-        c1 = ax1.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, dew_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax1.set_title(r'$P_{\mathrm{dew}}$')
-        ax1.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax1.set_ylabel('Temperature (K)')
-        fig.colorbar(c1, ax=ax1).set_label('Pressure (MPa)')
-
-        # Bubble Point Pressure plot
-        c2 = ax2.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, bubble_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax2.set_title(r'$P_{\mathrm{bubble}}$')
-        ax2.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax2.set_ylabel('Temperature (K)')
-        fig.colorbar(c2, ax=ax2).set_label('Pressure (MPa)')
-
-        # LIMS
-        ax1.set_xlim(0, 1)
-        ax2.set_xlim(0.95, 1)
-        ax1.set_ylim(279.9, 400.1)
-        ax2.set_ylim(279.9, 400.1)
-        st.pyplot(fig)
-
-        st.markdown("### 4. 내삽 데이터 다운로드 받기:")
-        st.markdown("> 아래 버튼을 눌러 내삽 데이터를 확인해볼 수 있어요 (용량: 약 45 mb).")
-
-        # Create a download button
-        if st.button('**클릭하여 내삽 데이터 (CSV) 만들기**'):
-            # Save the interpolated data to a DataFrame
-            df_interpolated = pd.DataFrame({
-                'T_Kel': temperature_grid.flatten(),
-                'x_nh3': ammonia_mass_fraction_grid.flatten(),
-                'DewP': dew_point_pressure_grid.flatten(),
-                'BubbleP': bubble_point_pressure_grid.flatten()
-            })
-
-            # Save the DataFrame to a CSV file
-            df_interpolated.to_csv('nh3+h2_interpolated.csv', index=False)
-
-            # Display the download link
-            st.markdown(
-                f'<a href="nh3+h2_interpolated.csv" download="nh3+h2_interpolated.csv">nh3+h2_interpolated 다운받기.csv</a>',
-                unsafe_allow_html=True
-            )
-
-        # Interactive user inputs and results
-        st.markdown("### 5. 사용자 입력 및 결과 확인")
-        # User input and calculation
-        user_choice = st.radio(
-            "온도 (Temperature) 또는 압력 (Pressure) 중 어떤 것을 입력하시겠어요?",
-            ('Temperature', 'Pressure')
-        )
-
-        if user_choice == 'Temperature':
-            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3h2['T_Kel'].min()), max_value=float(df_nh3h2['T_Kel'].max()), value=330.0, step=50.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            temp_idx = (np.abs(temperature_range - user_temp)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding pressure values
-            dew_point_pressure = dew_point_pressure_grid[temp_idx, mass_frac_idx]
-            bubble_point_pressure = bubble_point_pressure_grid[temp_idx, mass_frac_idx]
-
-            # Display the results
-            if np.isnan(dew_point_pressure): 
-                st.error("해당 온도와 암모니아 분율에 대한 이슬점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 이슬점 압력은 {round(dew_point_pressure, 2)} MPa 이에요.")
-
-            if np.isnan(bubble_point_pressure):
-                st.error("해당 온도와 암모니아 분율에 대한 거품점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 거품점 압력은 {round(bubble_point_pressure, 2)} MPa 이에요.")
-
-        elif user_choice == 'Pressure':
-            user_pressure = st.number_input("원하시는 압력을 입력하세요 (MPa):", min_value=0.0, max_value=40.0, value=10.0, step=1.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.98, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            pressure_idx = (np.abs(np.linspace(0, 40, 1000) - user_pressure)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding temperature for dew point and bubble point
-            dew_point_slice = np.abs(dew_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(dew_point_slice)):
-                dew_point_temperature = np.nan
-            else:
-                dew_point_temperature = temperature_range[np.nanargmin(dew_point_slice)]
-
-            bubble_point_slice = np.abs(bubble_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(bubble_point_slice)):
-                bubble_point_temperature = np.nan
-            else:
-                bubble_point_temperature = temperature_range[np.nanargmin(bubble_point_slice)]
-
-            # Check if the values are nan and print the results
-            if np.isnan(dew_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 이슬점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 이슬점 온도는 {round(dew_point_temperature, 2)} K 이에요.")
-
-            if np.isnan(bubble_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 거품점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {round(bubble_point_temperature, 2)} K 이에요.")
-    
-    elif mixture_choice == "4. $NH_3 + N_2$ 혼합물":
-        st.markdown("""
-        ------
-        ## $NH_3 + N_2$ 혼합물의 거품점 및 이슬점 정보
-        > **Reference**: [Phase Behavior in the Nitrogen-Ammonia System (Reamer et al.)](https://pubs.acs.org/doi/pdf/10.1021/je60004a005)""", unsafe_allow_html=True
-        )
-
-        st.markdown("NOTE: 해당 문헌에서는 암모니아의 몰 분율에 따른 거품점과 이슬점 정보를 제공하고 있습니다. 이를 질량 분율로 변환하기 위해, 아래와 같은 환산과정을 사용했어요.")
-        # Create a checkbox
-        if st.checkbox('**체크박스 눌러 환산 과정 확인하기**'):
-            # Display the markdown text when the checkbox is checked
-            st.markdown("""
-            ----
-                        
-            ## **Mass fraction conversion**
-
-            This code converts the __mole fractions of *ammonia* at both dew / bubble points to mass fractions__. This conversion is crucial when working with mixtures of gases, like ammonia and nitrogen, as it allows for the representation of the composition in terms of mass instead of moles.
-
-            This program calculates the mass fraction from the mole fraction using the molecular weights of nitrogen and ammonia. The conversion is performed as follows:
-
-            1. Calculate the mole fraction of NH₃ ($x_{NH_3}$) as the complement of the nitrogen mole fraction:
-            $$ x_{NH_3} = 1 - x_{N_2} $$
-
-            2. Convert the mole fractions to mass fractions. The mass fraction of ammonia (NH₃) in the mixture can be calculated using the formula:        
-                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{N_2} \\times MW_{N_2} + x_{NH_3} \\times MW_{NH_3}} $$
-                        
-            <br> where:
-            - $w_{NH_3}$ is the mass fraction of ammonia,
-            - $x_{N_2}$ is the mole fraction of nitrogen,
-            - $x_{NH_3}$ is the mole fraction of ammonia,
-            - $MW_{N_2}$ is the molecular weight of nitrogen (**28.014 g/mol**),
-            - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
-                        
-            ----
-                        
-            """, unsafe_allow_html=True)
-
-        df_nh3n2 = pd.read_csv("./nh3+n2.csv")
-
-        # Data processing for NH3 + N2 mixture
-        df_nh3n2['T_Kel'] = round((df_nh3n2['T_F'] - 32) * (5/9) + 273.15, 3)
-        df_nh3n2['P_MPa'] = round(df_nh3n2['P_psi'] * 0.00689476, 3)
-
-        # Convert mole fraction to mass fraction
-        mw_n2 = 28.014  # g/mol for N2 (molecular weight; 14.006 is the atomic weight of N)
-        mw_nh3 = 17.031  # g/mol for NH3
-        df_nh3n2['DewP_NH3'] = 1 - df_nh3n2['DewP']
-        df_nh3n2['BubbleP_NH3'] = 1 - df_nh3n2['BubbleP']
-        df_nh3n2['DewP_NH3_mass'] = (df_nh3n2['DewP_NH3'] * mw_nh3) / (df_nh3n2['DewP'] * mw_n2 + df_nh3n2['DewP_NH3'] * mw_nh3)
-        df_nh3n2['BubbleP_NH3_mass'] = (df_nh3n2['BubbleP_NH3'] * mw_nh3) / (df_nh3n2['BubbleP'] * mw_n2 + df_nh3n2['BubbleP_NH3'] * mw_nh3)
-
-        # Display initial data
-        st.markdown("### 1. 가공된 데이터 미리보기:")
-        st.dataframe(df_nh3n2)
-
-        # Visualization of P-x curve for NH3 + H2 mixture
-        st.markdown("### 2. NH₃ + N₂ 혼합물에 대한 P-x 정보 ([문헌](https://pubs.acs.org/doi/pdf/10.1021/je60004a005) 발췌):")
-        st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
-
-        # Plot
-        fig, ax = plt.subplots(figsize=(5, 4))
-
-        # Define the temperature values for which you want to plot the P-x curve
-        temperatures = [277.594, 310.928, 344.261, 377.594, 394.261]
-
-        # Color dic
-        color_dict = {277.594: 'blue', 310.928: 'green', 344.261: 'r', 377.594: 'orange', 394.261: 'purple'}
-
-        for temp in sorted(df_nh3n2['T_Kel'].unique()):
-            df_temp = df_nh3n2[df_nh3n2['T_Kel'] == temp]
-            ax.scatter(df_temp['DewP_NH3_mass'], df_temp['P_MPa'], marker='o', label=f'{temp} K', color=color_dict[temp], alpha=0.6, s=20)
-            ax.scatter(df_temp['BubbleP_NH3_mass'], df_temp['P_MPa'], marker='D', color=color_dict[temp], alpha=0.6, s=20)
-
-        ax.set_xlabel('Ammonia Mass Fraction, $x_{\\mathrm{NH}_3}$')
-        ax.set_ylabel('Pressure (MPa)')
-
-        # LIMS
-        ax.set_xlim(0, 1)
-
-        ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1), fontsize=11)
-        st.pyplot(fig)
-
-        st.markdown("### 3. NH₃ + N₂ 혼합물에 대한 P-x 내삽 그래프:")
-
-        # Adjusting the temperature and ammonia mass fraction range as requested
-        temperature_range = np.linspace(277.6, 394.2, 1000)
-        ammonia_mass_fraction_range = np.linspace(0, 1, 1000)
-        ammonia_mass_fraction_grid, temperature_grid = np.meshgrid(ammonia_mass_fraction_range, temperature_range)
-
-        # Re-interpolating the data with the updated grid
-        dew_point_pressure_grid = griddata(
-            (df_nh3n2['T_Kel'], df_nh3n2['DewP_NH3_mass']),
-            df_nh3n2['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='linear'
-        )
-
-        bubble_point_pressure_grid = griddata(
-            (df_nh3n2['T_Kel'], df_nh3n2['BubbleP_NH3_mass']),
-            df_nh3n2['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='cubic'
-        )
-
-        # Plotting the updated interpolated data
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 4))
-
-        # Dew Point Pressure plot
-        c1 = ax1.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, dew_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax1.set_title(r'$P_{\mathrm{dew}}$')
-        ax1.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax1.set_ylabel('Temperature (K)')
-        fig.colorbar(c1, ax=ax1).set_label('Pressure (MPa)')
-
-        # Bubble Point Pressure plot
-        c2 = ax2.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, bubble_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax2.set_title(r'$P_{\mathrm{bubble}}$')
-        ax2.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax2.set_ylabel('Temperature (K)')
-        fig.colorbar(c2, ax=ax2).set_label('Pressure (MPa)')
-
-        # LIMS
-        ax1.set_xlim(0, 1)
-        ax2.set_xlim(0.85, 1)
-        ax1.set_ylim(279.9, 400.1)
-        ax2.set_ylim(279.9, 400.1)
-        st.pyplot(fig)
-
-        st.markdown("### 4. 내삽 데이터 다운로드 받기:")
-        st.markdown("> 아래 버튼을 눌러 내삽 데이터를 확인해볼 수 있어요 (용량: 약 45 mb).")
-
-        # Create a download button
-        if st.button('**클릭하여 내삽 데이터 (CSV) 만들기**'):
-            # Save the interpolated data to a DataFrame
-            df_interpolated = pd.DataFrame({
-                'T_Kel': temperature_grid.flatten(),
-                'x_nh3': ammonia_mass_fraction_grid.flatten(),
-                'DewP': dew_point_pressure_grid.flatten(),
-                'BubbleP': bubble_point_pressure_grid.flatten()
-            })
-
-            # Save the DataFrame to a CSV file
-            df_interpolated.to_csv('nh3+n2_interpolated.csv', index=False)
-
-            # Display the download link
-            st.markdown(
-                f'<a href="nh3+n2_interpolated.csv" download="nh3+n2_interpolated.csv">nh3+n2_interpolated 다운받기.csv</a>',
-                unsafe_allow_html=True
-            )
-
-        # Interactive user inputs and results
-        st.markdown("### 5. 사용자 입력 및 결과 확인")
-        # User input and calculation
-        user_choice = st.radio(
-            "온도 (Temperature) 또는 압력 (Pressure) 중 어떤 것을 입력하시겠어요?",
-            ('Temperature', 'Pressure')
-        )
-
-        if user_choice == 'Temperature':
-            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3n2['T_Kel'].min()), max_value=float(df_nh3n2['T_Kel'].max()), value=330.0, step=50.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            temp_idx = (np.abs(temperature_range - user_temp)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding pressure values
-            dew_point_pressure = dew_point_pressure_grid[temp_idx, mass_frac_idx]
-            bubble_point_pressure = bubble_point_pressure_grid[temp_idx, mass_frac_idx]
-
-            # Display the results
-            if np.isnan(dew_point_pressure): 
-                st.error("해당 온도와 암모니아 분율에 대한 이슬점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 이슬점 압력은 {round(dew_point_pressure, 2)} MPa 이에요.")
-
-            if np.isnan(bubble_point_pressure):
-                st.error("해당 온도와 암모니아 분율에 대한 거품점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 거품점 압력은 {round(bubble_point_pressure, 2)} MPa 이에요.")
-
-        elif user_choice == 'Pressure':
-            user_pressure = st.number_input("원하시는 압력을 입력하세요 (MPa):", min_value=0.0, max_value=40.0, value=10.0, step=1.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.98, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            pressure_idx = (np.abs(np.linspace(0, 40, 1000) - user_pressure)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding temperature for dew point and bubble point
-            dew_point_slice = np.abs(dew_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(dew_point_slice)):
-                dew_point_temperature = np.nan
-            else:
-                dew_point_temperature = temperature_range[np.nanargmin(dew_point_slice)]
-
-            bubble_point_slice = np.abs(bubble_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(bubble_point_slice)):
-                bubble_point_temperature = np.nan
-            else:
-                bubble_point_temperature = temperature_range[np.nanargmin(bubble_point_slice)]
-
-            # Check if the values are nan and print the results
-            if np.isnan(dew_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 이슬점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 이슬점 온도는 {round(dew_point_temperature, 2)} K 이에요.")
-
-            if np.isnan(bubble_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 거품점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {round(bubble_point_temperature, 2)} K 이에요.")
-                
-    elif mixture_choice == "5. $NH_3 + CH_4$ 혼합물":
-        st.markdown("""
-        ------
-        ## $NH_3 + CH_4$ 혼합물의 거품점 및 이슬점 정보
-        > **Reference**: [P, V, T, x values of the gas-liquid phase equilibria in the binary system methane-ammonia at high pressures (Lentz et al.)](https://www.sciencedirect.com/science/article/pii/0378381294870195?ref=pdf_download&fr=RR-2&rr=8c8accfaaf69305b)""", unsafe_allow_html=True
-        )
-
-        st.markdown("NOTE: 해당 문헌에서는 암모니아의 몰 분율에 따른 거품점과 이슬점 정보를 제공하고 있습니다. 이를 질량 분율로 변환하기 위해, 아래와 같은 환산과정을 사용했어요.")
-        # Create a checkbox
-        if st.checkbox('**체크박스 눌러 환산 과정 확인하기**'):
-            # Display the markdown text when the checkbox is checked
-            st.markdown("""
-            ----
-                        
-            ## **Mass fraction conversion**
-
-            This code converts the __mole fractions of *ammonia* at both dew / bubble points to mass fractions__. This conversion is crucial when working with mixtures of gases, like ammonia and nitrogen, as it allows for the representation of the composition in terms of mass instead of moles.
-
-            This program calculates the mass fraction from the mole fraction using the molecular weights of nitrogen and ammonia. The conversion is performed as follows:
-
-            1. Calculate the mole fraction of NH₃ ($x_{NH_3}$) as the complement of the nitrogen mole fraction:
-            $$ x_{NH_3} = 1 - x_{CH_4} $$
-
-            2. Convert the mole fractions to mass fractions. The mass fraction of ammonia (NH₃) in the mixture can be calculated using the formula:        
-                $$ w_{NH_3} = \\frac{x_{NH_3} \\times MW_{NH_3}}{x_{CH_4} \\times MW_{CH_4} + x_{NH_3} \\times MW_{NH_3}} $$
-                        
-            <br> where:
-            - $w_{NH_3}$ is the mass fraction of ammonia,
-            - $x_{CH_4}$ is the mole fraction of methane,
-            - $x_{NH_3}$ is the mole fraction of ammonia,
-            - $MW_{CH_4}$ is the molecular weight of methane (**16.04 g/mol**),
-            - $MW_{NH_3}$ is the molecular weight of ammonia (**17.031 g/mol**).
-                        
-            ----
-                        
-            """, unsafe_allow_html=True)
-
-        df_nh3ch4 = pd.read_csv("./nh3+ch4.csv")
-
-        # Data processing for NH3 + CH4 mixture
-        df_nh3ch4['T_Kel'] = round((df_nh3ch4['T_F'] - 32) * (5/9) + 273.15, 3)
-        df_nh3ch4['P_MPa'] = round(df_nh3ch4['P_psi'] * 0.00689476, 3)
-
-        # Convert mole fraction to mass fraction
-        mw_ch4 = 16.04  # g/mol for CH4
-        mw_nh3 = 17.031  # g/mol for NH3
-        df_nh3ch4['DewP_NH3'] = 1 - df_nh3ch4['DewP']
-        df_nh3ch4['BubbleP_NH3'] = 1 - df_nh3ch4['BubbleP']
-        df_nh3ch4['DewP_NH3_mass'] = (df_nh3ch4['DewP_NH3'] * mw_nh3) / (df_nh3ch4['DewP'] * mw_ch4 + df_nh3ch4['DewP_NH3'] * mw_nh3)
-        df_nh3ch4['BubbleP_NH3_mass'] = (df_nh3ch4['BubbleP_NH3'] * mw_nh3) / (df_nh3ch4['BubbleP'] * mw_ch4 + df_nh3ch4['BubbleP_NH3'] * mw_nh3)
-
-        # Display initial data
-        st.markdown("### 1. 가공된 데이터 미리보기:")
-        st.dataframe(df_nh3ch4)
-
-        # Visualization of P-x curve for NH3 + CH4 mixture
-        st.markdown("### 2. NH₃ + CH4 혼합물에 대한 P-x 정보 ([문헌](https://www.sciencedirect.com/science/article/pii/0378381294870195?ref=pdf_download&fr=RR-2&rr=8c8accfaaf69305b) 발췌):")
-        st.markdown("동그라미는 이슬점, 마름모는 거품점을 나타냅니다.", unsafe_allow_html=True)
-
-        # Plot
-        fig, ax = plt.subplots(figsize=(5, 4))
-
-        # Define the temperature values for which you want to plot the P-x curve
-        temperatures = [273.15, 298.15, 323.15, 348.15, 373.15]
-
-        # Color dic
-        color_dict = {273.15: 'blue', 298.15: 'green', 323.15: 'r', 348.15: 'orange', 373.15: 'purple'}
-
-        for temp in sorted(df_nh3ch4['T_Kel'].unique()):
-            df_temp = df_nh3ch4[df_nh3ch4['T_Kel'] == temp]
-            ax.scatter(df_temp['DewP_NH3_mass'], df_temp['P_MPa'], marker='o', label=f'{temp} K', color=color_dict[temp], alpha=0.6, s=20)
-            ax.scatter(df_temp['BubbleP_NH3_mass'], df_temp['P_MPa'], marker='D', color=color_dict[temp], alpha=0.6, s=20)
-
-        ax.set_xlabel('Ammonia Mass Fraction, $x_{\\mathrm{NH}_3}$')
-        ax.set_ylabel('Pressure (MPa)')
-
-        # LIMS
-        ax.set_xlim(0, 1)
-
-        ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1), fontsize=11)
-        st.pyplot(fig)
-
-        st.markdown("### 3. NH₃ + CH4 혼합물에 대한 P-x 내삽 그래프:")
-
-        # Adjusting the temperature and ammonia mass fraction range as requested
-        temperature_range = np.linspace(273.15, 373.15, 1000)
-        ammonia_mass_fraction_range = np.linspace(0, 1, 1000)
-        ammonia_mass_fraction_grid, temperature_grid = np.meshgrid(ammonia_mass_fraction_range, temperature_range)
-
-        # Re-interpolating the data with the updated grid
-        dew_point_pressure_grid = griddata(
-            (df_nh3ch4['T_Kel'], df_nh3ch4['DewP_NH3_mass']),
-            df_nh3ch4['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='linear'
-        )
-
-        bubble_point_pressure_grid = griddata(
-            (df_nh3ch4['T_Kel'], df_nh3ch4['BubbleP_NH3_mass']),
-            df_nh3ch4['P_MPa'],
-            (temperature_grid, ammonia_mass_fraction_grid),
-            method='cubic'
-        )
-
-        # Plotting the updated interpolated data
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 4))
-
-        # Dew Point Pressure plot
-        c1 = ax1.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, dew_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax1.set_title(r'$P_{\mathrm{dew}}$')
-        ax1.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax1.set_ylabel('Temperature (K)')
-        fig.colorbar(c1, ax=ax1).set_label('Pressure (MPa)')
-
-        # Bubble Point Pressure plot
-        c2 = ax2.pcolormesh(ammonia_mass_fraction_grid, temperature_grid, bubble_point_pressure_grid, shading='auto', cmap='plasma', vmin=0, vmax=40)
-        ax2.set_title(r'$P_{\mathrm{bubble}}$')
-        ax2.set_xlabel(r'Ammonia Mass Fraction, $x_{\mathrm{NH}_3}$')
-        ax2.set_ylabel('Temperature (K)')
-        fig.colorbar(c2, ax=ax2).set_label('Pressure (MPa)')
-
-        # LIMS
-        ax1.set_xlim(0, 1)
-        ax2.set_xlim(0, 1)
-        ax1.set_ylim(273.15, 373.15)
-        ax2.set_ylim(273.15, 373.15)
-        st.pyplot(fig)
-
-        st.markdown("### 4. 내삽 데이터 다운로드 받기:")
-        st.markdown("> 아래 버튼을 눌러 내삽 데이터를 확인해볼 수 있어요 (용량: 약 45 mb).")
-
-        # Create a download button
-        if st.button('**클릭하여 내삽 데이터 (CSV) 만들기**'):
-            # Save the interpolated data to a DataFrame
-            df_interpolated = pd.DataFrame({
-                'T_Kel': temperature_grid.flatten(),
-                'x_nh3': ammonia_mass_fraction_grid.flatten(),
-                'DewP': dew_point_pressure_grid.flatten(),
-                'BubbleP': bubble_point_pressure_grid.flatten()
-            })
-
-            # Save the DataFrame to a CSV file
-            df_interpolated.to_csv('nh3+ch4_interpolated.csv', index=False)
-
-            # Display the download link
-            st.markdown(
-                f'<a href="nh3+ch4_interpolated.csv" download="nh3+ch4_interpolated.csv">nh3+ch4_interpolated 다운받기.csv</a>',
-                unsafe_allow_html=True
-            )
-
-        # Interactive user inputs and results
-        st.markdown("### 5. 사용자 입력 및 결과 확인")
-        # User input and calculation
-        user_choice = st.radio(
-            "온도 (Temperature) 또는 압력 (Pressure) 중 어떤 것을 입력하시겠어요?",
-            ('Temperature', 'Pressure')
-        )
-
-        if user_choice == 'Temperature':
-            user_temp = st.number_input("원하시는 온도를 입력하세요 (K):", min_value=float(df_nh3ch4['T_Kel'].min()), max_value=float(df_nh3ch4['T_Kel'].max()), value=320.0, step=50.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.4, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            temp_idx = (np.abs(temperature_range - user_temp)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding pressure values
-            dew_point_pressure = dew_point_pressure_grid[temp_idx, mass_frac_idx]
-            bubble_point_pressure = bubble_point_pressure_grid[temp_idx, mass_frac_idx]
-
-            # Display the results
-            if np.isnan(dew_point_pressure): 
-                st.error("해당 온도와 암모니아 분율에 대한 이슬점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 이슬점 압력은 {round(dew_point_pressure, 2)} MPa 이에요.")
-
-            if np.isnan(bubble_point_pressure):
-                st.error("해당 온도와 암모니아 분율에 대한 거품점 압력을 찾을 수 없어요.")
-            else:
-                st.write(f"해당 온도와 암모니아 분율에 대한 거품점 압력은 {round(bubble_point_pressure, 2)} MPa 이에요.")
-
-        elif user_choice == 'Pressure':
-            user_pressure = st.number_input("원하시는 압력을 입력하세요 (MPa):", min_value=0.0, max_value=40.0, value=10.0, step=1.0)
-            user_mass_fraction = st.number_input("암모니아 분율을 입력해주세요 (0 ~ 1):", min_value=0.0, max_value=1.0, value=0.98, step=0.1)
-
-            # Find the nearest indices in the grid for the user's input
-            pressure_idx = (np.abs(np.linspace(0, 40, 1000) - user_pressure)).argmin()
-            mass_frac_idx = (np.abs(ammonia_mass_fraction_range - user_mass_fraction)).argmin()
-
-            # Get the corresponding temperature for dew point and bubble point
-            dew_point_slice = np.abs(dew_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(dew_point_slice)):
-                dew_point_temperature = np.nan
-            else:
-                dew_point_temperature = temperature_range[np.nanargmin(dew_point_slice)]
-
-            bubble_point_slice = np.abs(bubble_point_pressure_grid[:, mass_frac_idx] - user_pressure)
-            if np.all(np.isnan(bubble_point_slice)):
-                bubble_point_temperature = np.nan
-            else:
-                bubble_point_temperature = temperature_range[np.nanargmin(bubble_point_slice)]
-
-            # Check if the values are nan and print the results
-            if np.isnan(dew_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 이슬점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 이슬점 온도는 {round(dew_point_temperature, 2)} K 이에요.")
-
-            if np.isnan(bubble_point_temperature):
-                st.error("해당 압력과 암모니아 분율에 대한 거품점 온도를 찾을 수 없어요.")
-            else:
-                st.write(f"해당 압력과 암모니아 분율에 대한 거품점 온도는 {round(bubble_point_temperature, 2)} K 이에요.")
-
+    return fig
+
+
+def _nearest_T(col, P, T_axis):
+    d = np.abs(col - P)
+    return np.nan if np.all(np.isnan(d)) else float(T_axis[np.nanargmin(d)])
+
+
+# =====================================================================
+# 페이지 1: 증기압
+# =====================================================================
+def page_vapor_pressure():
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key="vp_known")
+        if known == "온도":
+            T = st.number_input("온도 (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="vp_T")
+            P = p_sat(T)
         else:
-            st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
-            
+            P = st.number_input("압력 (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="vp_P")
+            T = t_sat(P)
+        st.caption(f"유효 범위 {VP_T_MIN:.0f}–{VP_T_MAX:.0f} K · {VP_P_MIN:.3f}–{VP_P_MAX:.1f} MPa · 문헌값 선형 보간")
+    with left.container(border=True):
+        m1, m2 = st.columns(2)
+        m1.metric("온도", f"{T:.1f} K")
+        m2.metric("포화 증기압", f"{P:.4f} MPa")
+    with right.container(border=True, height="stretch"):
+        fig = line_chart(VP_T, VP_P, "Temperature (K)", "Pressure (MPa)", point=(T, P))
+        st.plotly_chart(fig, width="stretch", key="vp_chart")
 
+
+# =====================================================================
+# 페이지 2: 밀도
+# =====================================================================
+def page_density():
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        unit = st.radio("온도 단위", ["K", "°C"], horizontal=True, key="den_unit")
+        if unit == "K":
+            T_K = st.number_input("온도 (K)", DEN_T_MIN, DEN_T_MAX, 298.15, step=1.0, format="%.2f", key="den_TK")
+        else:
+            T_C = st.number_input("온도 (°C)", DEN_T_MIN - 273.15, DEN_T_MAX - 273.15, 25.0, step=1.0, format="%.1f", key="den_TC")
+            T_K = T_C + 273.15
+        rho = rho_nh3(T_K)
+        st.caption(f"유효 범위 {DEN_T_MIN - 273.15:.0f}–{DEN_T_MAX - 273.15:.0f} °C · 문헌값 선형 보간")
+    with left.container(border=True):
+        m1, m2 = st.columns(2)
+        m1.metric("온도", f"{T_K:.2f} K")
+        m2.metric("밀도", f"{rho:.4f} g/L")
+    with right.container(border=True, height="stretch"):
+        fig = line_chart(DEN_T, DEN_RHO, "Temperature (K)", "Density (g/L)", point=(T_K, rho))
+        st.plotly_chart(fig, width="stretch", key="den_chart")
+
+
+# =====================================================================
+# 페이지 3: 비열 (Shomate)
+# =====================================================================
+def page_specific_heat():
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        T = st.number_input("온도 (K)", 200.0, 1400.0, 300.0, step=10.0, format="%.0f", key="sh_T")
+        st.caption("Shomate 방정식 (NIST) · 200–1400 K")
+    Cp, dH, S = shomate(T)
+    with left.container(border=True):
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Cp° (J/mol·K)", f"{Cp:.2f}")
+        m2.metric("ΔH (kJ/mol)", f"{dH:.2f}", help="H° − H°(298.15 K)")
+        m3.metric("S° (J/mol·K)", f"{S:.2f}")
+    with right.container(border=True, height="stretch"):
+        T_range = np.arange(200, 1401, 1)
+        Cp_v, dH_v, S_v = shomate(T_range)
+        tabs = st.tabs(["Cp°", "ΔH", "S°"])
+        series = [
+            ("Cp", Cp_v, Cp, "Cp° (J/mol·K)"),
+            ("dH", dH_v, dH, "ΔH = H° − H°₂₉₈ (kJ/mol)"),
+            ("S", S_v, S, "S° (J/mol·K)"),
+        ]
+        for tab, (key, ys, yv, ylabel) in zip(tabs, series):
+            with tab:
+                fig = line_chart(T_range, ys, "Temperature (K)", ylabel, point=(T, yv), name=ylabel, mode="lines", height=380)
+                fig.add_vline(x=T, line_dash="dot", line_color=ACCENT, opacity=0.6)
+                fig.add_hline(y=yv, line_dash="dot", line_color=ACCENT, opacity=0.6)
+                st.plotly_chart(fig, width="stretch", key=f"sh_chart_{key}")
+    with st.expander("Shomate 방정식 · 계수 · 출처", icon=":material/functions:"):
+        st.markdown(SHOMATE_MD)
+
+
+# =====================================================================
+# 페이지 4: 이슬점 · 거품점
+# =====================================================================
+def page_pure_nh3():
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        known = st.radio("알고 있는 값", ["압력", "온도"], horizontal=True, key="pure_known")
+        if known == "압력":
+            P = st.number_input("압력 (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="pure_P")
+            T = t_sat(P)
+            result = [("이슬점 온도", f"{T:.2f} K"), ("거품점 온도", f"{T:.2f} K")]
+        else:
+            T = st.number_input("온도 (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="pure_T")
+            P = p_sat(T)
+            result = [("이슬점 압력", f"{P:.4f} MPa"), ("거품점 압력", f"{P:.4f} MPa")]
+        st.caption("순수 물질은 거품점과 이슬점이 같습니다 (증기압 곡선).")
+    with left.container(border=True):
+        m1, m2 = st.columns(2)
+        m1.metric(*result[0])
+        m2.metric(*result[1])
+    with right.container(border=True, height="stretch"):
+        fig = line_chart(VP_T, VP_P, "Temperature (K)", "Pressure (MPa)", point=(T, P))
+        st.plotly_chart(fig, width="stretch", key="pure_chart")
+
+
+def page_nh3_h2o():
+    bubble, dew = load_h2o()
+    x = bubble.index.values.astype(float)
+    p_b = bubble.columns.values.astype(float)
+    p_d = dew.columns.values.astype(float)
+    sp_b = RectBivariateSpline(x, p_b, bubble.values)
+    sp_d = RectBivariateSpline(x, p_d, dew.values)
+
+    def pressure_at(T, xn, spline):
+        try:
+            return float(brentq(lambda P: spline(xn, P, grid=False) - T, 0.0, 10.0))
+        except ValueError:
+            return np.nan
+
+    st.caption("출처: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)")
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key="h2o_known")
+        xn = st.number_input("NH₃ 질량분율 (0–1)", 0.0, 1.0, 0.5, step=0.01, format="%.2f", key="h2o_x")
+        if known == "온도":
+            T = st.number_input("온도 (K)", 220.0, 560.0, 300.0, step=1.0, format="%.1f", key="h2o_T")
+            P_b, P_d = pressure_at(T, xn, sp_b), pressure_at(T, xn, sp_d)
+            result = [("거품점 압력", _fmt(P_b, "MPa")), ("이슬점 압력", _fmt(P_d, "MPa"))]
+            marks = [(xn, T)]
+        else:
+            P = st.number_input("압력 (MPa)", 0.0, 10.0, 1.0, step=0.1, format="%.2f", key="h2o_P")
+            T_b = float(sp_b(xn, P, grid=False))
+            T_d = float(sp_d(xn, P, grid=False))
+            result = [("거품점 온도", _fmt(T_b, "K")), ("이슬점 온도", _fmt(T_d, "K"))]
+            marks = [(xn, T_b), (xn, T_d)]
+        st.caption("유효 범위 220–560 K · 0–10 MPa · 2차원 스플라인 보간")
+    with left.container(border=True):
+        m1, m2 = st.columns(2)
+        m1.metric(*result[0])
+        m2.metric(*result[1])
+        if any(v == "—" for _, v in result):
+            st.warning("이 조건에서는 문헌 데이터 범위를 벗어나 값을 찾을 수 없어요.")
+    with right.container(border=True, height="stretch"):
+        n = max(len(p_b), len(p_d), 2)
+        colors = px.colors.sample_colorscale("Turbo", [i / (n - 1) for i in range(n)])
+        fig = go.Figure()
+        for i, col in enumerate(bubble.columns):
+            fig.add_scatter(x=x, y=bubble[col], mode="lines", name=f"{float(col):g} MPa",
+                            legendgroup=str(col), line=dict(color=colors[i], width=2))
+        for i, col in enumerate(dew.columns):
+            fig.add_scatter(x=x, y=dew[col], mode="lines", name=f"{float(col):g} MPa (dew)",
+                            legendgroup=str(col), showlegend=False,
+                            line=dict(color=colors[i], width=2, dash="dot"))
+        pts = [(a, b) for a, b in marks if not np.isnan(b)]
+        if pts:
+            fig.add_scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", name="입력 조건",
+                            marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")))
+        fig.update_layout(height=460, margin=dict(l=10, r=10, t=10, b=10),
+                          xaxis_title="NH₃ mass fraction", yaxis_title="Temperature (K)",
+                          legend=dict(title="Pressure", orientation="v"))
+        st.plotly_chart(fig, width="stretch", key="h2o_chart")
+        st.caption("실선 = 거품점 · 점선 = 이슬점")
+
+
+def page_binary(name, cfg):
+    df = load_binary(cfg["file"], cfg["mw"])
+    T_axis, x_axis, dew_grid, bub_grid = binary_grid(
+        cfg["file"], cfg["mw"], cfg["dew_method"], cfg["bubble_method"], cfg["T_range"]
+    )
+    st.caption(f"출처: [{cfg['ref'][0]}]({cfg['ref'][1]}) · 몰분율 → 질량분율 환산 · 1000×1000 격자 내삽")
+
+    # ---- 상단: 입력 · 결과 · 문헌 P-x 그래프
+    left, right = panels()
+    with left.container(border=True):
+        st.markdown("**조건 입력**")
+        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key=f"bin_known_{cfg['file']}")
+        x_nh3 = st.number_input("NH₃ 질량분율 (0–1)", 0.0, 1.0, cfg["x_default"], step=0.01, format="%.2f", key=f"bin_x_{cfg['file']}")
+        xi = int(np.abs(x_axis - x_nh3).argmin())
+        if known == "온도":
+            T = st.number_input("온도 (K)", float(T_axis[0]), float(T_axis[-1]), cfg["T_default"], step=1.0, format="%.1f", key=f"bin_T_{cfg['file']}")
+            ti = int(np.abs(T_axis - T).argmin())
+            p_dew, p_bub = float(dew_grid[ti, xi]), float(bub_grid[ti, xi])
+            result = [("이슬점 압력", _fmt(p_dew, "MPa")), ("거품점 압력", _fmt(p_bub, "MPa"))]
+            marks = [(x_nh3, T)]
+        else:
+            P = st.number_input("압력 (MPa)", 0.0, 40.0, 10.0, step=0.5, format="%.2f", key=f"bin_P_{cfg['file']}")
+            T_dew = _nearest_T(dew_grid[:, xi], P, T_axis)
+            T_bub = _nearest_T(bub_grid[:, xi], P, T_axis)
+            result = [("이슬점 온도", _fmt(T_dew, "K")), ("거품점 온도", _fmt(T_bub, "K"))]
+            marks = [(x_nh3, T_dew), (x_nh3, T_bub)]
+        st.caption(f"유효 범위 {T_axis[0]:.1f}–{T_axis[-1]:.1f} K · 격자에서 가장 가까운 값")
+    with left.container(border=True):
+        m1, m2 = st.columns(2)
+        m1.metric(*result[0])
+        m2.metric(*result[1])
+        if any(v == "—" for _, v in result):
+            st.warning("이 조건에서는 문헌 데이터 범위를 벗어나 값을 찾을 수 없어요.")
+    with right.container(border=True, height="stretch"):
+        temps = sorted(df["T_Kel"].unique())
+        n = max(len(temps), 2)
+        colors = px.colors.sample_colorscale("Turbo", [i / (n - 1) for i in range(n)])
+        fig = go.Figure()
+        for c, t in zip(colors, temps):
+            d = df[df["T_Kel"] == t]
+            fig.add_scatter(x=d["DewP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{t:.1f} K",
+                            legendgroup=str(t), marker=dict(symbol="circle", size=8, color=c))
+            fig.add_scatter(x=d["BubbleP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{t:.1f} K (bubble)",
+                            legendgroup=str(t), showlegend=False, marker=dict(symbol="diamond", size=8, color=c))
+        fig.update_layout(height=460, margin=dict(l=10, r=10, t=10, b=10),
+                          xaxis_title="NH₃ mass fraction", yaxis_title="Pressure (MPa)",
+                          xaxis=dict(range=[0, 1]), legend=dict(title="Temperature"))
+        st.plotly_chart(fig, width="stretch", key=f"bin_px_{cfg['file']}")
+        st.caption("● 이슬점 · ◆ 거품점 (문헌 실측값)")
+
+    # ---- 하단: 내삽 히트맵
+    with st.container(border=True):
+        st.markdown(f"**{name} · 내삽 상평형도** (색 = 압력, MPa)")
+        step = 5  # 표시용 다운샘플 (계산 격자는 1000×1000 그대로)
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("P_dew", "P_bubble"), horizontal_spacing=0.1)
+        fig.add_trace(go.Heatmap(z=dew_grid[::step, ::step], x=x_axis[::step], y=T_axis[::step], coloraxis="coloraxis",
+                                 hovertemplate="x=%{x:.3f}<br>T=%{y:.1f} K<br>P=%{z:.2f} MPa<extra>dew</extra>"), row=1, col=1)
+        fig.add_trace(go.Heatmap(z=bub_grid[::step, ::step], x=x_axis[::step], y=T_axis[::step], coloraxis="coloraxis",
+                                 hovertemplate="x=%{x:.3f}<br>T=%{y:.1f} K<br>P=%{z:.2f} MPa<extra>bubble</extra>"), row=1, col=2)
+        pts = [(a, b) for a, b in marks if not np.isnan(b)]
+        for c_ in (1, 2):
+            if pts:
+                fig.add_trace(go.Scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", showlegend=(c_ == 1),
+                                         name="입력 조건", marker=dict(size=13, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white"))),
+                              row=1, col=c_)
+        fig.update_layout(height=430, margin=dict(l=10, r=10, t=40, b=10),
+                          coloraxis=dict(colorscale="Plasma", cmin=0, cmax=40, colorbar=dict(title="P (MPa)")))
+        fig.update_xaxes(title_text="NH₃ mass fraction", range=[0, 1], row=1, col=1)
+        fig.update_xaxes(title_text="NH₃ mass fraction", range=list(cfg["zoom_x"]), row=1, col=2)
+        fig.update_yaxes(title_text="Temperature (K)", range=list(cfg["ylim"]))
+        st.plotly_chart(fig, width="stretch", key=f"bin_heat_{cfg['file']}")
+
+    # ---- 부가 정보
+    c1, c2 = st.columns(2)
+    with c1:
+        with st.expander("가공된 문헌 데이터 보기", icon=":material/table_chart:"):
+            st.dataframe(df, hide_index=True, width="stretch")
+    with c2:
+        with st.expander("몰분율 → 질량분율 환산 과정", icon=":material/calculate:"):
+            st.markdown(CONVERSION_MD.replace("__SYM__", cfg["sym"]).replace("__MW__", f"{cfg['mw']:g}"))
+        key = cfg["file"]
+        if st.button("내삽 격자 CSV 생성 (약 45 MB)", key=f"gen_{key}", icon=":material/dataset:"):
+            X, TT = np.meshgrid(x_axis, T_axis)
+            st.session_state[f"csv_{key}"] = pd.DataFrame(
+                {"T_Kel": TT.ravel(), "x_nh3": X.ravel(), "DewP": dew_grid.ravel(), "BubbleP": bub_grid.ravel()}
+            ).to_csv(index=False).encode("utf-8")
+        if f"csv_{key}" in st.session_state:
+            st.download_button("⬇ CSV 다운로드", st.session_state[f"csv_{key}"],
+                               file_name=key.replace(".csv", "") + "_interpolated.csv", mime="text/csv", key=f"dl_{key}")
+
+
+def page_dew_bubble():
+    sub = st.segmented_control(
+        "혼합물", ["순수 NH₃", "NH₃ + H₂O", "NH₃ + H₂", "NH₃ + N₂", "NH₃ + CH₄"],
+        default="순수 NH₃", key="db_sub",
+    )
+    sub = sub or "순수 NH₃"
+    if sub == "순수 NH₃":
+        page_pure_nh3()
+    elif sub == "NH₃ + H₂O":
+        page_nh3_h2o()
     else:
-        st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
+        page_binary(sub, MIX_CFG[sub])
 
 
-elif option == "LHV & Density of NH3-H2 Fuel":
-    render_lhv_page()
+# =====================================================================
+# 헤더 · 사이드바 · 라우팅
+# =====================================================================
+hl, hr = st.columns([6, 1], vertical_alignment="center")
+with hl:
+    st.title(":material/science: Thermophysical Properties of Ammonia Systems")
+    st.caption("SENLAB · Sustainable Energy Network Lab. — 암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성을 문헌 데이터 기반으로 검색하고 시각화합니다.")
+with hr:
+    st.link_button("About Lab", "https://sensr.snu.ac.kr/", icon=":material/open_in_new:", width="stretch")
 
-elif option == "EOS Recommendation (Binary Mixtures)":
-    render_eos_page()
+with st.expander("이 데이터베이스에 대해 · 사용 방법", icon=":material/info:"):
+    a, b = st.columns(2)
+    a.markdown("""
+**What's included**
+- 증기압 (Vapor Pressure) — 특정 온도에서 액체와 평형을 이루는 포화 증기의 압력
+- 밀도 (Density) — 온도에 따른 단위 부피당 질량
+- 비열 (Specific Heat) — Shomate 방정식 기반 Cp°, ΔH, S°
+- 이슬점 / 거품점 (Dew / Bubble Point) — 순수 NH₃ 및 H₂O·H₂·N₂·CH₄ 이성분계
+- NH₃·H₂ 혼소 연료 발열량 · EOS 추천
+""")
+    b.markdown("""
+**How to use**
+1. 아래에서 물성을 선택하고
+2. 왼쪽 카드에 온도·압력·조성 조건을 입력하면
+3. 값(카드)과 그래프(오른쪽)가 즉시 갱신됩니다. 그래프 위 ◆ 가 입력 조건입니다.
+""")
 
-else:
-    st.error("뭔가 잘못되었어요. 다시 시도해주세요.")
+with st.sidebar:
+    st.markdown("""
+### SENLAB
+[Sustainable Energy Network Lab. Homepage](https://sensr.snu.ac.kr/)
+
+### Contributors
+- 고우진 (woojingo@snu.ac.kr)
+- 민채림 (asd578300@snu.ac.kr)
+- 정건우 (gw.jeong@snu.ac.kr)
+- 강태현 (kang990925@pusan.ac.kr)
+
+### Supervisor
+- 서유택 (yutaek.seo@snu.ac.kr)
+""")
+
+PAGES = {
+    "증기압": page_vapor_pressure,
+    "밀도": page_density,
+    "비열 (Shomate)": page_specific_heat,
+    "이슬점 · 거품점": page_dew_bubble,
+    "NH₃·H₂ 혼소 발열량": render_lhv_page,
+    "EOS 추천 (이성분계)": render_eos_page,
+}
+
+st.caption("물성 선택")
+prop = st.pills("물성", list(PAGES), default="증기압", label_visibility="collapsed", key="prop")
+if prop is None:
+    st.info("위에서 물성을 하나 선택하세요.", icon=":material/touch_app:")
+    st.stop()
+
+PAGES[prop]()
