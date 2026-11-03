@@ -1,5 +1,3 @@
-# Theme Studio (Tailwind) 기반 · SENLAB 수정본
-
 [theme]
 base = "light"
 primaryColor = "#2563eb"
