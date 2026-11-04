@@ -1,5 +1,5 @@
 {
- "schema_version": "1.0",
+ "schema_version": "1.1",
  "system": "NH3-N2",
  "display_name": "NH₃ + N₂",
  "solvent": "NH3",
@@ -152,6 +152,19 @@
      "rank": 8
     },
     {
+     "eos": "PR-BM",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.0567,
+     "use_fitted": true,
+     "x_aard_base": null,
+     "x_aard_fit": 0.0287,
+     "validation_improvement_pct": null,
+     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현 평가 — classic α 모드로 thermopack PR 결과 재현 확인. 기본값(kij=0) 평가는 생략. kij 부호가 PR과 반대이므로 PR의 kij를 PR-BM에 넣지 말 것",
+     "engine": "custom PR-BM (Python)",
+     "rank": 9
+    },
+    {
      "eos": "CPA",
      "bip_name": "kij",
      "bip_default": 0.0,
@@ -161,7 +174,7 @@
      "x_aard_fit": null,
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
-     "rank": 9
+     "rank": 10
     }
    ]
   },
@@ -203,6 +216,19 @@
    ],
    "ranking": [
     {
+     "eos": "PR-BM",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.085,
+     "use_fitted": true,
+     "x_aard_base": null,
+     "x_aard_fit": 0.0511,
+     "validation_improvement_pct": null,
+     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현 평가 — classic α 모드로 thermopack PR 결과 재현 확인. 기본값(kij=0) 평가는 생략. kij 부호가 PR과 반대이므로 PR의 kij를 PR-BM에 넣지 말 것",
+     "engine": "custom PR-BM (Python)",
+     "rank": 1
+    },
+    {
      "eos": "SW",
      "bip_name": "kij",
      "bip_default": 0.0,
@@ -212,7 +238,7 @@
      "x_aard_fit": 0.0595,
      "validation_improvement_pct": 97.7,
      "note": "",
-     "rank": 1
+     "rank": 2
     },
     {
      "eos": "SRK",
@@ -224,7 +250,7 @@
      "x_aard_fit": 0.0688,
      "validation_improvement_pct": 99.4,
      "note": "",
-     "rank": 2
+     "rank": 3
     },
     {
      "eos": "PT",
@@ -236,7 +262,7 @@
      "x_aard_fit": 0.0704,
      "validation_improvement_pct": 99.2,
      "note": "",
-     "rank": 3
+     "rank": 4
     },
     {
      "eos": "tcPR",
@@ -248,7 +274,7 @@
      "x_aard_fit": 0.0761,
      "validation_improvement_pct": 98.7,
      "note": "",
-     "rank": 4
+     "rank": 5
     },
     {
      "eos": "PR",
@@ -260,7 +286,7 @@
      "x_aard_fit": 0.0803,
      "validation_improvement_pct": 99.5,
      "note": "",
-     "rank": 5
+     "rank": 6
     },
     {
      "eos": "SAFT-VRQ Mie",
@@ -272,7 +298,7 @@
      "x_aard_fit": 0.0844,
      "validation_improvement_pct": 97.2,
      "note": "",
-     "rank": 6
+     "rank": 7
     },
     {
      "eos": "PC-SAFT",
@@ -284,7 +310,7 @@
      "x_aard_fit": 0.1066,
      "validation_improvement_pct": 99.5,
      "note": "",
-     "rank": 7
+     "rank": 8
     },
     {
      "eos": "SAFT-VR Mie",
@@ -296,7 +322,7 @@
      "x_aard_fit": 0.1122,
      "validation_improvement_pct": 97.3,
      "note": "",
-     "rank": 8
+     "rank": 9
     },
     {
      "eos": "CPA",
@@ -308,7 +334,7 @@
      "x_aard_fit": null,
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
-     "rank": 9
+     "rank": 10
     }
    ]
   },
@@ -448,6 +474,19 @@
      "validation_improvement_pct": 99.6,
      "note": "",
      "rank": 9
+    },
+    {
+     "eos": "PR-BM",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.1579,
+     "use_fitted": true,
+     "x_aard_base": null,
+     "x_aard_fit": 0.1878,
+     "validation_improvement_pct": null,
+     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현 평가 — classic α 모드로 thermopack PR 결과 재현 확인. 기본값(kij=0) 평가는 생략. kij 부호가 PR과 반대이므로 PR의 kij를 PR-BM에 넣지 말 것",
+     "engine": "custom PR-BM (Python)",
+     "rank": 10
     }
    ]
   },
@@ -485,6 +524,19 @@
    "warnings": [],
    "ranking": [
     {
+     "eos": "PR-BM",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.2765,
+     "use_fitted": true,
+     "x_aard_base": null,
+     "x_aard_fit": 0.0242,
+     "validation_improvement_pct": null,
+     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현 평가 — classic α 모드로 thermopack PR 결과 재현 확인. 기본값(kij=0) 평가는 생략. kij 부호가 PR과 반대이므로 PR의 kij를 PR-BM에 넣지 말 것",
+     "engine": "custom PR-BM (Python)",
+     "rank": 1
+    },
+    {
      "eos": "SAFT-VR Mie",
      "bip_name": "eps_kij",
      "bip_default": 0.0,
@@ -494,7 +546,7 @@
      "x_aard_fit": 0.0362,
      "validation_improvement_pct": 65.9,
      "note": "",
-     "rank": 1
+     "rank": 2
     },
     {
      "eos": "SAFT-VRQ Mie",
@@ -506,7 +558,7 @@
      "x_aard_fit": 0.0364,
      "validation_improvement_pct": 67.4,
      "note": "",
-     "rank": 2
+     "rank": 3
     },
     {
      "eos": "PC-SAFT",
@@ -518,7 +570,7 @@
      "x_aard_fit": 0.0371,
      "validation_improvement_pct": 97.9,
      "note": "",
-     "rank": 3
+     "rank": 4
     },
     {
      "eos": "PT",
@@ -530,7 +582,7 @@
      "x_aard_fit": 0.0454,
      "validation_improvement_pct": 95.8,
      "note": "",
-     "rank": 4
+     "rank": 5
     },
     {
      "eos": "PR",
@@ -542,7 +594,7 @@
      "x_aard_fit": 0.0467,
      "validation_improvement_pct": 96.5,
      "note": "",
-     "rank": 5
+     "rank": 6
     },
     {
      "eos": "SRK",
@@ -554,7 +606,7 @@
      "x_aard_fit": 0.0482,
      "validation_improvement_pct": 95.2,
      "note": "",
-     "rank": 6
+     "rank": 7
     },
     {
      "eos": "CPA",
@@ -566,7 +618,7 @@
      "x_aard_fit": null,
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
-     "rank": 7
+     "rank": 8
     },
     {
      "eos": "SW",
@@ -578,7 +630,7 @@
      "x_aard_fit": 0.2351,
      "validation_improvement_pct": 80.8,
      "note": "",
-     "rank": 8
+     "rank": 9
     },
     {
      "eos": "tcPR",
@@ -590,9 +642,317 @@
      "x_aard_fit": 0.2381,
      "validation_improvement_pct": 85.1,
      "note": "",
-     "rank": 9
+     "rank": 10
     }
    ]
   }
- ]
+ ],
+ "aspen_kij_T": {
+  "SAFT-VR Mie": {
+   "kaij": 1.2046204567043206,
+   "kbij": -0.002388660585887332,
+   "kcij": -128.95525660008255,
+   "max_abs_dev": 0.0012261029188025546,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.0903,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.0783,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.0508,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.0152,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "PC-SAFT": {
+   "kaij": 2.2727185783626043,
+   "kbij": -0.0039011901805372554,
+   "kcij": -248.01198317851623,
+   "max_abs_dev": 0.0008472280776983809,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.3051,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.2972,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.2673,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.2193,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "SAFT-VRQ Mie": {
+   "kaij": 1.1707171383813804,
+   "kbij": -0.002353453561800651,
+   "kcij": -119.6900161658169,
+   "max_abs_dev": 0.001760248741249762,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.1018,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.0881,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.0574,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.0207,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "PR": {
+   "kaij": 1.413569189024863,
+   "kbij": -0.00199894184251499,
+   "kcij": -179.74713481936092,
+   "max_abs_dev": 0.00013860861389264345,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.197,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.211,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.2146,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.2058,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "tcPR": {
+   "kaij": -3.9012390431891792,
+   "kbij": 0.007337126838649081,
+   "kcij": 562.6381299475662,
+   "max_abs_dev": 0.016646417729970026,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.1739,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.179,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.1668,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.2503,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "PT": {
+   "kaij": 1.4720402764887612,
+   "kbij": -0.002084779018953582,
+   "kcij": -193.87309332996176,
+   "max_abs_dev": 0.00030435918373339366,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.1779,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.1946,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.2008,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.1934,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "SRK": {
+   "kaij": 1.513640901115753,
+   "kbij": -0.002040180636608939,
+   "kcij": -205.2061563236707,
+   "max_abs_dev": 0.00032117230942138586,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.1859,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.2077,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.2191,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.2167,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "SW": {
+   "kaij": -4.381032551831891,
+   "kbij": 0.008293030585723615,
+   "kcij": 612.9721328244945,
+   "max_abs_dev": 0.01782999375184427,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": 0.1344,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": 0.147,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": 0.143,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": 0.2433,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "PR-BM": {
+   "kaij": 4.335790050689817,
+   "kbij": -0.00889064785203877,
+   "kcij": -542.2369328922146,
+   "max_abs_dev": 0.0003716936282911337,
+   "n_bands": 4,
+   "T_range_K": [
+    240.0,
+    355.0
+   ],
+   "band_values": [
+    {
+     "T_K": 252.5,
+     "kij": -0.0567,
+     "band": "극저온 대역 (약 255 K)"
+    },
+    {
+     "T_K": 277.5,
+     "kij": -0.085,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 306.2,
+     "kij": -0.1579,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 338.8,
+     "kij": -0.2765,
+     "band": "중온 대역 (약 340 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  }
+ }
 }

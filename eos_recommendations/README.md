@@ -71,3 +71,11 @@
 ```
 
 규약: x-AARD는 분율로 저장(표시할 때 %). 밴드는 서로 겹치지 않게. 회귀가 없는 EOS(예: 노출 파라미터 없음)는 `bip_fitted: null, use_fitted: false`로 base만 기재. 실측 자체 데이터를 회귀에 추가한 경우 `source.provenance`에 `+ SENLAB experimental (LAB###)`처럼 명시.
+
+## v1.1 추가 필드 (2026-11, Aspen 호환 층)
+
+- 순위 행: `bip_display`(2-파라미터 모델의 표시용 문자열, 예 HV-NRTL), `engine`(평가 엔진: thermopack / custom PR-BM 등). `x_aard_base: null`은 기본값 평가 생략.
+- 시스템 레벨: `aspen_kij_T` — EOS별 `{kaij, kbij, kcij, T_range_K, n_bands, max_abs_dev, band_values}`; kij = kaij + kbij·T + kcij/T (Aspen PRKBV/RKSKBV 형식). 밴드별 권장 kij를 잇는 보간식이며 T_range_K 밖에서는 사용 금지.
+- NH3+H2O: `recommended_model`(정밀 계산 권장 모델 — e-NRTL/Data 4), `composition_note`(조성별 정확도 안내).
+- 시뮬레이터 매핑(EOS → Aspen Plus/HYSYS 물성법, 직접/근사/참고용)은 JSON이 아니라 `eos_recommender.py`의 `ASPEN_MAP`에 있음. 새 EOS를 추가하면 거기에 한 줄 추가.
+- 추가된 행: NH3+N2 `PR-BM`(자체 구현 PR + Boston-Mathias α; kij 부호가 PR과 반대), NH3+H2O `PR (HV-NRTL)`(Huron-Vidal 혼합규칙 2-파라미터; Aspen 직접 대응 없음, 상한 참고용).
