@@ -25,10 +25,10 @@ import streamlit as st
 RECO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "eos_recommendations")
 
 MIXTURES = {
-    "1. $NH_3 + N_2$ 혼합물": ("nh3_n2.json", "NH₃ + N₂"),
-    "2. $NH_3 + H_2O$ 혼합물": ("nh3_h2o.json", "NH₃ + H₂O"),
-    "3. $NH_3 + H_2$ 혼합물": ("nh3_h2.json", "NH₃ + H₂"),
-    "4. $NH_3 + CH_4$ 혼합물": ("nh3_ch4.json", "NH₃ + CH₄"),
+    "1. $NH_3 + N_2$ 혼합물 — 질소": ("nh3_n2.json", "NH₃ + N₂ (질소)"),
+    "2. $NH_3 + H_2O$ 혼합물 — 물": ("nh3_h2o.json", "NH₃ + H₂O (물)"),
+    "3. $NH_3 + H_2$ 혼합물 — 수소": ("nh3_h2.json", "NH₃ + H₂ (수소)"),
+    "4. $NH_3 + CH_4$ 혼합물 — 메탄": ("nh3_ch4.json", "NH₃ + CH₄ (메탄)"),
 }
 
 ACCENT = "#2563EB"   # fitted x-AARD bars (validated: lightness/chroma/contrast pass)
@@ -206,8 +206,6 @@ def render_eos_page():
 
     source = reco.get("source", {})
     meta_bits = []
-    if source.get("provenance"):
-        meta_bits.append(source["provenance"])
     if source.get("n_datasets"):
         meta_bits.append(f"문헌 데이터셋 {source['n_datasets']}개")
     if source.get("n_points"):
@@ -216,6 +214,12 @@ def render_eos_page():
         meta_bits.append(f"평가일 {reco['generated']}")
     if meta_bits:
         st.caption(" · ".join(meta_bits))
+    if source.get("provenance") or reco.get("method"):
+        with st.expander("데이터 출처·평가 방법 상세"):
+            if source.get("provenance"):
+                st.markdown(f"**출처**: {source['provenance']}")
+            if reco.get("method"):
+                st.markdown(f"**방법**: {reco['method']}")
 
     metric_label = reco.get("metric_label", "x-AARD")
 
@@ -243,16 +247,10 @@ def render_eos_page():
     t_lo, t_hi = band["T_K"]
     p_lo, p_hi = band["P_bar"]
     if inside:
-        st.success(
-            f"입력 조건이 검증 범위 안에 있어요 — 평가 밴드 **{band_label}** "
-            f"(T {t_lo:g}–{t_hi:g} K, P {p_lo:g}–{p_hi:g} bar)의 결과를 보여드릴게요."
-        )
+        st.success(f"✅ 검증 범위 안 · **{band_label}** 기준")
     else:
-        st.warning(
-            f"⚠️ 입력 조건이 검증된 범위 밖이에요. 가장 가까운 평가 밴드 **{band_label}** "
-            f"(T {t_lo:g}–{t_hi:g} K, P {p_lo:g}–{p_hi:g} bar)의 결과를 보여드리지만, "
-            "이 조건에서는 **외삽**이므로 오차가 표기값보다 커질 수 있어요."
-        )
+        st.warning(f"⚠️ 검증 범위 밖 — 가장 가까운 **{band_label}** 결과를 참고로 보여드려요 (외삽 주의)")
+    st.caption(f"이 밴드의 검증 범위: T {t_lo:g}–{t_hi:g} K · P {p_lo:g}–{p_hi:g} bar")
 
     ranking = band.get("ranking", [])
     if not ranking:
@@ -307,16 +305,22 @@ def render_eos_page():
 
     # ------------------------------------------------------------- warnings
     warnings = list(band.get("warnings", []))
-    for case in band.get("cases", []):
-        status = case.get("interp_status", "")
-        if status and status != "INTERP":
-            warnings.append(
-                f"케이스 (T={case.get('T_K')} K, P={case.get('P_bar')} bar): {status}"
-            )
     if warnings:
         st.markdown("### 4. 주의사항")
-        for w in warnings:
+        for w in warnings[:3]:
             st.warning(w)
+        extra = warnings[3:]
+    else:
+        extra = []
+    case_lines = [f"- (T={c.get('T_K')} K, P={c.get('P_bar')} bar): {c.get('interp_status','')}"
+                  for c in band.get("cases", []) if c.get("interp_status")]
+    if extra or case_lines:
+        with st.expander("평가 케이스·외삽 상세 보기"):
+            for w in extra:
+                st.markdown(f"- {w}")
+            if case_lines:
+                st.markdown("**평가 케이스 상태**")
+                st.markdown("\n".join(case_lines))
 
     excluded = reco.get("excluded_eos", [])
     if excluded:
