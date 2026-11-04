@@ -79,3 +79,10 @@
 - NH3+H2O: `recommended_model`(정밀 계산 권장 모델 — e-NRTL/Data 4), `composition_note`(조성별 정확도 안내).
 - 시뮬레이터 매핑(EOS → Aspen Plus/HYSYS 물성법, 직접/근사/참고용)은 JSON이 아니라 `eos_recommender.py`의 `ASPEN_MAP`에 있음. 새 EOS를 추가하면 거기에 한 줄 추가.
 - 추가된 행: NH3+N2 `PR-BM`(자체 구현 PR + Boston-Mathias α; kij 부호가 PR과 반대), NH3+H2O `PR (HV-NRTL)`(Huron-Vidal 혼합규칙 2-파라미터; Aspen 직접 대응 없음, 상한 참고용).
+
+## v5 (2026-11-04 재평가) 추가 사항
+
+- 데이터: Aspen Plus V14 TDE 재추출 .bkp 4개로 전 모델 재평가. 정제 규칙은 각 JSON의 `source.provenance`·`method`에 기재(293 K 희박 TXY 세트의 압력 재구성, H2 BVLE016 제외, N2 Cannon 라벨 보정·LAB 증강, H2O pure-NH3 Psat 상한 필터).
+- 자체 구현 Aspen 변형(`engine: custom …`): `PR-BM`, `RKS-BM`(= Aspen SRK 물성법의 VLE), `RK-ASPEN`(2-파라미터 `bip_params: {kaij, kbij}`), `SR-POLAR`(`{kij, lij}`). 2-파라미터 행은 `bip_fitted: null` + `bip_display` + `bip_params`.
+- 케이스에 `x_ref`(기준 용해도)와 밴드에 `n_samples` 추가. H2O 밴드에는 `full_set_check`(상위 3개 모델을 대역 전체 실측점으로 재검산한 조성별 AARD) 추가.
+- 재현 코드: `eos2/` 파이프라인(bkp_parse → qc_data → refs/bands_h2o → eval_tp/eval_custom/eval_h2o → build_v5) — 저장소 외부(Claude 작업공간)에서 실행. 요청 시 제공.
