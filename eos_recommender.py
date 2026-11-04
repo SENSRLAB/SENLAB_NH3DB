@@ -41,6 +41,9 @@ ASPEN_MAP = {
     "PR":      {"aspen": "PENG-ROB", "param": "PRKBV", "hysys": "Peng-Robinson*", "tier": "direct"},
     "PR-BM":   {"aspen": "PR-BM", "param": "PRKBV", "hysys": "—", "tier": "direct"},
     "SRK":     {"aspen": "RK-SOAVE", "param": "RKSKBV", "hysys": "SRK", "tier": "direct"},
+    "RKS-BM":  {"aspen": "RKS-BM (= SRK 물성법의 VLE)", "param": "RKSKBV", "hysys": "SRK*", "tier": "direct"},
+    "RK-ASPEN": {"aspen": "RK-ASPEN", "param": "RKAKA0 / RKAKB0", "hysys": "—", "tier": "direct"},
+    "SR-POLAR": {"aspen": "SR-POLAR", "param": "SRKKA0 / SRLIJ0", "hysys": "—", "tier": "direct"},
     "tcPR":    {"aspen": "PENG-ROB + Twu α·부피보정 옵션*", "param": "PRKBV", "hysys": "PR-Twu*", "tier": "cond"},
     "PC-SAFT": {"aspen": "PC-SAFT*", "param": "PCSKIJ", "hysys": "—", "tier": "cond"},
     "CPA":     {"aspen": "CPA (V12+ 확인)*", "param": "—", "hysys": "CPA*", "tier": "cond"},
@@ -106,6 +109,8 @@ def _effective_bip(entry):
 
 def _bip_text(entry):
     value = _effective_bip(entry)
+    if entry.get("use_fitted") and entry.get("bip_display"):
+        return entry["bip_display"]
     if entry.get("use_fitted") and isinstance(entry.get("bip_fitted"), (int, float)):
         return f"{value:.4f}"
     if entry.get("bip_display"):
@@ -194,6 +199,9 @@ def _aspen_card(reco, band, pick, metric_label):
     ]
     if kij is not None:
         lines.append(f"이 대역 상수      : kaij = {kij:.4f}   (T {t_lo:g}–{t_hi:g} K, P {p_lo:g}–{p_hi:g} bar)   ← 가장 안전")
+    elif pick.get("bip_params") and pick.get("use_fitted"):
+        vals = ", ".join(f"{k} = {v:+.4f}" for k, v in pick["bip_params"].items())
+        lines.append(f"이 대역 상수      : {vals}   (T {t_lo:g}–{t_hi:g} K, P {p_lo:g}–{p_hi:g} bar)")
     if fit and fit.get("n_bands", 0) >= 3:
         lo, hi = fit["T_range_K"]
         lines.append(
@@ -201,8 +209,9 @@ def _aspen_card(reco, band, pick, metric_label):
             f"   (kij = kaij + kbij·T + kcij/T, {lo:g}–{hi:g} K 안에서만; 밴드값 재현 오차 ≤ {fit['max_abs_dev']:.3f})"
         )
     if m["hysys"] not in ("—", ""):
-        lines.append(f"HYSYS            : {m['hysys'].rstrip('*')} 패키지 → Binary Coeffs에 kij = {kij:.4f} 입력" if kij is not None
-                     else f"HYSYS            : {m['hysys']}")
+        approx = " (HYSYS판은 자체 수정 모델이라 근사)" if m["hysys"].endswith("*") else ""
+        lines.append(f"HYSYS            : {m['hysys'].rstrip('*')} 패키지 → Binary Coeffs에 kij = {kij:.4f} 입력{approx}" if kij is not None
+                     else f"HYSYS            : {m['hysys'].rstrip('*')}{approx}")
     else:
         lines.append("HYSYS            : 해당 물성법 없음")
     lines.append(f"기대 정확도       : {metric_label} {100.0 * _effective_aard(pick):.1f}% (이 대역 문헌 실측 기준)")
@@ -340,7 +349,8 @@ def render_eos_page():
                 "아래 EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책이에요.")
 
     top = _sorted(ranking)[0]
-    direct_rows = [r for r in ranking if _mapping(r["eos"])["tier"] == "direct" and not np.isnan(_effective_aard(r))]
+    direct_rows = [r for r in ranking if _mapping(r["eos"])["tier"] == "direct" and not np.isnan(_effective_aard(r))
+                   and "탐색 경계" not in (r.get("note") or "")]
     sim_pick = min(direct_rows, key=_effective_aard) if direct_rows else None
     same_pick = sim_pick is not None and sim_pick["eos"] == top["eos"]
 
@@ -386,8 +396,8 @@ def render_eos_page():
                 "Aspen Plus": _mapping(r["eos"])["aspen"],
                 "HYSYS": _mapping(r["eos"])["hysys"],
                 "BIP": r.get("bip_name", "kij"),
-                "기본값": r.get("bip_default"),
-                "회귀값": r.get("bip_fitted") if r.get("bip_fitted") is not None else r.get("bip_display"),
+                "기본값": "" if r.get("bip_default") is None else f"{r['bip_default']:.4g}",
+                "회귀값": r.get("bip_display") if r.get("bip_display") else ("" if r.get("bip_fitted") is None else f"{r['bip_fitted']:.4f}"),
                 "회귀값 사용": "O" if r.get("use_fitted") else "X",
                 f"{metric_label} (기본, %)": None if r.get("x_aard_base") is None else round(100.0 * r["x_aard_base"], 2),
                 f"{metric_label} (회귀, %)": None if r.get("x_aard_fit") is None else round(100.0 * r["x_aard_fit"], 2),

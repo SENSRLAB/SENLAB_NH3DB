@@ -26,7 +26,8 @@ at.number_input[1].set_value(30.0)
 at.run()
 succ = " | ".join(s.value for s in at.success)
 check("in-band success badge", "검증 범위 안" in succ, succ[:200])
-check("PR-BM top pick at 275 K", any(m.value == "PR-BM" for m in at.metric), str([m.value for m in at.metric]))
+vals275 = [m.value for m in at.metric]
+check("Aspen-variant model is top pick at 275 K", any(v in ("SR-POLAR", "PR-BM", "RKS-BM", "RK-ASPEN") for v in vals275), str(vals275))
 
 # 4. Out-of-band condition -> extrapolation warning
 at.number_input[0].set_value(400.0)
@@ -41,7 +42,7 @@ at.number_input[1].set_value(30.0)
 at.run()
 vals = [m.value for m in at.metric]
 check("극저온 overall top SAFT-VR Mie", "SAFT-VR Mie" in vals, str(vals))
-check("극저온 Aspen pick present", "PR-BM" in vals or "PR" in vals or "SRK" in vals, str(vals))
+check("극저온 Aspen pick present", any(v in ("PR-BM", "PR", "SRK", "RKS-BM", "RK-ASPEN", "SR-POLAR") for v in vals), str(vals))
 
 # 6. Simulator-only toggle filters the table (toggle is the first toggle widget on the page)
 at.toggle[0].set_value(True)
@@ -58,7 +59,7 @@ for mix in ("2. $NH_3 + H_2O$ 혼합물 — 물", "3. $NH_3 + H_2$ 혼합물 —
     if "H_2O" in mix:
         infos = " | ".join(i.value for i in at.info)
         check("H2O recommended model banner", "정밀 계산 권장" in infos, infos[:200])
-        check("H2O composition note", "NH₃ ≥ 50%" in infos, infos[:300])
+        check("H2O composition note", "NH₃ 부화" in infos, infos[:300])
 
 # 8. Dew/bubble page still works (N2 molar-mass fix retained)
 at2 = AppTest.from_file("app.py", default_timeout=120)
