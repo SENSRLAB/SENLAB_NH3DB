@@ -6,7 +6,7 @@
  "solute": "H2",
  "status": "validated",
  "generated": "2026-09-01",
- "method": "EOS/BIP agent workflow (Thermopack): per-case 9-point local sampling from TDE literature VLE, Henry-surface reference ln(1-x)=a+b/T+c·P, single-kij regression per EOS per band on the union samples (train/validation split), x-AARD vs reference. BVLE016 1-atm isobaric rows excluded (liquid NH3 cannot exist at 1 atm above ~240 K).",
+ "method": "EOS/BIP agent workflow (Thermopack): per-case 9-point local sampling from TDE literature VLE, Henry-surface reference ln(1-x)=a+b/T+c·P, single-kij regression per EOS per band on the union samples (train/validation split), x-AARD vs reference. BVLE016 1-atm isobaric rows excluded (liquid NH3 cannot exist at 1 atm above 약 240 K).",
  "source": {
   "bkp_file": "NH3_H2.bkp",
   "n_datasets": 13,
@@ -42,10 +42,10 @@
  "condition_bands": [
   {
    "band_id": "B1",
-   "label": "연료공급 저온 대역 (~275 K / 2 °C)",
+   "label": "저온 대역 (약 275 K)",
    "T_K": [
-    265.0,
-    285.0
+    260.0,
+    290.0
    ],
    "P_bar": [
     10.0,
@@ -72,9 +72,8 @@
     }
    ],
    "warnings": [
-    "실측 최저압(34.5 bar) 미만인 10·30 bar 케이스의 기준값은 Krichevsky–Kasarnovsky 물리 외삽으로 재구성 (KK fit R²=0.95, 최저압 leave-out 검증 오차 ~13%) — 기준값 불확도 ±15~20% (Wiebe 1934 vs Reamer 1959 소스 간 산포)",
-    "저압(가압 저장 ~10 bar) 실측은 여전히 문헌 공백 — KK 외삽의 실측 검증 자체가 논문 아이템",
-    "PT·SW·VdW는 이 조건에서 계산 실패로 순위 제외"
+    "실측 최저압(34.5 bar) 미만인 10·30 bar 케이스의 기준값은 Krichevsky–Kasarnovsky 물리 외삽으로 재구성 (KK fit R²=0.95, 최저압 leave-out 검증 오차 약 13%) — 기준값 불확도 ±15–20% (Wiebe 1934 vs Reamer 1959 소스 간 산포)",
+    "저압(가압 저장 약 10 bar) 실측은 여전히 문헌 공백 — KK 외삽의 실측 검증 자체가 논문 아이템"
    ],
    "ranking": [
     {
@@ -153,10 +152,10 @@
   },
   {
    "band_id": "B2",
-   "label": "연료공급 상온 대역 (~305 K / 32 °C)",
+   "label": "상온 대역 (약 305 K)",
    "T_K": [
-    295.0,
-    315.0
+    290.0,
+    320.0
    ],
    "P_bar": [
     30.0,
@@ -182,9 +181,7 @@
      "interp_status": "INTERP"
     }
    ],
-   "warnings": [
-    "PT·SW·VdW는 이 조건에서 계산 실패로 순위 제외"
-   ],
+   "warnings": [],
    "ranking": [
     {
      "eos": "CPA",
@@ -257,6 +254,256 @@
      "validation_improvement_pct": 91.8,
      "note": "",
      "rank": 6
+    }
+   ]
+  },
+  {
+   "band_id": "B3",
+   "label": "중온 대역 (약 335 K)",
+   "T_K": [
+    320.0,
+    355.0
+   ],
+   "P_bar": [
+    100.0,
+    300.0
+   ],
+   "cases": [
+    {
+     "T_K": 335.0,
+     "P_bar": 100.0,
+     "scored": true,
+     "interp_status": "INTERP (widened ±15 K, 0.25–4·P*)"
+    },
+    {
+     "T_K": 335.0,
+     "P_bar": 200.0,
+     "scored": true,
+     "interp_status": "INTERP (widened ±15 K, 0.25–4·P*)"
+    },
+    {
+     "T_K": 335.0,
+     "P_bar": 300.0,
+     "scored": true,
+     "interp_status": "INTERP (widened ±15 K, 0.25–4·P*)"
+    }
+   ],
+   "warnings": [],
+   "ranking": [
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.16991898222812035,
+     "use_fitted": true,
+     "x_aard_base": 0.2357,
+     "x_aard_fit": 0.0464,
+     "validation_improvement_pct": 74.1,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.23773987328935564,
+     "use_fitted": true,
+     "x_aard_base": 0.2852,
+     "x_aard_fit": 0.0644,
+     "validation_improvement_pct": 70.7,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.6800307786856178,
+     "use_fitted": true,
+     "x_aard_base": 0.3108,
+     "x_aard_fit": 0.0752,
+     "validation_improvement_pct": 78.1,
+     "note": "회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "rank": 3
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.35466255463115676,
+     "use_fitted": true,
+     "x_aard_base": 0.9085,
+     "x_aard_fit": 0.0816,
+     "validation_improvement_pct": 93.3,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.3558585492047486,
+     "use_fitted": true,
+     "x_aard_base": 0.6171,
+     "x_aard_fit": 0.0856,
+     "validation_improvement_pct": 88.6,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.1209,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 6
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.07440676031731118,
+     "use_fitted": true,
+     "x_aard_base": 0.465,
+     "x_aard_fit": 0.3542,
+     "validation_improvement_pct": 34.8,
+     "note": "",
+     "rank": 7
+    }
+   ]
+  },
+  {
+   "band_id": "B4",
+   "label": "고온 대역 (약 375 K)",
+   "T_K": [
+    355.0,
+    390.0
+   ],
+   "P_bar": [
+    100.0,
+    300.0
+   ],
+   "cases": [
+    {
+     "T_K": 375.0,
+     "P_bar": 100.0,
+     "scored": true,
+     "interp_status": "INTERP"
+    },
+    {
+     "T_K": 375.0,
+     "P_bar": 200.0,
+     "scored": true,
+     "interp_status": "INTERP"
+    },
+    {
+     "T_K": 375.0,
+     "P_bar": 300.0,
+     "scored": true,
+     "interp_status": "INTERP"
+    }
+   ],
+   "warnings": [],
+   "ranking": [
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.1163,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 1
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.6373835392494323,
+     "use_fitted": true,
+     "x_aard_base": 3.8387,
+     "x_aard_fit": 0.2411,
+     "validation_improvement_pct": 98.9,
+     "note": "회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "rank": 2
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.45105530919814985,
+     "use_fitted": false,
+     "x_aard_base": 0.5888,
+     "x_aard_fit": 0.1767,
+     "validation_improvement_pct": null,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.39523342922353794,
+     "use_fitted": false,
+     "x_aard_base": 0.7562,
+     "x_aard_fit": 0.2206,
+     "validation_improvement_pct": -1311.2,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "VdW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.7594,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "kij regression failed",
+     "rank": 5
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.45229870535294336,
+     "use_fitted": false,
+     "x_aard_base": 0.9426,
+     "x_aard_fit": 0.2241,
+     "validation_improvement_pct": null,
+     "note": "",
+     "rank": 6
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.15025390572037733,
+     "use_fitted": false,
+     "x_aard_base": 1.6383,
+     "x_aard_fit": 1.7506,
+     "validation_improvement_pct": -5.0,
+     "note": "",
+     "rank": 7
+    },
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.2545428131987667,
+     "use_fitted": false,
+     "x_aard_base": 1.6909,
+     "x_aard_fit": 0.4603,
+     "validation_improvement_pct": -67.8,
+     "note": "",
+     "rank": 8
     }
    ]
   }

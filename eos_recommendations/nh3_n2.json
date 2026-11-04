@@ -30,10 +30,147 @@
  "condition_bands": [
   {
    "band_id": "B1",
-   "label": "연료·가스프리잉 저온 대역 (~275 K / 2 °C)",
+   "label": "극저온 대역 (약 255 K)",
+   "T_K": [
+    240.0,
+    265.0
+   ],
+   "P_bar": [
+    25.0,
+    40.0
+   ],
+   "cases": [
+    {
+     "T_K": 255.0,
+     "P_bar": 25.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 255.4-255.4 K; widened ±15 K, 0.25–4·P*; only 8 T-local points available)"
+    },
+    {
+     "T_K": 255.0,
+     "P_bar": 40.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 255.4-255.4 K; widened ±15 K, 0.25–4·P*; only 8 T-local points available)"
+    }
+   ],
+   "warnings": [],
+   "ranking": [
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.09034599979600162,
+     "use_fitted": true,
+     "x_aard_base": 0.9295,
+     "x_aard_fit": 0.0205,
+     "validation_improvement_pct": 92.9,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.30514955887693784,
+     "use_fitted": true,
+     "x_aard_base": 3.5347,
+     "x_aard_fit": 0.0209,
+     "validation_improvement_pct": 98.2,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.10184186259011113,
+     "use_fitted": true,
+     "x_aard_base": 1.0303,
+     "x_aard_fit": 0.0219,
+     "validation_improvement_pct": 93.6,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.1970144394809008,
+     "use_fitted": true,
+     "x_aard_base": 1.8049,
+     "x_aard_fit": 0.0232,
+     "validation_improvement_pct": 96.4,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.17390189210242007,
+     "use_fitted": true,
+     "x_aard_base": 1.4003,
+     "x_aard_fit": 0.024,
+     "validation_improvement_pct": 95.3,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.17792453724311902,
+     "use_fitted": true,
+     "x_aard_base": 1.3861,
+     "x_aard_fit": 0.0249,
+     "validation_improvement_pct": 95.3,
+     "note": "",
+     "rank": 6
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.1859086466466953,
+     "use_fitted": true,
+     "x_aard_base": 1.3891,
+     "x_aard_fit": 0.0256,
+     "validation_improvement_pct": 95.3,
+     "note": "",
+     "rank": 7
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.13440759214629655,
+     "use_fitted": true,
+     "x_aard_base": 0.8359,
+     "x_aard_fit": 0.0268,
+     "validation_improvement_pct": 92.0,
+     "note": "",
+     "rank": 8
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.5212,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 9
+    }
+   ]
+  },
+  {
+   "band_id": "B2",
+   "label": "저온 대역 (약 275 K)",
    "T_K": [
     265.0,
-    285.0
+    290.0
    ],
    "P_bar": [
     10.0,
@@ -60,10 +197,9 @@
     }
    ],
    "warnings": [
-    "저온 실측은 Cannon 두 압력(20.7/48.3 bar, 200–283 K)과 Reamer 277.6 K(34.5 bar~)뿐 — 10 bar 케이스 기준값은 Krichevsky–Kasarnovsky 물리 외삽으로 재구성 (R²=0.99, 20.7 bar leave-out 검증 오차 ~5%)",
+    "저온 실측은 Cannon 두 압력(20.7/48.3 bar, 200–283 K)과 Reamer 277.6 K(34.5 bar–)뿐 — 10 bar 케이스 기준값은 Krichevsky–Kasarnovsky 물리 외삽으로 재구성 (R²=0.99, 20.7 bar leave-out 검증 오차 약 5%)",
     "T*=275 K가 표본 하한(277.6 K)보다 2.6 K 낮아 전 케이스 T-외삽 플래그 — 폭이 작아 참고 가능",
-    "저온·저압(가압 저장) 영역은 N2도 실측 공백 — 실측 보강 가치 있음",
-    "VdW는 이 조건에서 계산 실패로 순위 제외"
+    "저온·저압(가압 저장) 영역은 N2도 실측 공백 — 실측 보강 가치 있음"
    ],
    "ranking": [
     {
@@ -177,11 +313,11 @@
    ]
   },
   {
-   "band_id": "B2",
-   "label": "연료공급 상온 대역 (~305 K / 32 °C)",
+   "band_id": "B3",
+   "label": "상온 대역 (약 305 K)",
    "T_K": [
-    295.0,
-    315.0
+    290.0,
+    322.5
    ],
    "P_bar": [
     30.0,
@@ -202,8 +338,7 @@
     }
    ],
    "warnings": [
-    "10 bar는 305 K에서 NH3 증기압(≈12.4 bar)보다 낮아 액상이 존재하지 않아 케이스 성립 불가 — 제외",
-    "VdW는 이 조건에서 계산 실패로 순위 제외"
+    "10 bar는 305 K에서 NH3 증기압(≈12.4 bar)보다 낮아 액상이 존재하지 않아 케이스 성립 불가 — 제외"
    ],
    "ranking": [
     {
@@ -311,6 +446,149 @@
      "x_aard_base": 0.2928,
      "x_aard_fit": 0.1623,
      "validation_improvement_pct": 99.6,
+     "note": "",
+     "rank": 9
+    }
+   ]
+  },
+  {
+   "band_id": "B4",
+   "label": "중온 대역 (약 340 K)",
+   "T_K": [
+    322.5,
+    355.0
+   ],
+   "P_bar": [
+    100.0,
+    300.0
+   ],
+   "cases": [
+    {
+     "T_K": 340.0,
+     "P_bar": 100.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 344.3-344.3 K; widened ±15 K, 0.25–4·P*)"
+    },
+    {
+     "T_K": 340.0,
+     "P_bar": 200.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 344.3-344.3 K; widened ±15 K, 0.25–4·P*)"
+    },
+    {
+     "T_K": 340.0,
+     "P_bar": 300.0,
+     "scored": true,
+     "interp_status": "EXTRAPOLATION (T* outside sample range 344.3-344.3 K; widened ±15 K, 0.25–4·P*)"
+    }
+   ],
+   "warnings": [],
+   "ranking": [
+    {
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.015165735682175966,
+     "use_fitted": true,
+     "x_aard_base": 0.089,
+     "x_aard_fit": 0.0362,
+     "validation_improvement_pct": 65.9,
+     "note": "",
+     "rank": 1
+    },
+    {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.020707250523529588,
+     "use_fitted": true,
+     "x_aard_base": 0.1154,
+     "x_aard_fit": 0.0364,
+     "validation_improvement_pct": 67.4,
+     "note": "",
+     "rank": 2
+    },
+    {
+     "eos": "PC-SAFT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.2193168958653175,
+     "use_fitted": true,
+     "x_aard_base": 1.034,
+     "x_aard_fit": 0.0371,
+     "validation_improvement_pct": 97.9,
+     "note": "",
+     "rank": 3
+    },
+    {
+     "eos": "PT",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.19340702307566907,
+     "use_fitted": true,
+     "x_aard_base": 0.7474,
+     "x_aard_fit": 0.0454,
+     "validation_improvement_pct": 95.8,
+     "note": "",
+     "rank": 4
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.20576540646509703,
+     "use_fitted": true,
+     "x_aard_base": 0.9221,
+     "x_aard_fit": 0.0467,
+     "validation_improvement_pct": 96.5,
+     "note": "",
+     "rank": 5
+    },
+    {
+     "eos": "SRK",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.21665455061144615,
+     "use_fitted": true,
+     "x_aard_base": 0.8089,
+     "x_aard_fit": 0.0482,
+     "validation_improvement_pct": 95.2,
+     "note": "",
+     "rank": 6
+    },
+    {
+     "eos": "CPA",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": null,
+     "use_fitted": false,
+     "x_aard_base": 0.0854,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "No settable BIP for this pair in this Thermopack build",
+     "rank": 7
+    },
+    {
+     "eos": "SW",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.2433242730733876,
+     "use_fitted": true,
+     "x_aard_base": 0.3618,
+     "x_aard_fit": 0.2351,
+     "validation_improvement_pct": 80.8,
+     "note": "",
+     "rank": 8
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.25034745944409176,
+     "use_fitted": true,
+     "x_aard_base": 0.4839,
+     "x_aard_fit": 0.2381,
+     "validation_improvement_pct": 85.1,
      "note": "",
      "rank": 9
     }
