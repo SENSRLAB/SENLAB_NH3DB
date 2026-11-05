@@ -89,6 +89,8 @@
       "kbij": 0.08882812500000002
      },
      "bip_display": "kaij=+0.0005, kbij=+0.0888",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 1
     },
     {
@@ -102,7 +104,24 @@
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 2
+    },
+    {
+     "eos": "tcPR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.6972875231878403,
+     "use_fitted": true,
+     "x_aard_base": 0.522,
+     "x_aard_fit": 0.0423,
+     "validation_improvement_pct": 89.8,
+     "note": "",
+     "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 3
     },
     {
      "eos": "SAFT-VRQ Mie",
@@ -115,46 +134,54 @@
      "validation_improvement_pct": 66.0,
      "note": "",
      "engine": "thermopack",
-     "rank": 3
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 4
     },
     {
      "eos": "RKS-BM",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.7867455607485219,
+     "bip_fitted": -0.7866299620167253,
      "use_fitted": true,
      "x_aard_base": 0.4731,
      "x_aard_fit": 0.0561,
      "validation_improvement_pct": 87.4,
      "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
      "engine": "custom SRK+bm+vdw",
-     "rank": 4
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 5
     },
     {
      "eos": "PR-BM",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.09218324700043895,
+     "bip_fitted": 0.09224513367473616,
      "use_fitted": true,
      "x_aard_base": 0.2895,
      "x_aard_fit": 0.0727,
      "validation_improvement_pct": 73.4,
      "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
      "engine": "custom PR+bm+vdw",
-     "rank": 5
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 6
     },
     {
      "eos": "SAFT-VR Mie",
      "bip_name": "eps_kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.016819874977470155,
+     "bip_fitted": -0.01686603886864077,
      "use_fitted": true,
      "x_aard_base": 0.1158,
-     "x_aard_fit": 0.0808,
-     "validation_improvement_pct": 36.7,
+     "x_aard_fit": 0.0807,
+     "validation_improvement_pct": 36.8,
      "note": "",
      "engine": "thermopack",
-     "rank": 6
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 7
     },
     {
      "eos": "SRK",
@@ -167,7 +194,9 @@
      "validation_improvement_pct": 69.2,
      "note": "",
      "engine": "thermopack",
-     "rank": 7
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 8
     },
     {
      "eos": "PR",
@@ -180,19 +209,8 @@
      "validation_improvement_pct": 87.1,
      "note": "",
      "engine": "thermopack",
-     "rank": 8
-    },
-    {
-     "eos": "tcPR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.35127601208810755,
-     "use_fitted": true,
-     "x_aard_base": 0.522,
-     "x_aard_fit": 0.3085,
-     "validation_improvement_pct": 62.8,
-     "note": "",
-     "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 9
     },
     {
@@ -211,6 +229,8 @@
       "lij": -0.49983704234831394
      },
      "bip_display": "kij=+0.2409, lij=-0.4998",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 10
     }
    ],
@@ -258,13 +278,15 @@
      "eos": "PR",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.3039506645455585,
+     "bip_fitted": 0.3039501330540373,
      "use_fitted": true,
      "x_aard_base": 0.74,
      "x_aard_fit": 0.0502,
      "validation_improvement_pct": 94.9,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 1
     },
     {
@@ -278,6 +300,8 @@
      "validation_improvement_pct": 90.9,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 2
     },
     {
@@ -291,6 +315,8 @@
      "validation_improvement_pct": 90.5,
      "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
      "engine": "custom PR+bm+vdw",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 3
     },
     {
@@ -302,13 +328,15 @@
      "x_aard_base": 0.3933,
      "x_aard_fit": 0.0573,
      "validation_improvement_pct": 89.9,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); 회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용; 회귀 파라미터가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); 회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.9,
       "kbij": -0.005926361083984375
      },
      "bip_display": "kaij=-0.9000, kbij=-0.0059",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 4
     },
     {
@@ -322,6 +350,8 @@
      "validation_improvement_pct": 88.8,
      "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
      "engine": "custom SRK+bm+vdw",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 5
     },
     {
@@ -340,19 +370,23 @@
       "lij": 0.00025
      },
      "bip_display": "kij=-0.8351, lij=+0.0003",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 6
     },
     {
      "eos": "tcPR",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.6382977383181396,
+     "bip_fitted": -0.6384252490442933,
      "use_fitted": true,
      "x_aard_base": 0.4269,
-     "x_aard_fit": 0.0606,
+     "x_aard_fit": 0.0605,
      "validation_improvement_pct": 91.7,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 7
     },
     {
@@ -366,19 +400,23 @@
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 8
     },
     {
      "eos": "SAFT-VR Mie",
      "bip_name": "eps_kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.08701077522555126,
+     "bip_fitted": -0.08702573940496178,
      "use_fitted": true,
      "x_aard_base": 0.2165,
      "x_aard_fit": 0.0714,
      "validation_improvement_pct": 79.4,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 9
     },
     {
@@ -392,6 +430,8 @@
      "validation_improvement_pct": 85.7,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 10
     }
    ],
@@ -447,6 +487,8 @@
      "validation_improvement_pct": 91.4,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 1
     },
     {
@@ -460,20 +502,39 @@
      "validation_improvement_pct": 74.4,
      "note": "",
      "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 2
+    },
+    {
+     "eos": "PR",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.33820163343480913,
+     "use_fitted": true,
+     "x_aard_base": 0.8495,
+     "x_aard_fit": 0.0403,
+     "validation_improvement_pct": 91.9,
+     "note": "",
+     "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 3
     },
     {
      "eos": "SRK",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.3303318401619038,
+     "bip_fitted": 0.33036318859353314,
      "use_fitted": true,
      "x_aard_base": 0.5661,
      "x_aard_fit": 0.0453,
      "validation_improvement_pct": 86.7,
      "note": "",
      "engine": "thermopack",
-     "rank": 3
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 4
     },
     {
      "eos": "tcPR",
@@ -486,7 +547,9 @@
      "validation_improvement_pct": 68.7,
      "note": "",
      "engine": "thermopack",
-     "rank": 4
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 5
     },
     {
      "eos": "RK-ASPEN",
@@ -504,20 +567,24 @@
       "kbij": 0.08584594726562503
      },
      "bip_display": "kaij=+0.0008, kbij=+0.0858",
-     "rank": 5
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 6
     },
     {
      "eos": "PR-BM",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.2053368647732514,
+     "bip_fitted": 0.2054015069595576,
      "use_fitted": true,
      "x_aard_base": 0.4582,
-     "x_aard_fit": 0.0831,
+     "x_aard_fit": 0.083,
      "validation_improvement_pct": 88.5,
      "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
      "engine": "custom PR+bm+vdw",
-     "rank": 6
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 7
     },
     {
      "eos": "CPA",
@@ -530,7 +597,9 @@
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
      "engine": "thermopack",
-     "rank": 7
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 8
     },
     {
      "eos": "SR-POLAR",
@@ -548,45 +617,38 @@
       "lij": -0.09266657307464636
      },
      "bip_display": "kij=-0.9000, lij=-0.0927",
-     "rank": 8
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 9
     },
     {
      "eos": "RKS-BM",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.7649352191508683,
+     "bip_fitted": -0.7648778143499533,
      "use_fitted": true,
      "x_aard_base": 0.2419,
-     "x_aard_fit": 0.089,
+     "x_aard_fit": 0.0889,
      "validation_improvement_pct": 87.8,
      "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
      "engine": "custom SRK+bm+vdw",
-     "rank": 9
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 10
     },
     {
      "eos": "PT",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.07452176748672276,
+     "bip_fitted": 0.07462683577203781,
      "use_fitted": true,
      "x_aard_base": 0.3396,
-     "x_aard_fit": 0.2381,
-     "validation_improvement_pct": 31.6,
-     "note": "",
+     "x_aard_fit": 0.238,
+     "validation_improvement_pct": 31.7,
+     "note": "케이스 1/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
-     "rank": 10
-    },
-    {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.05197943268678709,
-     "use_fitted": true,
-     "x_aard_base": 0.8495,
-     "x_aard_fit": 0.6917,
-     "validation_improvement_pct": 18.7,
-     "note": "",
-     "engine": "thermopack",
+     "cases_ok": 1,
+     "cases_n": 3,
      "rank": 11
     }
    ],
@@ -631,17 +693,49 @@
    ],
    "ranking": [
     {
+     "eos": "SAFT-VRQ Mie",
+     "bip_name": "eps_kij",
+     "bip_default": 0.0,
+     "bip_fitted": -0.27513605092422405,
+     "use_fitted": true,
+     "x_aard_base": 0.2763,
+     "x_aard_fit": 0.0304,
+     "validation_improvement_pct": 89.3,
+     "note": "",
+     "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 1
+    },
+    {
+     "eos": "PR-BM",
+     "bip_name": "kij",
+     "bip_default": 0.0,
+     "bip_fitted": 0.3720579990057746,
+     "use_fitted": true,
+     "x_aard_base": 0.5482,
+     "x_aard_fit": 0.0694,
+     "validation_improvement_pct": 91.8,
+     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
+     "engine": "custom PR+bm+vdw",
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 2
+    },
+    {
      "eos": "RKS-BM",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.3483352501482709,
+     "bip_fitted": -0.3482756806963717,
      "use_fitted": false,
      "x_aard_base": 0.0738,
      "x_aard_fit": 0.0778,
      "validation_improvement_pct": 75.6,
      "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
      "engine": "custom SRK+bm+vdw",
-     "rank": 1
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 3
     },
     {
      "eos": "RK-ASPEN",
@@ -652,14 +746,16 @@
      "x_aard_base": 0.0876,
      "x_aard_fit": 0.0756,
      "validation_improvement_pct": 80.5,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); 회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용; 회귀 파라미터가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
+     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); 회귀 kij가 탐색 경계 부근(물리적 신뢰 낮음) — 참고용",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.9,
       "kbij": -0.030480158363701805
      },
      "bip_display": "kaij=-0.9000, kbij=-0.0305",
-     "rank": 2
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 4
     },
     {
      "eos": "SR-POLAR",
@@ -677,7 +773,9 @@
       "lij": 0.2541376056709559
      },
      "bip_display": "kij=-0.8043, lij=+0.2541",
-     "rank": 3
+     "cases_ok": 3,
+     "cases_n": 3,
+     "rank": 5
     },
     {
      "eos": "CPA",
@@ -690,58 +788,38 @@
      "validation_improvement_pct": null,
      "note": "No settable BIP for this pair in this Thermopack build",
      "engine": "thermopack",
-     "rank": 4
-    },
-    {
-     "eos": "PR-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.3343682657081348,
-     "use_fitted": true,
-     "x_aard_base": 0.5482,
-     "x_aard_fit": 0.0885,
-     "validation_improvement_pct": 90.2,
-     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
-     "engine": "custom PR+bm+vdw",
-     "rank": 5
-    },
-    {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.4522131159436264,
-     "use_fitted": true,
-     "x_aard_base": 0.8751,
-     "x_aard_fit": 0.1416,
-     "validation_improvement_pct": 92.0,
-     "note": "",
-     "engine": "thermopack",
+     "cases_ok": 3,
+     "cases_n": 3,
      "rank": 6
     },
     {
      "eos": "tcPR",
      "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.07072275148578529,
-     "use_fitted": true,
-     "x_aard_base": 3.8478,
-     "x_aard_fit": 0.184,
-     "validation_improvement_pct": 1.6,
-     "note": "",
+     "bip_fitted": -0.525,
+     "use_fitted": false,
+     "x_aard_base": 0.0743,
+     "x_aard_fit": 0.1126,
+     "validation_improvement_pct": -274.9,
+     "note": "케이스 1/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
+     "cases_ok": 1,
+     "cases_n": 3,
      "rank": 7
     },
     {
-     "eos": "SRK",
-     "bip_name": "kij",
+     "eos": "SAFT-VR Mie",
+     "bip_name": "eps_kij",
      "bip_default": 0.0,
-     "bip_fitted": 0.395233429223538,
-     "use_fitted": true,
-     "x_aard_base": 0.6944,
-     "x_aard_fit": 0.1879,
-     "validation_improvement_pct": -518.0,
-     "note": "검증 분할에서 개선 미확인(-518%) — 표본 적어 참고",
+     "bip_fitted": 0.332078082246329,
+     "use_fitted": false,
+     "x_aard_base": 0.2882,
+     "x_aard_fit": 0.5539,
+     "validation_improvement_pct": -77.5,
+     "note": "케이스 2/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
+     "cases_ok": 2,
+     "cases_n": 3,
      "rank": 8
     },
     {
@@ -753,34 +831,40 @@
      "x_aard_base": 0.4815,
      "x_aard_fit": null,
      "validation_improvement_pct": null,
-     "note": "BIP regression failed",
+     "note": "BIP regression failed; 케이스 1/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
+     "cases_ok": 1,
+     "cases_n": 3,
      "rank": 9
     },
     {
-     "eos": "SAFT-VRQ Mie",
-     "bip_name": "eps_kij",
+     "eos": "SRK",
+     "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.13294335941955437,
+     "bip_fitted": null,
      "use_fitted": false,
-     "x_aard_base": 1.6479,
-     "x_aard_fit": 3.2979,
-     "validation_improvement_pct": -73.4,
-     "note": "",
+     "x_aard_base": 0.6944,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "BIP regression failed; 케이스 2/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
+     "cases_ok": 2,
+     "cases_n": 3,
      "rank": 10
     },
     {
-     "eos": "SAFT-VR Mie",
-     "bip_name": "eps_kij",
+     "eos": "PR",
+     "bip_name": "kij",
      "bip_default": 0.0,
-     "bip_fitted": -0.17887233641984607,
+     "bip_fitted": null,
      "use_fitted": false,
-     "x_aard_base": 1.7004,
-     "x_aard_fit": 3.3998,
-     "validation_improvement_pct": -1553.6,
-     "note": "",
+     "x_aard_base": 0.8751,
+     "x_aard_fit": null,
+     "validation_improvement_pct": null,
+     "note": "BIP regression failed; 케이스 2/3만 계산 가능(나머지는 이 EOS의 표현 범위 밖) — AARD는 계산된 케이스 기준, 순위는 뒤로",
      "engine": "thermopack",
+     "cases_ok": 2,
+     "cases_n": 3,
      "rank": 11
     }
    ],
@@ -788,12 +872,41 @@
   }
  ],
  "aspen_kij_T": {
-  "SAFT-VRQ Mie": {
-   "kaij": 5.4615522133243095,
-   "kbij": -0.010088742753856742,
-   "kcij": -776.6020431665056,
-   "max_abs_dev": 4.496403249731884e-15,
+  "tcPR": {
+   "kaij": 13.477960782633627,
+   "kbij": -0.023408302043727666,
+   "kcij": -2127.9404420439973,
+   "max_abs_dev": 1.0103029524088925e-14,
    "n_bands": 3,
+   "T_range_K": [
+    260.0,
+    390.0
+   ],
+   "band_values": [
+    {
+     "T_K": 275.0,
+     "kij": -0.6973,
+     "band": "저온 대역 (약 275 K)"
+    },
+    {
+     "T_K": 305.0,
+     "kij": -0.6384,
+     "band": "상온 대역 (약 305 K)"
+    },
+    {
+     "T_K": 337.5,
+     "kij": -0.7273,
+     "band": "중온 대역 (약 335 K)"
+    }
+   ],
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+  },
+  "SAFT-VRQ Mie": {
+   "kaij": 0.2372032063720721,
+   "kbij": -0.0014501287103484799,
+   "kcij": 8.251935892636814,
+   "max_abs_dev": 0.01667650401815335,
+   "n_bands": 4,
    "T_range_K": [
     260.0,
     390.0
@@ -813,15 +926,20 @@
      "T_K": 337.5,
      "kij": -0.2444,
      "band": "중온 대역 (약 335 K)"
+    },
+    {
+     "T_K": 372.5,
+     "kij": -0.2751,
+     "band": "고온 대역 (약 375 K)"
     }
    ],
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
   },
   "RKS-BM": {
-   "kaij": 24.06831902096771,
-   "kbij": -0.040387410183002216,
-   "kcij": -3780.84486488242,
-   "max_abs_dev": 1.2656542480726785e-14,
+   "kaij": 24.05189371063478,
+   "kbij": -0.040360917673878983,
+   "kcij": -3778.2996108920624,
+   "max_abs_dev": 2.0650148258027912e-14,
    "n_bands": 3,
    "T_range_K": [
     260.0,
@@ -830,7 +948,7 @@
    "band_values": [
     {
      "T_K": 275.0,
-     "kij": -0.7867,
+     "kij": -0.7866,
      "band": "저온 대역 (약 275 K)"
     },
     {
@@ -847,10 +965,10 @@
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
   },
   "PR-BM": {
-   "kaij": -0.6010688256434445,
-   "kbij": 0.002373257236570398,
-   "kcij": 14.415397361334405,
-   "max_abs_dev": 0.037280915403841264,
+   "kaij": -2.4549468258817018,
+   "kbij": 0.005438572327053675,
+   "kcij": 292.9467267300339,
+   "max_abs_dev": 0.04316012896167848,
    "n_bands": 4,
    "T_range_K": [
     260.0,
@@ -869,22 +987,22 @@
     },
     {
      "T_K": 337.5,
-     "kij": 0.2053,
+     "kij": 0.2054,
      "band": "중온 대역 (약 335 K)"
     },
     {
      "T_K": 372.5,
-     "kij": 0.3344,
+     "kij": 0.3721,
      "band": "고온 대역 (약 375 K)"
     }
    ],
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
   },
   "SAFT-VR Mie": {
-   "kaij": 2.993298765123704,
-   "kbij": -0.0064202174585459675,
-   "kcij": -342.253680725284,
-   "max_abs_dev": 1.1657341758564144e-15,
+   "kaij": 2.994781767323601,
+   "kbij": -0.006422307060307183,
+   "kcij": -342.5161752671354,
+   "max_abs_dev": 2.1094237467877974e-15,
    "n_bands": 3,
    "T_range_K": [
     260.0,
@@ -893,7 +1011,7 @@
    "band_values": [
     {
      "T_K": 275.0,
-     "kij": -0.0168,
+     "kij": -0.0169,
      "band": "저온 대역 (약 275 K)"
     },
     {
@@ -910,11 +1028,11 @@
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
   },
   "SRK": {
-   "kaij": 5.335908419790831,
-   "kbij": -0.006404695711013413,
-   "kcij": -953.9333493026212,
-   "max_abs_dev": 0.017522594043023032,
-   "n_bands": 4,
+   "kaij": 10.822296128233107,
+   "kbij": -0.015476385109054707,
+   "kcij": -1778.1703758000908,
+   "max_abs_dev": 8.382183835919932e-15,
+   "n_bands": 3,
    "T_range_K": [
     260.0,
     390.0
@@ -932,23 +1050,18 @@
     },
     {
      "T_K": 337.5,
-     "kij": 0.3303,
+     "kij": 0.3304,
      "band": "중온 대역 (약 335 K)"
-    },
-    {
-     "T_K": 372.5,
-     "kij": 0.3952,
-     "band": "고온 대역 (약 375 K)"
     }
    ],
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
   },
   "PR": {
-   "kaij": -13.302137634015713,
-   "kbij": 0.021876529162778584,
-   "kcij": 2068.0849119701643,
-   "max_abs_dev": 0.15687052416538838,
-   "n_bands": 4,
+   "kaij": 8.25852256880305,
+   "kbij": -0.011827056463733339,
+   "kcij": -1325.9326653646542,
+   "max_abs_dev": 4.052314039881821e-15,
+   "n_bands": 3,
    "T_range_K": [
     260.0,
     390.0
@@ -966,47 +1079,8 @@
     },
     {
      "T_K": 337.5,
-     "kij": 0.052,
+     "kij": 0.3382,
      "band": "중온 대역 (약 335 K)"
-    },
-    {
-     "T_K": 372.5,
-     "kij": 0.4522,
-     "band": "고온 대역 (약 375 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
-  },
-  "tcPR": {
-   "kaij": -53.70666233048703,
-   "kbij": 0.08451762951502853,
-   "kcij": 8290.710637530377,
-   "max_abs_dev": 0.11045606077253134,
-   "n_bands": 4,
-   "T_range_K": [
-    260.0,
-    390.0
-   ],
-   "band_values": [
-    {
-     "T_K": 275.0,
-     "kij": -0.3513,
-     "band": "저온 대역 (약 275 K)"
-    },
-    {
-     "T_K": 305.0,
-     "kij": -0.6383,
-     "band": "상온 대역 (약 305 K)"
-    },
-    {
-     "T_K": 337.5,
-     "kij": -0.7273,
-     "band": "중온 대역 (약 335 K)"
-    },
-    {
-     "T_K": 372.5,
-     "kij": 0.0707,
-     "band": "고온 대역 (약 375 K)"
     }
    ],
    "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"

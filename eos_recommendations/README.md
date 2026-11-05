@@ -86,3 +86,9 @@
 - 자체 구현 Aspen 변형(`engine: custom …`): `PR-BM`, `RKS-BM`(= Aspen SRK 물성법의 VLE), `RK-ASPEN`(2-파라미터 `bip_params: {kaij, kbij}`), `SR-POLAR`(`{kij, lij}`). 2-파라미터 행은 `bip_fitted: null` + `bip_display` + `bip_params`.
 - 케이스에 `x_ref`(기준 용해도)와 밴드에 `n_samples` 추가. H2O 밴드에는 `full_set_check`(상위 3개 모델을 대역 전체 실측점으로 재검산한 조성별 AARD) 추가.
 - 재현 코드: `eos2/` 파이프라인(bkp_parse → qc_data → refs/bands_h2o → eval_tp/eval_custom/eval_h2o → build_v5) — 저장소 외부(Claude 작업공간)에서 실행. 요청 시 제공.
+
+## v5.1 (2026-11-04) — 1-파라미터 회귀 안정화
+
+- 원인: 1-파라미터 kij 회귀(bounded Brent)가 비매끄러운 목적함수(플래시 실패 → 페널티)에서 국소 최소에 갇히는 경우가 있었음. 대표 사례 NH3+H2 335 K 대역의 PR(kij 0.052, x-AARD 69%) — 실제 최적은 kij ≈ 0.34(약 4%).
+- 조치: `scoring.evaluate`에 탐색 구간 전체 격자 스캔(25점 + 기본값) 후 최적 격자점 주변만 국소 최소화. thermopack 1-파라미터 8종과 자체 구현 PR-BM·RKS-BM의 전 대역(N2·H2·CH4)을 재회귀. 2-파라미터(RK-ASPEN·SR-POLAR)·CPA·H2O 행은 그대로.
+- 결과: 갱신된 `nh3_n2.json`·`nh3_h2.json`·`nh3_ch4.json`(3개). `nh3_h2o.json`은 변경 없음.
