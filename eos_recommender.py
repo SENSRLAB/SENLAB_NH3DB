@@ -44,6 +44,7 @@ ASPEN_MAP = {
     "RKS-BM":  {"aspen": "RKS-BM (= SRK 물성법의 VLE)", "param": "RKSKBV", "hysys": "SRK*", "tier": "direct"},
     "RK-ASPEN": {"aspen": "RK-ASPEN", "param": "RKAKA0 / RKAKB0", "hysys": "—", "tier": "direct"},
     "SR-POLAR": {"aspen": "SR-POLAR", "param": "SRKKA0 / SRLIJ0", "hysys": "—", "tier": "direct"},
+    "NRTL-RK": {"aspen": "NRTL-RK (활성계수 모델)", "param": "NRTL", "hysys": "NRTL (τ 형식 다름)*", "tier": "direct"},
     "tcPR":    {"aspen": "PENG-ROB + Twu α·부피보정 옵션*", "param": "PRKBV", "hysys": "PR-Twu*", "tier": "cond"},
     "PC-SAFT": {"aspen": "PC-SAFT*", "param": "PCSKIJ", "hysys": "—", "tier": "cond"},
     "CPA":     {"aspen": "CPA (V12+ 확인)*", "param": "—", "hysys": "CPA*", "tier": "cond"},
@@ -197,7 +198,12 @@ def _aspen_card(reco, band, pick, metric_label):
         f"Aspen Plus 물성법 : {m['aspen']}",
         f"파라미터 입력란   : Parameters → Binary Interaction → {m['param']}-1   ({solvent} / {solute})",
     ]
-    if kij is not None:
+    if pick["eos"] == "NRTL-RK" and pick.get("bip_params"):
+        p = pick["bip_params"]
+        lines[-1] = "파라미터 입력란   : Parameters → Binary Interaction → NRTL-1   (성분 i = NH3(AMMONIA), j = H2O(WATER) 순서)"
+        lines.append(f"이 대역 상수      : AIJ = 0, AJI = 0, BIJ = {p['b12_K']:+.0f}, BJI = {p['b21_K']:+.0f}, CIJ = {p['alpha']:g}   "
+                     f"(τij = BIJ/T, T {t_lo:g}–{t_hi:g} K)   — Aspen 내장 ENRTL-RK 파라미터가 있으면 그쪽이 우선")
+    elif kij is not None:
         lines.append(f"이 대역 상수      : kaij = {kij:.4f}   (T {t_lo:g}–{t_hi:g} K, P {p_lo:g}–{p_hi:g} bar)   ← 가장 안전")
     elif pick.get("bip_params") and pick.get("use_fitted"):
         vals = ", ".join(f"{k} = {v:+.4f}" for k, v in pick["bip_params"].items())
