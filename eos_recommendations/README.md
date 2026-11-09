@@ -92,3 +92,24 @@
 - 원인: 1-파라미터 kij 회귀(bounded Brent)가 비매끄러운 목적함수(플래시 실패 → 페널티)에서 국소 최소에 갇히는 경우가 있었음. 대표 사례 NH3+H2 335 K 대역의 PR(kij 0.052, x-AARD 69%) — 실제 최적은 kij ≈ 0.34(약 4%).
 - 조치: `scoring.evaluate`에 탐색 구간 전체 격자 스캔(25점 + 기본값) 후 최적 격자점 주변만 국소 최소화. thermopack 1-파라미터 8종과 자체 구현 PR-BM·RKS-BM의 전 대역(N2·H2·CH4)을 재회귀. 2-파라미터(RK-ASPEN·SR-POLAR)·CPA·H2O 행은 그대로.
 - 결과: 갱신된 `nh3_n2.json`·`nh3_h2.json`·`nh3_ch4.json`(3개). `nh3_h2o.json`은 변경 없음.
+
+## v5.2 (2026-11-05) — NH3+CH4 데이터 QC 추가
+
+- Lentz & Weber 1994의 298.2 K / 82 bar 점(x_CH4 = 0.084)을 제외: x/P가 이웃 점의 3배이고 Krichevskii & Efremova 1953은 99 bar에서 0.038. 이 점이 305 K 대역의 회귀(SSE 지배)와 기준값(국소 보간)을 함께 왜곡하고 있었음.
+- 305 K 대역만 재평가: 기준값 30 bar 0.01096 → 0.01002, 50 bar 0.02277 → 0.02190. 같은 kij의 PR이 1.1% → 5.5%로 바뀌는 만큼 이 대역의 점수 불확도는 ±5% 수준으로 보아야 함. Aspen 1위 PR-BM 2.4%(kij 0.094), 전체 1위 SAFT-VRQ Mie 0.2%.
+- Lentz 세트 나머지(273 K: 75 bar 0.034 > 100 bar 0.029 비단조, 유효숫자 2자리)는 273 K 유일 출처라 유지 — 275 K 대역 12% 바닥의 원인. 독립적인 270–280 K·50–200 bar 데이터(문헌 또는 연구실 측정)가 해법.
+- 갱신 파일: `nh3_ch4.json`만. v5.1 패키지 미반영 시 v5.2 패키지(질소·수소·메탄 3개)로 한 번에 반영.
+
+## v5.3 (2026-11-06) — NH3+H2O에 활성계수 모델 행(NRTL-RK) 추가
+
+- 질문 "e-NRTL을 순위에 넣을 수 없나"에 대한 답: Aspen의 e-NRTL(ENRTL-RK) 자체는 전해질 모델 + 비공개 데이터뱅크 파라미터라 재현 불가. 대신 그 뼈대인 **NRTL 활성계수 모델 + SRK 기상(γ-φ) = Aspen NRTL-RK 물성법**을 `nrtl_rk.py`로 구현해 5개 대역에서 τij = bij/T 2-파라미터(α 0.2/0.3 선택)로 회귀.
+- 결과(전체 실측점 재검산): 243 K 4.2% · 273 K 5.9% · 307 K 7.5% · 339 K 6.0% · 381 K 7.3% — 저온 두 대역은 1위, 나머지는 EOS 상위와 동급. 물 부화 희박 영역(x<0.1)도 EOS 상위와 비슷(4–9%). 즉 물 혼합물의 5–9% 바닥은 모델 종류가 아니라 문헌 간 산포(9–15개 출처 혼합)에서 온다.
+- 순위 행 필드: `bip_params: {b12_K, b21_K, alpha}`, `bip_display`, `engine: custom gamma-phi (NRTL + SRK)`. Aspen 입력: NRTL-1 (i = AMMONIA, j = WATER) AIJ = AJI = 0, BIJ = b12, BJI = b21, CIJ = α. `eos_recommender.py`의 ASPEN_MAP에 NRTL-RK 추가(입력 카드 NRTL 형식).
+- 순성분 증기압: NH3 thermopack CPA 표(0.1 %), H2O IAPWS Wagner-Pruss(228–273 K는 외삽). teqp 0.23.2의 Tillner-Roth NH3–H2O 모델은 물 부화 저밀도 상태에서 비물리적 압력을 내 기준식 활용은 보류.
+- 갱신 파일: `nh3_h2o.json`, `eos_recommender.py`. (v5.2 미반영이면 이 패키지의 JSON 4개 + py 1개를 한 번에 업로드.)
+
+## v5.4 (2026-11-09) — 이슬선(y-only) 독립 검증 필드
+
+- TDE에 있었지만 x 회귀에 쓰지 않은 기상 조성 세트(N2: Reamer & Sage 1959 이슬선 5개 등온선 + Glowka 1992 등조성 이슬점; CH4: Glowka 1992)로 각 대역의 Aspen 1위 모델이 내는 기상 NH3 분율을 검증. 밴드에 `dew_line_check` {n_points, sources, P_bar, model, y_aard_pct, y_aad, y_aard_pct_kij0_PR} 추가, warnings에 한 줄 요약.
+- 결과: N2 275 K SR-POLAR 4.6%(kij=0이면 23.5%), 305 K PR 4.0%(14.1%), 340 K RK-ASPEN 2.4%(10.9%) — 회귀 kij가 x뿐 아니라 y도 맞춘다는 독립 확인. CH4는 2–6%이나 kij=0과 차이가 없어 y로는 kij를 판별하지 못함(저압에서 y는 NH3 증기압이 지배). 밴드 온도 범위 밖(N2 378·394 K)은 외삽이라 제외(7–21%).
+- 재현: `eos2/ycheck.py <out_json_dir>` → ycheck_<sys>.csv, ycheck_summary.json.
