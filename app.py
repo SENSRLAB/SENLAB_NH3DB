@@ -18,7 +18,9 @@ from lhv_calculator import render_lhv_page
 from eos_recommender import render_eos_page
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ACCENT = "#F2A65A"  # 그래프에서 '입력 조건'을 표시하는 색
+ACCENT = "#c2410c"  # 그래프에서 '입력 조건'을 표시하는 색 (라이트 테마용 진한 주황)
+PRIMARY = "#1e3a8a"  # 그래프 기본 선·막대 색 (남색; 흰 배경용)
+LINE_SCALE = "Viridis"  # 등압·등온선 색 척도 (흰 배경에서 노란 구간을 피하려고 0–0.85만 사용)
 
 # =====================================================================
 # 페이지 설정
@@ -330,7 +332,7 @@ def _fmt(v, unit, nd=2):
 
 def line_chart(x, y, x_title, y_title, point=None, name="문헌값", mode="lines+markers", height=420):
     fig = go.Figure()
-    fig.add_scatter(x=x, y=y, mode=mode, name=name, marker=dict(size=7), line=dict(width=2.5))
+    fig.add_scatter(x=x, y=y, mode=mode, name=name, marker=dict(size=7, color=PRIMARY), line=dict(width=2.5, color=PRIMARY))
     if point is not None and not np.isnan(point[1]):
         fig.add_scatter(
             x=[point[0]], y=[point[1]], mode="markers", name="입력 조건",
@@ -497,7 +499,7 @@ def page_nh3_h2o():
             st.warning("이 조건에서는 문헌 데이터 범위를 벗어나 값을 찾을 수 없어요.")
     with right.container(border=True, height="stretch"):
         n = max(len(p_b), len(p_d), 2)
-        colors = px.colors.sample_colorscale("Turbo", [i / (n - 1) for i in range(n)])
+        colors = px.colors.sample_colorscale(LINE_SCALE, [0.85 * i / max(n - 1, 1) for i in range(n)])
         fig = go.Figure()
         for i, col in enumerate(bubble.columns):
             fig.add_scatter(x=x, y=bubble[col], mode="lines", name=f"{float(col):g} MPa",
@@ -553,7 +555,7 @@ def page_binary(name, cfg):
     with right.container(border=True, height="stretch"):
         temps = sorted(df["T_Kel"].unique())
         n = max(len(temps), 2)
-        colors = px.colors.sample_colorscale("Turbo", [i / (n - 1) for i in range(n)])
+        colors = px.colors.sample_colorscale(LINE_SCALE, [0.85 * i / max(n - 1, 1) for i in range(n)])
         fig = go.Figure()
         for c, t in zip(colors, temps):
             d = df[df["T_Kel"] == t]

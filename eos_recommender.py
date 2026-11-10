@@ -162,12 +162,13 @@ def _render_ranking_chart(ranking, metric_label="x-AARD", key="eos_chart"):
         x=bar_x, y=names, orientation="h", name=f"추천 설정의 {metric_label}",
         text=bar_text, textposition=bar_pos, cliponaxis=False, customdata=final,
         hovertemplate="%{y}: %{customdata:.2f}%<extra></extra>",
+        marker_color="#1e3a8a",
     )
     tick_x = [bv if (not np.isnan(bv) and bv <= upper) else np.nan for bv in base]
     if not np.all(np.isnan(tick_x)):
         fig.add_scatter(
             x=tick_x, y=names, mode="markers", name=f"기본 BIP의 {metric_label}",
-            marker=dict(symbol="line-ns-open", size=18, line=dict(width=2.5)),
+            marker=dict(symbol="line-ns-open", size=18, line=dict(width=2.5, color="#b45309")),
             hovertemplate="%{y} 기본값: %{x:.1f}%<extra></extra>",
         )
     for name, bv, fv in zip(names, base, final):
