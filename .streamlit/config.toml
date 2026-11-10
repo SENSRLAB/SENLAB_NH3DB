@@ -1,18 +1,18 @@
 [theme]
-base = "dark"
+base = "light"
 
-# 색 — demo-stockpeers와 동일
-textColor = "#e2e8f0"
-primaryColor = "#615fff"
-linkColor = "#8b8aff"
+# 색 — 흰 배경 + 남색 계열 글씨 (2026-11 라이트 테마)
+textColor = "#1e293b"
+primaryColor = "#1e3a8a"
+linkColor = "#1d4ed8"
 linkUnderline = false
-backgroundColor = "#1d293d"
-secondaryBackgroundColor = "#0f172b"
-codeBackgroundColor = "#0f172b"
-borderColor = "#314158"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f4f6fa"
+codeBackgroundColor = "#f1f5f9"
+borderColor = "#cbd5e1"
 showWidgetBorder = true
-dataframeHeaderBackgroundColor = "#1d293d"
-dataframeBorderColor = "#314158"
+dataframeHeaderBackgroundColor = "#e8edf5"
+dataframeBorderColor = "#cbd5e1"
 
 # 본문 글꼴 — 한글 지원 (demo는 Space Grotesk라 한글 불가)
 font = "'IBM Plex Sans KR':https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap, sans-serif"
@@ -25,8 +25,8 @@ headingFontWeights = [300, 400, 400, 300, 300, 300]
 headingFontSizes = ["2.5rem", "1.5rem", "1rem"]
 codeFont = "monospace"
 
-# 그래프 색 — 보라 강조색과 어울리는 팔레트
-chartCategoricalColors = ["#615fff", "#F2A65A", "#5FD19B", "#F77A8E", "#7AA2F7", "#FFD166"]
+# 그래프 색 — 흰 배경에서 잘 보이는 진한 팔레트(남색·갈색·녹색·적색·보라·청록)
+chartCategoricalColors = ["#1e3a8a", "#b45309", "#047857", "#b91c1c", "#6d28d9", "#0e7490"]
 
 [client]
 toolbarMode = "minimal"
