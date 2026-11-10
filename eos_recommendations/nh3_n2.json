@@ -6,17 +6,17 @@
  "solute": "N2",
  "status": "validated",
  "generated": "2026-11-04",
- "method": "EOS/BIP 평가 v5 (2026-11 재평가): 기준값은 케이스가 실측에 둘러싸이면 국소 보간(ln x = a + b/T + c·ln(P−Psat) [+ d·ln²]), 아니면 Krichevsky–Kasarnovsky 물리 외삽(ln(f₂/x) = A + B/T + V∞(P−Psat)/RT, 최저압 leave-out 검증). 각 EOS는 밴드 표본(≤30점, 3:1 train/validation)으로 BIP를 회귀(thermopack 9종: 단일 kij/eps_kij; 자체 구현 Aspen 변형: PR-BM·RKS-BM 단일 kij, RK-ASPEN kaij+kbij, SR-POLAR kij+lij)하고 케이스 x-AARD로 순위. 자체 구현은 classic α 모드가 thermopack PR/SRK 기포압을 1e-4 이내로 재현함을 확인(극성 α 파라미터는 0 — thermopack 임계상수 기준으로는 NH3 증기압 개선 없음)",
+ "method": "EOS/BIP evaluation v5 (re-evaluated Nov 2026): the reference value is a local interpolation (ln x = a + b/T + c·ln(P−Psat) [+ d·ln²]) when the case is bracketed by measurements, otherwise a Krichevsky–Kasarnovsky physical extrapolation (ln(f₂/x) = A + B/T + V∞(P−Psat)/RT, validated by lowest-pressure leave-out). Each EOS has its BIP regressed on the band sample (≤30 points, 3:1 train/validation; thermopack 9 models: single kij/eps_kij; in-house Aspen variants: PR-BM·RKS-BM single kij, RK-ASPEN kaij+kbij, SR-POLAR kij+lij) and is ranked by the case x-AARD. The in-house implementations reproduce thermopack PR/SRK bubble pressures within 1e-4 in classic-α mode (polar α parameters set to 0 — no NH3 vapour-pressure gain with thermopack critical constants). v5.1: 1-parameter regressions stabilised (grid scan + validation-selected candidate; bubble-branch guard near the critical region); rows that cannot compute every case are flagged and ranked after full-coverage rows",
  "source": {
-  "bkp_file": "NH3_N2.bkp (Aspen Plus V14, 2026-11-04 추출)",
+  "bkp_file": "NH3_N2.bkp (Aspen Plus V14, extracted 2026-11-04)",
   "n_datasets": 5,
   "n_points": 81,
-  "provenance": "Aspen Plus V14 TDE(NIST) 문헌 이성분 VLE — Cannon, Robson & English(Douglas MSS; 20.7/48.3 bar, 200–283 K; TDE X 라벨이 실제로는 용질 N2 분율이라 보정) + Reamer & Sage 1959 기포선(연구실 nh3+n2.csv 몰분율, LAB 증강; 277.6–394.3 K, 34.5–413.7 bar) + 293 K 희박 TXY 세트 2개(2013·2015; 압력 미기재라 P = Psat·x_NH3/y_NH3로 재구성, x < 1e-5 정량화 잡음 행 제외). Reamer 이슬선(y-only) 세트는 x 회귀 미사용"
+  "provenance": "Aspen Plus V14 TDE (NIST) literature binary VLE — Cannon, Robson & English (Douglas MSSD; 20.7/48.3 bar, 200–283 K; the TDE 'X' label is in fact the solute N2 fraction and was corrected) + Reamer & Sage 1959 bubble line (laboratory nh3+n2.csv mole fractions, LAB augmentation; 277.6–394.3 K, 34.5–413.7 bar) + two dilute 293 K TXY sets (2013, 2015; no pressure column, so P = Psat·x_NH3/y_NH3 was reconstructed and rows below the 1e-5 quantisation noise floor were dropped). Reamer dew-line (y-only) sets are not used for the x regression"
  },
  "excluded_eos": [
   {
    "eos": "GERG-2008",
-   "reason": "NH3는 GERG-2008 구성 성분이 아님"
+   "reason": "NH3 is not a GERG-2008 component"
   },
   {
    "eos": "VdW",
@@ -26,7 +26,7 @@
  "condition_bands": [
   {
    "band_id": "B1",
-   "label": "극저온 대역 (약 255 K)",
+   "label": "Cryogenic band (~255 K)",
    "T_K": [
     240.0,
     265.0
@@ -40,14 +40,14 @@
      "T_K": 255.0,
      "P_bar": 25.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 3%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
      "x_ref": 0.00119
     },
     {
      "T_K": 255.0,
      "P_bar": 40.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 3%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
      "x_ref": 0.001865
     }
    ],
@@ -182,7 +182,7 @@
      "x_aard_base": 0.2219,
      "x_aard_fit": 0.0235,
      "validation_improvement_pct": 75.0,
-     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
+     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
      "engine": "custom PR+bm+vdw",
      "cases_ok": 2,
      "cases_n": 2,
@@ -197,7 +197,7 @@
      "x_aard_base": 0.4303,
      "x_aard_fit": 0.0245,
      "validation_improvement_pct": 85.9,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
      "engine": "custom SRK+srpolar+srpolar",
      "bip_params": {
       "kij": 0.0023395118564367304,
@@ -217,7 +217,7 @@
      "x_aard_base": 0.4303,
      "x_aard_fit": 0.0247,
      "validation_improvement_pct": 86.0,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.1612976892673579,
@@ -237,7 +237,7 @@
      "x_aard_base": 0.4192,
      "x_aard_fit": 0.0247,
      "validation_improvement_pct": 85.6,
-     "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
+     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
      "engine": "custom SRK+bm+vdw",
      "cases_ok": 2,
      "cases_n": 2,
@@ -263,7 +263,7 @@
   },
   {
    "band_id": "B2",
-   "label": "저온 대역 (약 275 K)",
+   "label": "Low-temperature band (~275 K)",
    "T_K": [
     265.0,
     290.0
@@ -284,20 +284,20 @@
      "T_K": 275.0,
      "P_bar": 30.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO 오차 4%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 4%)",
      "x_ref": 0.001692
     },
     {
      "T_K": 275.0,
      "P_bar": 50.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=12, LOO 오차 2%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=12, LOO error 2%)",
      "x_ref": 0.002899
     }
    ],
    "warnings": [
-    "1/3 케이스 기준값이 실측 범위 밖 외삽(KK) — 케이스 상세 참고",
-    "이슬선(y-only) 독립 검증: Reamer&Sage 1959 이슬선 8점(9.8–202.3 bar) → Aspen 1위 SR-POLAR의 기상 NH₃ 분율 오차 4.6% (kij=0 PR이면 23.5%)"
+    "1/3 case reference values are KK extrapolations outside the measured range — see case details",
+    "Independent dew-line (y-only) check: Reamer & Sage 1959 dew lines, 8 points (9.8–202.3 bar) → vapour NH₃ fraction error of the Aspen pick SR-POLAR: 4.6% (PR with kij = 0: 23.5%)"
    ],
    "ranking": [
     {
@@ -309,7 +309,7 @@
      "x_aard_base": 0.3961,
      "x_aard_fit": 0.0368,
      "validation_improvement_pct": 81.9,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
      "engine": "custom SRK+srpolar+srpolar",
      "bip_params": {
       "kij": 0.002297136545181276,
@@ -329,7 +329,7 @@
      "x_aard_base": 0.2218,
      "x_aard_fit": 0.0417,
      "validation_improvement_pct": 67.7,
-     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
+     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
      "engine": "custom PR+bm+vdw",
      "cases_ok": 3,
      "cases_n": 3,
@@ -359,7 +359,7 @@
      "x_aard_base": 0.3855,
      "x_aard_fit": 0.0479,
      "validation_improvement_pct": 80.0,
-     "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
+     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
      "engine": "custom SRK+bm+vdw",
      "cases_ok": 3,
      "cases_n": 3,
@@ -404,7 +404,7 @@
      "x_aard_base": 0.3961,
      "x_aard_fit": 0.0572,
      "validation_improvement_pct": 91.3,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.43446718803229867,
@@ -510,7 +510,7 @@
    "dew_line_check": {
     "n_points": 8,
     "sources": [
-     "Reamer&Sage 1959 이슬선"
+     "Reamer & Sage 1959 dew lines"
     ],
     "P_bar": [
      9.8,
@@ -522,12 +522,12 @@
     "y_aard_pct": 4.6,
     "y_aad": 0.0084,
     "y_aard_pct_kij0_PR": 23.5,
-    "note": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
    }
   },
   {
    "band_id": "B3",
-   "label": "상온 대역 (약 305 K)",
+   "label": "Ambient band (~305 K)",
    "T_K": [
     290.0,
     322.5
@@ -553,8 +553,8 @@
     }
    ],
    "warnings": [
-    "2/2 케이스 기준값이 실측 범위 밖 외삽(KK) — 케이스 상세 참고",
-    "이슬선(y-only) 독립 검증: Glowka 1992 등조성 이슬점 · Reamer&Sage 1959 이슬선 16점(22.6–268 bar) → Aspen 1위 PR의 기상 NH₃ 분율 오차 4.0% (kij=0 PR이면 14.1%)"
+    "2/2 case reference values are KK extrapolations outside the measured range — see case details",
+    "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 16 points (22.6–268 bar) → vapour NH₃ fraction error of the Aspen pick PR: 4.0% (PR with kij = 0: 14.1%)"
    ],
    "ranking": [
     {
@@ -671,7 +671,7 @@
      "x_aard_base": 0.4863,
      "x_aard_fit": 0.0932,
      "validation_improvement_pct": 99.2,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
      "engine": "custom SRK+srpolar+srpolar",
      "bip_params": {
       "kij": 0.003177734375000003,
@@ -691,7 +691,7 @@
      "x_aard_base": 0.4863,
      "x_aard_fit": 0.1093,
      "validation_improvement_pct": 98.4,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.321056919859307,
@@ -711,7 +711,7 @@
      "x_aard_base": 0.4786,
      "x_aard_fit": 0.1155,
      "validation_improvement_pct": 97.5,
-     "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
+     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
      "engine": "custom SRK+bm+vdw",
      "cases_ok": 2,
      "cases_n": 2,
@@ -726,7 +726,7 @@
      "x_aard_base": 0.3901,
      "x_aard_fit": 0.1352,
      "validation_improvement_pct": 92.9,
-     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
+     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
      "engine": "custom PR+bm+vdw",
      "cases_ok": 2,
      "cases_n": 2,
@@ -767,8 +767,8 @@
    "dew_line_check": {
     "n_points": 16,
     "sources": [
-     "Glowka 1992 등조성 이슬점",
-     "Reamer&Sage 1959 이슬선"
+     "Glowka 1992 isopleth dew points",
+     "Reamer & Sage 1959 dew lines"
     ],
     "P_bar": [
      22.6,
@@ -780,12 +780,12 @@
     "y_aard_pct": 4.0,
     "y_aad": 0.0105,
     "y_aard_pct_kij0_PR": 14.1,
-    "note": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
    }
   },
   {
    "band_id": "B4",
-   "label": "중온 대역 (약 340 K)",
+   "label": "Mid-temperature band (~340 K)",
    "T_K": [
     322.5,
     355.0
@@ -799,26 +799,26 @@
      "T_K": 340.0,
      "P_bar": 100.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 1%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 1%)",
      "x_ref": 0.016237
     },
     {
      "T_K": 340.0,
      "P_bar": 200.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=11, LOO 오차 1%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=11, LOO error 1%)",
      "x_ref": 0.037982
     },
     {
      "T_K": 340.0,
      "P_bar": 300.0,
      "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO 오차 1%)",
+     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 1%)",
      "x_ref": 0.058023
     }
    ],
    "warnings": [
-    "이슬선(y-only) 독립 검증: Glowka 1992 등조성 이슬점 · Reamer&Sage 1959 이슬선 18점(38.1–308.4 bar) → Aspen 1위 RK-ASPEN의 기상 NH₃ 분율 오차 2.4% (kij=0 PR이면 10.9%)"
+    "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 18 points (38.1–308.4 bar) → vapour NH₃ fraction error of the Aspen pick RK-ASPEN: 2.4% (PR with kij = 0: 10.9%)"
    ],
    "ranking": [
     {
@@ -875,7 +875,7 @@
      "x_aard_base": 0.4763,
      "x_aard_fit": 0.0358,
      "validation_improvement_pct": 95.2,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
      "engine": "custom SRK+mathias+aspen",
      "bip_params": {
       "kaij": -0.4618438711495205,
@@ -895,7 +895,7 @@
      "x_aard_base": 0.4696,
      "x_aard_fit": 0.0359,
      "validation_improvement_pct": 95.1,
-     "note": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)",
+     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
      "engine": "custom SRK+bm+vdw",
      "cases_ok": 3,
      "cases_n": 3,
@@ -970,7 +970,7 @@
      "x_aard_base": 0.4763,
      "x_aard_fit": 0.0425,
      "validation_improvement_pct": 97.4,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
      "engine": "custom SRK+srpolar+srpolar",
      "bip_params": {
       "kij": -0.8354524090972408,
@@ -1005,7 +1005,7 @@
      "x_aard_base": 0.4021,
      "x_aard_fit": 0.0447,
      "validation_improvement_pct": 98.3,
-     "note": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현",
+     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
      "engine": "custom PR+bm+vdw",
      "cases_ok": 3,
      "cases_n": 3,
@@ -1031,8 +1031,8 @@
    "dew_line_check": {
     "n_points": 18,
     "sources": [
-     "Glowka 1992 등조성 이슬점",
-     "Reamer&Sage 1959 이슬선"
+     "Glowka 1992 isopleth dew points",
+     "Reamer & Sage 1959 dew lines"
     ],
     "P_bar": [
      38.1,
@@ -1044,7 +1044,7 @@
     "y_aard_pct": 2.4,
     "y_aad": 0.0105,
     "y_aard_pct_kij0_PR": 10.9,
-    "note": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
    }
   }
  ],
@@ -1063,25 +1063,25 @@
     {
      "T_K": 252.5,
      "kij": 0.0903,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.0783,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.0507,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.015,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PC-SAFT": {
    "kaij": 2.2565790997340445,
@@ -1097,25 +1097,25 @@
     {
      "T_K": 252.5,
      "kij": 0.3051,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.2974,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.2669,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.2193,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SAFT-VRQ Mie": {
    "kaij": -1.44773775845102,
@@ -1131,25 +1131,25 @@
     {
      "T_K": 252.5,
      "kij": 0.1018,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.0882,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.0094,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.0207,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PR": {
    "kaij": 1.4133209402099576,
@@ -1165,25 +1165,25 @@
     {
      "T_K": 252.5,
      "kij": 0.197,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.2111,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.2144,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.2058,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "tcPR": {
    "kaij": 1.8530804893449517,
@@ -1199,25 +1199,25 @@
     {
      "T_K": 252.5,
      "kij": 0.1738,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.1779,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.1668,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.1379,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PT": {
    "kaij": 1.4552853787797904,
@@ -1233,25 +1233,25 @@
     {
      "T_K": 252.5,
      "kij": 0.1779,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.1947,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.2004,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.1934,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SRK": {
    "kaij": 1.512464222949614,
@@ -1267,25 +1267,25 @@
     {
      "T_K": 252.5,
      "kij": 0.1859,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.2077,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.2191,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.2167,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SW": {
    "kaij": 1.8907323793183197,
@@ -1301,25 +1301,25 @@
     {
      "T_K": 252.5,
      "kij": 0.1343,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": 0.1469,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": 0.1433,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": 0.1222,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PR-BM": {
    "kaij": 5.895739800744225,
@@ -1335,25 +1335,25 @@
     {
      "T_K": 252.5,
      "kij": -0.0567,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": -0.0642,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": -0.1487,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": -0.2765,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "RKS-BM": {
    "kaij": 7.115367315674115,
@@ -1369,25 +1369,25 @@
     {
      "T_K": 252.5,
      "kij": -0.1547,
-     "band": "극저온 대역 (약 255 K)"
+     "band": "Cryogenic band (~255 K)"
     },
     {
      "T_K": 277.5,
      "kij": -0.1659,
-     "band": "저온 대역 (약 275 K)"
+     "band": "Low-temperature band (~275 K)"
     },
     {
      "T_K": 306.2,
      "kij": -0.2885,
-     "band": "상온 대역 (약 305 K)"
+     "band": "Ambient band (~305 K)"
     },
     {
      "T_K": 338.8,
      "kij": -0.4479,
-     "band": "중온 대역 (약 340 K)"
+     "band": "Mid-temperature band (~340 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   }
  }
 }

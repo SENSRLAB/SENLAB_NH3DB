@@ -113,3 +113,9 @@
 - TDE에 있었지만 x 회귀에 쓰지 않은 기상 조성 세트(N2: Reamer & Sage 1959 이슬선 5개 등온선 + Glowka 1992 등조성 이슬점; CH4: Glowka 1992)로 각 대역의 Aspen 1위 모델이 내는 기상 NH3 분율을 검증. 밴드에 `dew_line_check` {n_points, sources, P_bar, model, y_aard_pct, y_aad, y_aard_pct_kij0_PR} 추가, warnings에 한 줄 요약.
 - 결과: N2 275 K SR-POLAR 4.6%(kij=0이면 23.5%), 305 K PR 4.0%(14.1%), 340 K RK-ASPEN 2.4%(10.9%) — 회귀 kij가 x뿐 아니라 y도 맞춘다는 독립 확인. CH4는 2–6%이나 kij=0과 차이가 없어 y로는 kij를 판별하지 못함(저압에서 y는 NH3 증기압이 지배). 밴드 온도 범위 밖(N2 378·394 K)은 외삽이라 제외(7–21%).
 - 재현: `eos2/ycheck.py <out_json_dir>` → ycheck_<sys>.csv, ycheck_summary.json.
+
+## v6 (2026-11-10) — English interface
+
+- All UI text (app.py, lhv_calculator.py, eos_recommender.py) and every string in the four recommendation JSONs are now in English; the Korean originals are kept in the maintainer's workspace (`eos2/json_ko_backup/`). Regeneration: `eos2/translate_json.py <dir>` applies the template-based translation to freshly built JSONs and reports any Korean text left.
+- New landing page (Home): about, online-service cards, database contents, updates. Navigation pills: Home · Vapor Pressure · Density · Heat Capacity · Dew & Bubble Point · NH₃–H₂ Blend LHV · EOS Recommendation.
+- Marker strings used by the renderer: "search bound" in a ranking note excludes that row from the Aspen pick (was "탐색 경계").

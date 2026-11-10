@@ -7,31 +7,31 @@
  "status": "validated",
  "generated": "2026-11-04",
  "metric_label": "bubble-P AARD",
- "method": "변형 평가 v5(전조성 혼화계, 2026-11 재평가): 밴드 T 범위 안 TPX(Y) 실측점을 액상 조성에 걸쳐 균등하게 ≤24점 선별하고 EOS 기포압을 직접 계산해 bubble-P AARD로 채점. BIP는 ln(P_calc/P_exp) RMSE 최소화로 회귀(3:1 train/validation). thermopack 9종 + PR(HV-NRTL) 2-파라미터 + 자체 구현 RK-ASPEN(kaij·kbij)·SR-POLAR(kij·lij) + v5.3 활성계수 모델 NRTL-RK(γ-φ: NRTL τ=b/T 2-파라미터 + SRK 기상, 순성분 증기압 CPA/IAPWS). PR-BM·RKS-BM은 두 성분 모두 아임계라 PR·SRK와 동일하여 생략. pure-NH3 증기압보다 높은 기포압 행(물리 불가)은 제외",
+ "method": "Variant evaluation v5 (fully miscible system, re-evaluated Nov 2026): ≤24 TPX(Y) measurements inside the band temperature range are selected evenly across the liquid composition, the EOS bubble pressure is computed directly and scored as bubble-P AARD. BIPs are regressed by minimising the RMSE of ln(P_calc/P_exp) (3:1 train/validation). thermopack 9 models + PR (HV-NRTL) two-parameter + in-house RK-ASPEN (kaij·kbij)·SR-POLAR (kij·lij) + v5.3 activity-coefficient model NRTL-RK (γ-φ: NRTL τ = b/T two-parameter + SRK vapour, pure vapour pressures from CPA/IAPWS). PR-BM·RKS-BM are omitted because both components are subcritical (identical to PR·SRK). Rows with bubble pressures above the pure-NH3 vapour pressure (unphysical) were removed",
  "source": {
-  "bkp_file": "NH3_H2O.bkp (Aspen Plus V14, 2026-11-04 추출)",
+  "bkp_file": "NH3_H2O.bkp (Aspen Plus V14, extracted 2026-11-04)",
   "n_datasets": 86,
   "n_points": 1084,
-  "provenance": "Aspen Plus V14 TDE(NIST) 문헌 이성분 VLE — ≤400 K 등온·등압 데이터셋 86개, 1084점(x 0~1); 밴드별 9–15개 문헌 교차 사용"
+  "provenance": "Aspen Plus V14 TDE (NIST) literature binary VLE — 86 isothermal/isobaric data sets at ≤400 K, 1084 points (x 0–1); 9–15 sources cross-used per band"
  },
  "excluded_eos": [
   {
    "eos": "GERG-2008",
-   "reason": "NH3는 GERG-2008 구성 성분이 아님"
+   "reason": "NH3 is not a GERG-2008 component"
   },
   {
    "eos": "VdW",
-   "reason": "계산 실패 (numerical abort)"
+   "reason": "calculation failed (numerical abort)"
   },
   {
    "eos": "LK / LK-Plöcker / PeTS / SPUNG / NIST-MEOS / tcRK",
-   "reason": "인터페이스 없음 또는 회귀 파라미터 미노출"
+   "reason": "no interface, or no regressable parameter exposed"
   }
  ],
  "condition_bands": [
   {
    "band_id": "B1",
-   "label": "극저온 대역 (약 243 K)",
+   "label": "Cryogenic band (~243 K)",
    "T_K": [
     228.0,
     258.1
@@ -45,26 +45,26 @@
      "T_K": 253.02,
      "P_bar": 0.02,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.16)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.16)"
     },
     {
      "T_K": 243.02,
      "P_bar": 0.507,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.61)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.61)"
     },
     {
      "T_K": 243.22,
      "P_bar": 1.01,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.87)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.87)"
     }
    ],
    "warnings": [
-    "전조성 혼화계 — 평가 기준은 실측 기포압 직접 비교 (bubble-P AARD, 8점·3개 문헌, x_NH3 0.157–0.867, 조성 균등 선별)",
-    "1위 NRTL-RK를 이 대역 전체 8점으로 재검산: 전체 4.2% · 물 부화(x_NH3<0.1) None% · 0.1–0.5 5.4% · NH3 부화(≥0.5) 3.5%",
-    "정밀 설계 계산은 활성계수 모델(e-NRTL/Data 4) 권장 — EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책",
-    "기본 kij=0의 cubic EOS는 기포압을 수 배~수십 배 과대예측 — 반드시 회귀 kij와 함께 사용"
+    "Fully miscible system — scored by direct comparison with measured bubble pressures (bubble-P AARD, 8 points from 3 sources, x_NH3 0.157–0.867, composition-balanced selection)",
+    "Top model NRTL-RK re-checked on all 8 points of this band: overall 4.2% · water-rich (x_NH3 < 0.1) n/a · 0.1–0.5 5.4% · NH3-rich (≥ 0.5) 3.5%",
+    "For design-grade calculations use an activity-coefficient model (e-NRTL / Data 4) — the EOS ranking is the fallback for cases where an EOS must be used",
+    "Cubic EOS with the default kij = 0 over-predict the bubble pressure by a factor of several to tens — always use the regressed kij"
    ],
    "ranking": [
     {
@@ -76,7 +76,7 @@
      "x_aard_base": 4.527,
      "x_aard_fit": 0.0422,
      "validation_improvement_pct": null,
-     "note": "활성계수 모델(NRTL, τij = bij/T) + SRK 기상 = Aspen NRTL-RK 물성법; 본 DB 실측으로 회귀한 2-파라미터. Aspen 내장 ENRTL-RK(e-NRTL) 파라미터는 별도이며 정제 데이터 기준 1–3% — 이 행은 '같은 실측으로 회귀하면 활성계수 모델도 EOS와 같은 수준'임을 보여주는 비교 행",
+     "note": "Activity-coefficient model (NRTL, τij = bij/T) + SRK vapour = Aspen NRTL-RK method; two parameters regressed on this database's measurements. Aspen's built-in ENRTL-RK (e-NRTL) parameters are separate and reach 1–3% on curated data — this row shows that, regressed on the same measurements, an activity-coefficient model lands at the same level as the EOS",
      "engine": "custom gamma-phi (NRTL + SRK)",
      "bip_display": "b12=-1012 K, b21=+2606 K, α=0.2",
      "bip_params": {
@@ -95,7 +95,7 @@
      "x_aard_base": 28.7958,
      "x_aard_fit": 0.0625,
      "validation_improvement_pct": null,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
      "engine": "custom SRK+aspen",
      "bip_params": {
       "kaij": -0.2921319670688678,
@@ -139,7 +139,7 @@
      "x_aard_base": 28.7958,
      "x_aard_fit": 0.0652,
      "validation_improvement_pct": null,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
      "engine": "custom SRK+srpolar",
      "bip_params": {
       "kij": -0.31460354310402117,
@@ -222,7 +222,7 @@
      "x_aard_base": 5.7017,
      "x_aard_fit": 0.0816,
      "validation_improvement_pct": null,
-     "note": "Huron-Vidal(NRTL형) 혼합규칙 2-파라미터 회귀(thermopack PR, mixing='HV'). Aspen 직접 대응 물성법 없음 — PRWS·PRMHV2(EOS-gE) 계열의 상한 참고용",
+     "note": "Two-parameter regression of the Huron–Vidal (NRTL-type) mixing rule (thermopack PR, mixing='HV'). No direct Aspen counterpart — upper-bound reference for the PRWS/PRMHV2 (EOS-gE) family",
      "engine": "thermopack",
      "bip_display": "α=0.15, a12=-1135, a21=+3417",
      "bip_params": {
@@ -297,7 +297,7 @@
   },
   {
    "band_id": "B2",
-   "label": "저온 대역 (약 273 K)",
+   "label": "Low-temperature band (~273 K)",
    "T_K": [
     258.1,
     289.9
@@ -311,26 +311,26 @@
      "T_K": 282.99,
      "P_bar": 0.02,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.02)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.02)"
     },
     {
      "T_K": 283.19,
      "P_bar": 1.01,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.42)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.42)"
     },
     {
      "T_K": 273.2,
      "P_bar": 4.05,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.95)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.95)"
     }
    ],
    "warnings": [
-    "전조성 혼화계 — 평가 기준은 실측 기포압 직접 비교 (bubble-P AARD, 17점·7개 문헌, x_NH3 0.018–0.950, 조성 균등 선별)",
-    "1위 NRTL-RK를 이 대역 전체 17점으로 재검산: 전체 5.9% · 물 부화(x_NH3<0.1) 7.3% · 0.1–0.5 7.9% · NH3 부화(≥0.5) 2.6%",
-    "정밀 설계 계산은 활성계수 모델(e-NRTL/Data 4) 권장 — EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책",
-    "기본 kij=0의 cubic EOS는 기포압을 수 배~수십 배 과대예측 — 반드시 회귀 kij와 함께 사용"
+    "Fully miscible system — scored by direct comparison with measured bubble pressures (bubble-P AARD, 17 points from 7 sources, x_NH3 0.018–0.950, composition-balanced selection)",
+    "Top model NRTL-RK re-checked on all 17 points of this band: overall 5.9% · water-rich (x_NH3 < 0.1) 7.3% · 0.1–0.5 7.9% · NH3-rich (≥ 0.5) 2.6%",
+    "For design-grade calculations use an activity-coefficient model (e-NRTL / Data 4) — the EOS ranking is the fallback for cases where an EOS must be used",
+    "Cubic EOS with the default kij = 0 over-predict the bubble pressure by a factor of several to tens — always use the regressed kij"
    ],
    "ranking": [
     {
@@ -342,7 +342,7 @@
      "x_aard_base": 2.967,
      "x_aard_fit": 0.0595,
      "validation_improvement_pct": 96.5,
-     "note": "활성계수 모델(NRTL, τij = bij/T) + SRK 기상 = Aspen NRTL-RK 물성법; 본 DB 실측으로 회귀한 2-파라미터. Aspen 내장 ENRTL-RK(e-NRTL) 파라미터는 별도이며 정제 데이터 기준 1–3% — 이 행은 '같은 실측으로 회귀하면 활성계수 모델도 EOS와 같은 수준'임을 보여주는 비교 행; y_NH3 절대오차 평균 0.003",
+     "note": "Activity-coefficient model (NRTL, τij = bij/T) + SRK vapour = Aspen NRTL-RK method; two parameters regressed on this database's measurements. Aspen's built-in ENRTL-RK (e-NRTL) parameters are separate and reach 1–3% on curated data — this row shows that, regressed on the same measurements, an activity-coefficient model lands at the same level as the EOS; mean absolute error in y_NH3 0.003",
      "engine": "custom gamma-phi (NRTL + SRK)",
      "bip_display": "b12=-1124 K, b21=+1901 K, α=0.2",
      "bip_params": {
@@ -361,7 +361,7 @@
      "x_aard_base": 23.9921,
      "x_aard_fit": 0.0742,
      "validation_improvement_pct": 96.0,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0); y_NH3 절대오차 평균 0.008",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0); mean absolute error in y_NH3 0.008",
      "engine": "custom SRK+srpolar",
      "bip_params": {
       "kij": -0.304269721847957,
@@ -379,7 +379,7 @@
      "x_aard_base": 3.8977,
      "x_aard_fit": 0.0754,
      "validation_improvement_pct": 91.4,
-     "note": "Huron-Vidal(NRTL형) 혼합규칙 2-파라미터 회귀(thermopack PR, mixing='HV'). Aspen 직접 대응 물성법 없음 — PRWS·PRMHV2(EOS-gE) 계열의 상한 참고용; y_NH3 절대오차 평균 0.006",
+     "note": "Two-parameter regression of the Huron–Vidal (NRTL-type) mixing rule (thermopack PR, mixing='HV'). No direct Aspen counterpart — upper-bound reference for the PRWS/PRMHV2 (EOS-gE) family; mean absolute error in y_NH3 0.006",
      "engine": "thermopack",
      "bip_display": "α=0.15, a12=+3028, a21=-1602",
      "bip_params": {
@@ -398,7 +398,7 @@
      "x_aard_base": 19.9183,
      "x_aard_fit": 0.0828,
      "validation_improvement_pct": 97.0,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 4
     },
@@ -411,7 +411,7 @@
      "x_aard_base": 23.9921,
      "x_aard_fit": 0.0861,
      "validation_improvement_pct": 95.4,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); y_NH3 절대오차 평균 0.009",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0); mean absolute error in y_NH3 0.009",
      "engine": "custom SRK+aspen",
      "bip_params": {
       "kaij": -0.3787423944327599,
@@ -429,7 +429,7 @@
      "x_aard_base": 0.0978,
      "x_aard_fit": 0.1263,
      "validation_improvement_pct": 29.0,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 6
     },
@@ -442,7 +442,7 @@
      "x_aard_base": 21.8464,
      "x_aard_fit": 0.1041,
      "validation_improvement_pct": 95.8,
-     "note": "y_NH3 절대오차 평균 0.008",
+     "note": "mean absolute error in y_NH3 0.008",
      "engine": "thermopack",
      "rank": 7
     },
@@ -455,7 +455,7 @@
      "x_aard_base": 22.3703,
      "x_aard_fit": 0.1064,
      "validation_improvement_pct": 95.6,
-     "note": "y_NH3 절대오차 평균 0.008",
+     "note": "mean absolute error in y_NH3 0.008",
      "engine": "thermopack",
      "rank": 8
     },
@@ -468,7 +468,7 @@
      "x_aard_base": 5.5113,
      "x_aard_fit": 0.1161,
      "validation_improvement_pct": 93.2,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 9
     },
@@ -481,7 +481,7 @@
      "x_aard_base": 24.9046,
      "x_aard_fit": 0.1188,
      "validation_improvement_pct": 95.1,
-     "note": "y_NH3 절대오차 평균 0.010",
+     "note": "mean absolute error in y_NH3 0.010",
      "engine": "thermopack",
      "rank": 10
     },
@@ -494,7 +494,7 @@
      "x_aard_base": 24.0644,
      "x_aard_fit": 0.1206,
      "validation_improvement_pct": 94.5,
-     "note": "y_NH3 절대오차 평균 0.010",
+     "note": "mean absolute error in y_NH3 0.010",
      "engine": "thermopack",
      "rank": 11
     },
@@ -507,7 +507,7 @@
      "x_aard_base": 0.4205,
      "x_aard_fit": 0.4414,
      "validation_improvement_pct": 28.1,
-     "note": "y_NH3 절대오차 평균 0.029",
+     "note": "mean absolute error in y_NH3 0.029",
      "engine": "thermopack",
      "rank": 12
     },
@@ -520,7 +520,7 @@
      "x_aard_base": 0.4764,
      "x_aard_fit": 0.4721,
      "validation_improvement_pct": 29.8,
-     "note": "y_NH3 절대오차 평균 0.011",
+     "note": "mean absolute error in y_NH3 0.011",
      "engine": "thermopack",
      "rank": 13
     }
@@ -563,7 +563,7 @@
   },
   {
    "band_id": "B3",
-   "label": "상온 대역 (약 307 K)",
+   "label": "Ambient band (~307 K)",
    "T_K": [
     289.9,
     322.7
@@ -577,26 +577,26 @@
      "T_K": 313.14,
      "P_bar": 0.104,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.02)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.02)"
     },
     {
      "T_K": 313.13,
      "P_bar": 3.73,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.45)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.45)"
     },
     {
      "T_K": 293.15,
      "P_bar": 8.151,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.96)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.96)"
     }
    ],
    "warnings": [
-    "전조성 혼화계 — 평가 기준은 실측 기포압 직접 비교 (bubble-P AARD, 24점·15개 문헌, x_NH3 0.016–0.960, 조성 균등 선별)",
-    "1위 PR (HV-NRTL)를 이 대역 전체 255점으로 재검산: 전체 8.0% · 물 부화(x_NH3<0.1) 9.2% · 0.1–0.5 11.8% · NH3 부화(≥0.5) 3.3%",
-    "정밀 설계 계산은 활성계수 모델(e-NRTL/Data 4) 권장 — EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책",
-    "기본 kij=0의 cubic EOS는 기포압을 수 배~수십 배 과대예측 — 반드시 회귀 kij와 함께 사용"
+    "Fully miscible system — scored by direct comparison with measured bubble pressures (bubble-P AARD, 24 points from 15 sources, x_NH3 0.016–0.960, composition-balanced selection)",
+    "Top model PR (HV-NRTL) re-checked on all 255 points of this band: overall 8.0% · water-rich (x_NH3 < 0.1) 9.2% · 0.1–0.5 11.8% · NH3-rich (≥ 0.5) 3.3%",
+    "For design-grade calculations use an activity-coefficient model (e-NRTL / Data 4) — the EOS ranking is the fallback for cases where an EOS must be used",
+    "Cubic EOS with the default kij = 0 over-predict the bubble pressure by a factor of several to tens — always use the regressed kij"
    ],
    "ranking": [
     {
@@ -608,7 +608,7 @@
      "x_aard_base": 2.0338,
      "x_aard_fit": 0.0521,
      "validation_improvement_pct": 92.8,
-     "note": "Huron-Vidal(NRTL형) 혼합규칙 2-파라미터 회귀(thermopack PR, mixing='HV'). Aspen 직접 대응 물성법 없음 — PRWS·PRMHV2(EOS-gE) 계열의 상한 참고용; y_NH3 절대오차 평균 0.016",
+     "note": "Two-parameter regression of the Huron–Vidal (NRTL-type) mixing rule (thermopack PR, mixing='HV'). No direct Aspen counterpart — upper-bound reference for the PRWS/PRMHV2 (EOS-gE) family; mean absolute error in y_NH3 0.016",
      "engine": "thermopack",
      "bip_display": "α=0.15, a12=-1320, a21=+2415",
      "bip_params": {
@@ -627,7 +627,7 @@
      "x_aard_base": 1.4535,
      "x_aard_fit": 0.0544,
      "validation_improvement_pct": 91.5,
-     "note": "활성계수 모델(NRTL, τij = bij/T) + SRK 기상 = Aspen NRTL-RK 물성법; 본 DB 실측으로 회귀한 2-파라미터. Aspen 내장 ENRTL-RK(e-NRTL) 파라미터는 별도이며 정제 데이터 기준 1–3% — 이 행은 '같은 실측으로 회귀하면 활성계수 모델도 EOS와 같은 수준'임을 보여주는 비교 행; y_NH3 절대오차 평균 0.005",
+     "note": "Activity-coefficient model (NRTL, τij = bij/T) + SRK vapour = Aspen NRTL-RK method; two parameters regressed on this database's measurements. Aspen's built-in ENRTL-RK (e-NRTL) parameters are separate and reach 1–3% on curated data — this row shows that, regressed on the same measurements, an activity-coefficient model lands at the same level as the EOS; mean absolute error in y_NH3 0.005",
      "engine": "custom gamma-phi (NRTL + SRK)",
      "bip_display": "b12=-867 K, b21=+1460 K, α=0.3",
      "bip_params": {
@@ -646,7 +646,7 @@
      "x_aard_base": 7.8297,
      "x_aard_fit": 0.0643,
      "validation_improvement_pct": 96.7,
-     "note": "y_NH3 절대오차 평균 0.011",
+     "note": "mean absolute error in y_NH3 0.011",
      "engine": "thermopack",
      "rank": 3
     },
@@ -659,7 +659,7 @@
      "x_aard_base": 2.8445,
      "x_aard_fit": 0.0733,
      "validation_improvement_pct": 94.2,
-     "note": "y_NH3 절대오차 평균 0.013",
+     "note": "mean absolute error in y_NH3 0.013",
      "engine": "thermopack",
      "rank": 4
     },
@@ -672,7 +672,7 @@
      "x_aard_base": 8.4087,
      "x_aard_fit": 0.0736,
      "validation_improvement_pct": 96.5,
-     "note": "y_NH3 절대오차 평균 0.012",
+     "note": "mean absolute error in y_NH3 0.012",
      "engine": "thermopack",
      "rank": 5
     },
@@ -685,7 +685,7 @@
      "x_aard_base": 8.6201,
      "x_aard_fit": 0.0748,
      "validation_improvement_pct": 96.4,
-     "note": "y_NH3 절대오차 평균 0.012",
+     "note": "mean absolute error in y_NH3 0.012",
      "engine": "thermopack",
      "rank": 6
     },
@@ -698,7 +698,7 @@
      "x_aard_base": 9.188,
      "x_aard_fit": 0.0756,
      "validation_improvement_pct": 96.3,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0); y_NH3 절대오차 평균 0.010",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0); mean absolute error in y_NH3 0.010",
      "engine": "custom SRK+srpolar",
      "bip_params": {
       "kij": -0.2999348636338246,
@@ -716,7 +716,7 @@
      "x_aard_base": 0.1353,
      "x_aard_fit": 0.0783,
      "validation_improvement_pct": 57.3,
-     "note": "y_NH3 절대오차 평균 0.014",
+     "note": "mean absolute error in y_NH3 0.014",
      "engine": "thermopack",
      "rank": 8
     },
@@ -729,7 +729,7 @@
      "x_aard_base": 9.0542,
      "x_aard_fit": 0.0791,
      "validation_improvement_pct": 96.3,
-     "note": "y_NH3 절대오차 평균 0.012",
+     "note": "mean absolute error in y_NH3 0.012",
      "engine": "thermopack",
      "rank": 9
     },
@@ -742,7 +742,7 @@
      "x_aard_base": 9.188,
      "x_aard_fit": 0.0795,
      "validation_improvement_pct": 96.4,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); y_NH3 절대오차 평균 0.009",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0); mean absolute error in y_NH3 0.009",
      "engine": "custom SRK+aspen",
      "bip_params": {
       "kaij": -0.34174977686699,
@@ -760,7 +760,7 @@
      "x_aard_base": 9.206,
      "x_aard_fit": 0.0803,
      "validation_improvement_pct": 96.3,
-     "note": "y_NH3 절대오차 평균 0.011",
+     "note": "mean absolute error in y_NH3 0.011",
      "engine": "thermopack",
      "rank": 11
     },
@@ -773,7 +773,7 @@
      "x_aard_base": 0.3956,
      "x_aard_fit": 0.3186,
      "validation_improvement_pct": 37.8,
-     "note": "y_NH3 절대오차 평균 0.025",
+     "note": "mean absolute error in y_NH3 0.025",
      "engine": "thermopack",
      "rank": 12
     },
@@ -786,7 +786,7 @@
      "x_aard_base": 0.4368,
      "x_aard_fit": 0.3385,
      "validation_improvement_pct": 39.2,
-     "note": "y_NH3 절대오차 평균 0.029",
+     "note": "mean absolute error in y_NH3 0.029",
      "engine": "thermopack",
      "rank": 13
     }
@@ -829,7 +829,7 @@
   },
   {
    "band_id": "B4",
-   "label": "중온 대역 (약 339 K)",
+   "label": "Mid-temperature band (~339 K)",
    "T_K": [
     322.7,
     359.9
@@ -843,26 +843,26 @@
      "T_K": 353.13,
      "P_bar": 0.555,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.01)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.01)"
     },
     {
      "T_K": 323.15,
      "P_bar": 3.873,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.40)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.40)"
     },
     {
      "T_K": 353.13,
      "P_bar": 40.682,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.99)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.99)"
     }
    ],
    "warnings": [
-    "전조성 혼화계 — 평가 기준은 실측 기포압 직접 비교 (bubble-P AARD, 24점·13개 문헌, x_NH3 0.010–0.989, 조성 균등 선별)",
-    "1위 tcPR를 이 대역 전체 438점으로 재검산: 전체 5.3% · 물 부화(x_NH3<0.1) 8.4% · 0.1–0.5 7.0% · NH3 부화(≥0.5) 1.6%",
-    "정밀 설계 계산은 활성계수 모델(e-NRTL/Data 4) 권장 — EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책",
-    "기본 kij=0의 cubic EOS는 기포압을 수 배~수십 배 과대예측 — 반드시 회귀 kij와 함께 사용"
+    "Fully miscible system — scored by direct comparison with measured bubble pressures (bubble-P AARD, 24 points from 13 sources, x_NH3 0.010–0.989, composition-balanced selection)",
+    "Top model tcPR re-checked on all 438 points of this band: overall 5.3% · water-rich (x_NH3 < 0.1) 8.4% · 0.1–0.5 7.0% · NH3-rich (≥ 0.5) 1.6%",
+    "For design-grade calculations use an activity-coefficient model (e-NRTL / Data 4) — the EOS ranking is the fallback for cases where an EOS must be used",
+    "Cubic EOS with the default kij = 0 over-predict the bubble pressure by a factor of several to tens — always use the regressed kij"
    ],
    "ranking": [
     {
@@ -874,7 +874,7 @@
      "x_aard_base": 4.7842,
      "x_aard_fit": 0.0584,
      "validation_improvement_pct": 96.5,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 1
     },
@@ -887,7 +887,7 @@
      "x_aard_base": 1.3645,
      "x_aard_fit": 0.0613,
      "validation_improvement_pct": 91.0,
-     "note": "Huron-Vidal(NRTL형) 혼합규칙 2-파라미터 회귀(thermopack PR, mixing='HV'). Aspen 직접 대응 물성법 없음 — PRWS·PRMHV2(EOS-gE) 계열의 상한 참고용; y_NH3 절대오차 평균 0.004",
+     "note": "Two-parameter regression of the Huron–Vidal (NRTL-type) mixing rule (thermopack PR, mixing='HV'). No direct Aspen counterpart — upper-bound reference for the PRWS/PRMHV2 (EOS-gE) family; mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "bip_display": "α=0.15, a12=+2388, a21=-1711",
      "bip_params": {
@@ -906,7 +906,7 @@
      "x_aard_base": 0.8914,
      "x_aard_fit": 0.0675,
      "validation_improvement_pct": 91.4,
-     "note": "활성계수 모델(NRTL, τij = bij/T) + SRK 기상 = Aspen NRTL-RK 물성법; 본 DB 실측으로 회귀한 2-파라미터. Aspen 내장 ENRTL-RK(e-NRTL) 파라미터는 별도이며 정제 데이터 기준 1–3% — 이 행은 '같은 실측으로 회귀하면 활성계수 모델도 EOS와 같은 수준'임을 보여주는 비교 행; y_NH3 절대오차 평균 0.003",
+     "note": "Activity-coefficient model (NRTL, τij = bij/T) + SRK vapour = Aspen NRTL-RK method; two parameters regressed on this database's measurements. Aspen's built-in ENRTL-RK (e-NRTL) parameters are separate and reach 1–3% on curated data — this row shows that, regressed on the same measurements, an activity-coefficient model lands at the same level as the EOS; mean absolute error in y_NH3 0.003",
      "engine": "custom gamma-phi (NRTL + SRK)",
      "bip_display": "b12=-838 K, b21=+1360 K, α=0.3",
      "bip_params": {
@@ -925,7 +925,7 @@
      "x_aard_base": 5.064,
      "x_aard_fit": 0.0681,
      "validation_improvement_pct": 96.1,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 4
     },
@@ -938,7 +938,7 @@
      "x_aard_base": 5.1986,
      "x_aard_fit": 0.0703,
      "validation_improvement_pct": 96.1,
-     "note": "y_NH3 절대오차 평균 0.005",
+     "note": "mean absolute error in y_NH3 0.005",
      "engine": "thermopack",
      "rank": 5
     },
@@ -951,7 +951,7 @@
      "x_aard_base": 1.9318,
      "x_aard_fit": 0.0703,
      "validation_improvement_pct": 94.3,
-     "note": "y_NH3 절대오차 평균 0.003",
+     "note": "mean absolute error in y_NH3 0.003",
      "engine": "thermopack",
      "rank": 6
     },
@@ -964,7 +964,7 @@
      "x_aard_base": 5.3131,
      "x_aard_fit": 0.0704,
      "validation_improvement_pct": 96.0,
-     "note": "y_NH3 절대오차 평균 0.004",
+     "note": "mean absolute error in y_NH3 0.004",
      "engine": "thermopack",
      "rank": 7
     },
@@ -977,7 +977,7 @@
      "x_aard_base": 5.5193,
      "x_aard_fit": 0.0709,
      "validation_improvement_pct": 94.9,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0); y_NH3 절대오차 평균 0.004",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0); mean absolute error in y_NH3 0.004",
      "engine": "custom SRK+srpolar",
      "bip_params": {
       "kij": -0.2928175179099428,
@@ -995,7 +995,7 @@
      "x_aard_base": 5.5193,
      "x_aard_fit": 0.0744,
      "validation_improvement_pct": 94.9,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); y_NH3 절대오차 평균 0.004",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0); mean absolute error in y_NH3 0.004",
      "engine": "custom SRK+aspen",
      "bip_params": {
       "kaij": -0.37379320210054723,
@@ -1013,7 +1013,7 @@
      "x_aard_base": 5.5268,
      "x_aard_fit": 0.0805,
      "validation_improvement_pct": 96.0,
-     "note": "y_NH3 절대오차 평균 0.005",
+     "note": "mean absolute error in y_NH3 0.005",
      "engine": "thermopack",
      "rank": 10
     },
@@ -1026,7 +1026,7 @@
      "x_aard_base": 0.1684,
      "x_aard_fit": 0.1013,
      "validation_improvement_pct": 67.2,
-     "note": "y_NH3 절대오차 평균 0.005",
+     "note": "mean absolute error in y_NH3 0.005",
      "engine": "thermopack",
      "rank": 11
     },
@@ -1039,7 +1039,7 @@
      "x_aard_base": 0.4071,
      "x_aard_fit": 0.2674,
      "validation_improvement_pct": 45.2,
-     "note": "y_NH3 절대오차 평균 0.023",
+     "note": "mean absolute error in y_NH3 0.023",
      "engine": "thermopack",
      "rank": 12
     },
@@ -1052,7 +1052,7 @@
      "x_aard_base": 0.4411,
      "x_aard_fit": 0.2813,
      "validation_improvement_pct": 46.6,
-     "note": "y_NH3 절대오차 평균 0.021",
+     "note": "mean absolute error in y_NH3 0.021",
      "engine": "thermopack",
      "rank": 13
     }
@@ -1095,7 +1095,7 @@
   },
   {
    "band_id": "B5",
-   "label": "고온 대역 (약 381 K)",
+   "label": "High-temperature band (~381 K)",
    "T_K": [
     359.9,
     396.1
@@ -1109,26 +1109,26 @@
      "T_K": 371.2,
      "P_bar": 1.013,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.01)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.01)"
     },
     {
      "T_K": 394.27,
      "P_bar": 11.22,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.23)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.23)"
     },
     {
      "T_K": 394.22,
      "P_bar": 91.973,
      "scored": true,
-     "interp_status": "TPXY 밴드 평가 대표점 (x_NH3=0.99)"
+     "interp_status": "Representative TPXY point for band scoring (x_NH3 = 0.99)"
     }
    ],
    "warnings": [
-    "전조성 혼화계 — 평가 기준은 실측 기포압 직접 비교 (bubble-P AARD, 24점·9개 문헌, x_NH3 0.005–0.987, 조성 균등 선별)",
-    "1위 PR (HV-NRTL)를 이 대역 전체 298점으로 재검산: 전체 4.7% · 물 부화(x_NH3<0.1) 3.1% · 0.1–0.5 5.1% · NH3 부화(≥0.5) 5.5%",
-    "정밀 설계 계산은 활성계수 모델(e-NRTL/Data 4) 권장 — EOS 순위는 'EOS를 꼭 써야 할 때'의 차선책",
-    "기본 kij=0의 cubic EOS는 기포압을 수 배~수십 배 과대예측 — 반드시 회귀 kij와 함께 사용"
+    "Fully miscible system — scored by direct comparison with measured bubble pressures (bubble-P AARD, 24 points from 9 sources, x_NH3 0.005–0.987, composition-balanced selection)",
+    "Top model PR (HV-NRTL) re-checked on all 298 points of this band: overall 4.7% · water-rich (x_NH3 < 0.1) 3.1% · 0.1–0.5 5.1% · NH3-rich (≥ 0.5) 5.5%",
+    "For design-grade calculations use an activity-coefficient model (e-NRTL / Data 4) — the EOS ranking is the fallback for cases where an EOS must be used",
+    "Cubic EOS with the default kij = 0 over-predict the bubble pressure by a factor of several to tens — always use the regressed kij"
    ],
    "ranking": [
     {
@@ -1140,7 +1140,7 @@
      "x_aard_base": 0.9108,
      "x_aard_fit": 0.0374,
      "validation_improvement_pct": 90.1,
-     "note": "Huron-Vidal(NRTL형) 혼합규칙 2-파라미터 회귀(thermopack PR, mixing='HV'). Aspen 직접 대응 물성법 없음 — PRWS·PRMHV2(EOS-gE) 계열의 상한 참고용; y_NH3 절대오차 평균 0.024",
+     "note": "Two-parameter regression of the Huron–Vidal (NRTL-type) mixing rule (thermopack PR, mixing='HV'). No direct Aspen counterpart — upper-bound reference for the PRWS/PRMHV2 (EOS-gE) family; mean absolute error in y_NH3 0.024",
      "engine": "thermopack",
      "bip_display": "α=0.3, a12=-861, a21=+1627",
      "bip_params": {
@@ -1159,7 +1159,7 @@
      "x_aard_base": 3.243,
      "x_aard_fit": 0.041,
      "validation_improvement_pct": 95.6,
-     "note": "y_NH3 절대오차 평균 0.017",
+     "note": "mean absolute error in y_NH3 0.017",
      "engine": "thermopack",
      "rank": 2
     },
@@ -1172,7 +1172,7 @@
      "x_aard_base": 1.3844,
      "x_aard_fit": 0.0439,
      "validation_improvement_pct": 92.2,
-     "note": "y_NH3 절대오차 평균 0.015",
+     "note": "mean absolute error in y_NH3 0.015",
      "engine": "thermopack",
      "rank": 3
     },
@@ -1185,7 +1185,7 @@
      "x_aard_base": 3.3359,
      "x_aard_fit": 0.0479,
      "validation_improvement_pct": 95.1,
-     "note": "y_NH3 절대오차 평균 0.021",
+     "note": "mean absolute error in y_NH3 0.021",
      "engine": "thermopack",
      "rank": 4
     },
@@ -1198,7 +1198,7 @@
      "x_aard_base": 3.614,
      "x_aard_fit": 0.0484,
      "validation_improvement_pct": 96.0,
-     "note": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0); y_NH3 절대오차 평균 0.027",
+     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0); mean absolute error in y_NH3 0.027",
      "engine": "custom SRK+srpolar",
      "bip_params": {
       "kij": -0.27917774023371666,
@@ -1216,7 +1216,7 @@
      "x_aard_base": 3.4568,
      "x_aard_fit": 0.0487,
      "validation_improvement_pct": 95.2,
-     "note": "y_NH3 절대오차 평균 0.022",
+     "note": "mean absolute error in y_NH3 0.022",
      "engine": "thermopack",
      "rank": 6
     },
@@ -1229,7 +1229,7 @@
      "x_aard_base": 3.614,
      "x_aard_fit": 0.0493,
      "validation_improvement_pct": 95.8,
-     "note": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0); y_NH3 절대오차 평균 0.026",
+     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0); mean absolute error in y_NH3 0.026",
      "engine": "custom SRK+aspen",
      "bip_params": {
       "kaij": -0.3055260668963457,
@@ -1247,7 +1247,7 @@
      "x_aard_base": 3.4337,
      "x_aard_fit": 0.0499,
      "validation_improvement_pct": 95.0,
-     "note": "y_NH3 절대오차 평균 0.023",
+     "note": "mean absolute error in y_NH3 0.023",
      "engine": "thermopack",
      "rank": 8
     },
@@ -1260,7 +1260,7 @@
      "x_aard_base": 3.6162,
      "x_aard_fit": 0.0534,
      "validation_improvement_pct": 94.9,
-     "note": "y_NH3 절대오차 평균 0.025",
+     "note": "mean absolute error in y_NH3 0.025",
      "engine": "thermopack",
      "rank": 9
     },
@@ -1273,7 +1273,7 @@
      "x_aard_base": 0.457,
      "x_aard_fit": 0.0616,
      "validation_improvement_pct": 81.9,
-     "note": "활성계수 모델(NRTL, τij = bij/T) + SRK 기상 = Aspen NRTL-RK 물성법; 본 DB 실측으로 회귀한 2-파라미터. Aspen 내장 ENRTL-RK(e-NRTL) 파라미터는 별도이며 정제 데이터 기준 1–3% — 이 행은 '같은 실측으로 회귀하면 활성계수 모델도 EOS와 같은 수준'임을 보여주는 비교 행; y_NH3 절대오차 평균 0.019",
+     "note": "Activity-coefficient model (NRTL, τij = bij/T) + SRK vapour = Aspen NRTL-RK method; two parameters regressed on this database's measurements. Aspen's built-in ENRTL-RK (e-NRTL) parameters are separate and reach 1–3% on curated data — this row shows that, regressed on the same measurements, an activity-coefficient model lands at the same level as the EOS; mean absolute error in y_NH3 0.019",
      "engine": "custom gamma-phi (NRTL + SRK)",
      "bip_display": "b12=-575 K, b21=+489 K, α=0.3",
      "bip_params": {
@@ -1292,7 +1292,7 @@
      "x_aard_base": 0.2229,
      "x_aard_fit": 0.0617,
      "validation_improvement_pct": 63.2,
-     "note": "y_NH3 절대오차 평균 0.021",
+     "note": "mean absolute error in y_NH3 0.021",
      "engine": "thermopack",
      "rank": 11
     },
@@ -1305,7 +1305,7 @@
      "x_aard_base": 0.3938,
      "x_aard_fit": 0.2198,
      "validation_improvement_pct": 60.0,
-     "note": "y_NH3 절대오차 평균 0.051",
+     "note": "mean absolute error in y_NH3 0.051",
      "engine": "thermopack",
      "rank": 12
     },
@@ -1318,7 +1318,7 @@
      "x_aard_base": 0.4266,
      "x_aard_fit": 0.222,
      "validation_improvement_pct": 61.7,
-     "note": "y_NH3 절대오차 평균 0.057",
+     "note": "mean absolute error in y_NH3 0.057",
      "engine": "thermopack",
      "rank": 13
     }
@@ -1361,10 +1361,10 @@
   }
  ],
  "recommended_model": {
-  "name": "정밀 설계: e-NRTL (Aspen Plus ENRTL-RK, NH₃–H₂O 내장 파라미터) 또는 본 DB Data 4 — EOS는 회귀 kij와 함께 쓰면 전체 5–9% 수준",
-  "reason": "2026-11 재평가(조성 균등 표본 + 전 실측점 재검산)에서 tcPR·PR·CPA(회귀 kij) 및 PR(HV)가 기포압 5–9%를 달성 — 9월의 '~25%'는 물 부화 희박 구간에 치우친 표본의 영향이었음. 물이 주성분인 희박 NH₃ 영역(x<0.1)은 여전히 10–20%까지 벌어질 수 있어 그 영역의 정밀 계산은 활성계수 모델 권장"
+  "name": "Design-grade calculations: e-NRTL (Aspen Plus ENRTL-RK with built-in NH₃–H₂O parameters) or Data 4 of this database — an EOS used with the regressed kij reaches 5–9% overall",
+  "reason": "In the Nov 2026 re-evaluation (composition-balanced sample + re-check on all measured points) tcPR·PR·CPA (regressed kij) and PR (HV) reached 5–9% in bubble pressure — the earlier '~25%' came from a sample biased towards the dilute water-rich region. The dilute-NH₃, water-rich region (x < 0.1) can still deviate by 10–20%, so design-grade calculations there should use an activity-coefficient model"
  },
- "composition_note": "대역별 1위 모델을 각 대역의 전체 실측점(255–438점)으로 재검산한 결과: 전체 4.7–8.0%, NH₃ 부화 액상(x_NH3 ≥ 0.5) 1.6–5.5%, 0.1–0.5 구간 5–12%, 물 부화(x_NH3 < 0.1) 3–12%(상온 tcPR 17%). 혼소 연료 관점(암모니아에 수분 불순물)은 가장 정확한 영역",
+ "composition_note": "Re-check of each band's top model on all measured points of the band (255–438 points): overall 4.7–8.0%, NH₃-rich liquid (x_NH3 ≥ 0.5) 1.6–5.5%, 0.1–0.5 range 5–12%, water-rich (x_NH3 < 0.1) 3–12% (ambient tcPR 17%). The fuel-blend viewpoint (water as an impurity in ammonia) is the most accurate region",
  "aspen_kij_T": {
   "tcPR": {
    "kaij": -0.31189637910899143,
@@ -1380,30 +1380,30 @@
     {
      "T_K": 243.1,
      "kij": -0.3077,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.2921,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.2833,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.2694,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.2571,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PC-SAFT": {
    "kaij": -0.9267969481122458,
@@ -1419,30 +1419,30 @@
     {
      "T_K": 243.1,
      "kij": -0.237,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.25,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.1794,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.1498,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.1197,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PR": {
    "kaij": -0.31546949546598063,
@@ -1458,30 +1458,30 @@
     {
      "T_K": 243.1,
      "kij": -0.3085,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.2906,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.2843,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.2708,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.2569,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SW": {
    "kaij": -0.2612644754179085,
@@ -1497,30 +1497,30 @@
     {
      "T_K": 243.1,
      "kij": -0.3142,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.2942,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.2886,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.2747,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.2617,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "PT": {
    "kaij": -0.3115467081295053,
@@ -1536,30 +1536,30 @@
     {
      "T_K": 243.1,
      "kij": -0.3093,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.2916,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.2861,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.2732,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.2597,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SRK": {
    "kaij": -0.2801405038707294,
@@ -1575,30 +1575,30 @@
     {
      "T_K": 243.1,
      "kij": -0.3152,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.298,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.2967,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.2863,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.2753,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "CPA": {
    "kaij": -0.6357382460649438,
@@ -1614,30 +1614,30 @@
     {
      "T_K": 243.1,
      "kij": -0.5378,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": -0.5036,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": -0.4919,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": -0.4617,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": -0.4343,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SAFT-VRQ Mie": {
    "kaij": 0.000898267426737947,
@@ -1653,25 +1653,25 @@
     {
      "T_K": 243.1,
      "kij": 0.0486,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 306.3,
      "kij": 0.1255,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": 0.1753,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": 0.2073,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   },
   "SAFT-VR Mie": {
    "kaij": -0.1853179343145417,
@@ -1687,30 +1687,30 @@
     {
      "T_K": 243.1,
      "kij": 0.0661,
-     "band": "극저온 대역 (약 243 K)"
+     "band": "Cryogenic band (~243 K)"
     },
     {
      "T_K": 274.0,
      "kij": 0.0891,
-     "band": "저온 대역 (약 273 K)"
+     "band": "Low-temperature band (~273 K)"
     },
     {
      "T_K": 306.3,
      "kij": 0.1382,
-     "band": "상온 대역 (약 307 K)"
+     "band": "Ambient band (~307 K)"
     },
     {
      "T_K": 341.3,
      "kij": 0.1857,
-     "band": "중온 대역 (약 339 K)"
+     "band": "Mid-temperature band (~339 K)"
     },
     {
      "T_K": 378.0,
      "kij": 0.2148,
-     "band": "고온 대역 (약 381 K)"
+     "band": "High-temperature band (~381 K)"
     }
    ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
   }
  }
 }
