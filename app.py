@@ -18,12 +18,12 @@ from lhv_calculator import render_lhv_page
 from eos_recommender import render_eos_page
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ACCENT = "#c2410c"  # 그래프에서 '입력 조건'을 표시하는 색 (라이트 테마용 진한 주황)
-PRIMARY = "#1e3a8a"  # 그래프 기본 선·막대 색 (남색; 흰 배경용)
-LINE_SCALE = "Viridis"  # 등압·등온선 색 척도 (흰 배경에서 노란 구간을 피하려고 0–0.85만 사용)
+ACCENT = "#c2410c"  # marker colour for the user's input condition on charts (dark orange, light theme)
+PRIMARY = "#1e3a8a"  # default line / bar colour on charts (navy, light theme)
+LINE_SCALE = "Viridis"  # colour scale for isobars / isotherms (only 0–0.85 used to avoid the pale yellow end on white)
 
 # =====================================================================
-# 페이지 설정
+# Page configuration
 # =====================================================================
 st.set_page_config(
     page_title="Ammonia Properties DB · SENLAB",
@@ -38,7 +38,7 @@ st.set_page_config(
 )
 
 # =====================================================================
-# Data 1: 순수 NH3 증기압 (K, MPa)
+# Data 1: pure NH3 vapour pressure (K, MPa)
 # =====================================================================
 TEXT_VP = """
 | 240 | 0.1014 |
@@ -158,7 +158,7 @@ TEXT_VP = """
 """
 
 # =====================================================================
-# Data 2: NH3 밀도 vs 온도 (°C, g/L)
+# Data 2: NH3 density vs temperature (°C, g/L)
 # =====================================================================
 TEXT_DENSITY = """
 | -35 | 0.8843 |
@@ -215,7 +215,7 @@ def rho_nh3(T_K):
 
 
 # =====================================================================
-# Data 3: Shomate (NIST)
+# Data 3: Shomate equation (NIST)
 # =====================================================================
 SH_A, SH_B, SH_C, SH_D, SH_E, SH_F, SH_G, SH_H = (
     19.99563, 49.77119, -15.37599, 1.921168, 0.189174, -53.30667, 203.8591, -45.89806,
@@ -231,7 +231,7 @@ def shomate(T):
 
 
 SHOMATE_MD = r"""
-**Shomate 방정식** ($t = T/1000$)
+**Shomate equation** ($t = T/1000$)
 
 $$C_p^{o} = A + Bt + Ct^{2} + Dt^{3} + \frac{E}{t^{2}}$$
 
@@ -243,11 +243,11 @@ $$S^{o} = A\ln t + Bt + \frac{Ct^{2}}{2} + \frac{Dt^{3}}{3} - \frac{E}{2t^{2}} +
 |---|---|---|---|---|---|---|---|
 | 19.99563 | 49.77119 | −15.37599 | 1.921168 | 0.189174 | −53.30667 | 203.8591 | −45.89806 |
 
-출처: [NIST Chemistry WebBook](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1) · Data last reviewed June 1977
+Source: [NIST Chemistry WebBook](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1) · Data last reviewed June 1977
 """
 
 # =====================================================================
-# Data 4: 이성분 혼합물 설정
+# Data 4: binary mixture configuration
 # =====================================================================
 MIX_CFG = {
     "NH₃ + H₂": dict(
@@ -277,7 +277,7 @@ MIX_CFG = {
 }
 
 CONVERSION_MD = r"""
-문헌은 NH₃ **몰분율** 기준이므로 아래 식으로 **질량분율**로 환산했습니다.
+The literature reports NH₃ **mole fractions**; they were converted to **mass fractions** as follows.
 
 $$x_{NH_3} = 1 - x_{__SYM__}$$
 
@@ -300,7 +300,7 @@ def load_binary(file, mw_partner):
     return df
 
 
-@st.cache_data(show_spinner="내삽 격자 계산 중…")
+@st.cache_data(show_spinner="Building the interpolation grid…")
 def binary_grid(file, mw_partner, dew_method, bubble_method, T_range):
     df = load_binary(file, mw_partner)
     T_axis = np.linspace(T_range[0], T_range[1], 1000)
@@ -319,10 +319,10 @@ def load_h2o():
 
 
 # =====================================================================
-# 공통 UI 헬퍼
+# Shared UI helpers
 # =====================================================================
 def panels():
-    """왼쪽 입력/결과 · 오른쪽 그래프 (주식 앱과 같은 배치)"""
+    """Inputs and results on the left, chart on the right."""
     return st.columns([1, 2.3], gap="medium")
 
 
@@ -330,12 +330,12 @@ def _fmt(v, unit, nd=2):
     return "—" if v is None or np.isnan(v) else f"{v:.{nd}f} {unit}"
 
 
-def line_chart(x, y, x_title, y_title, point=None, name="문헌값", mode="lines+markers", height=420):
+def line_chart(x, y, x_title, y_title, point=None, name="Literature data", mode="lines+markers", height=420):
     fig = go.Figure()
     fig.add_scatter(x=x, y=y, mode=mode, name=name, marker=dict(size=7, color=PRIMARY), line=dict(width=2.5, color=PRIMARY))
     if point is not None and not np.isnan(point[1]):
         fig.add_scatter(
-            x=[point[0]], y=[point[1]], mode="markers", name="입력 조건",
+            x=[point[0]], y=[point[1]], mode="markers", name="Input condition",
             marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")),
         )
     fig.update_layout(
@@ -352,62 +352,62 @@ def _nearest_T(col, P, T_axis):
 
 
 # =====================================================================
-# 페이지 1: 증기압
+# Page 1: vapour pressure
 # =====================================================================
 def page_vapor_pressure():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key="vp_known")
-        if known == "온도":
-            T = st.number_input("온도 (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="vp_T")
+        st.markdown("**Input**")
+        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key="vp_known")
+        if known == "Temperature":
+            T = st.number_input("Temperature (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="vp_T")
             P = p_sat(T)
         else:
-            P = st.number_input("압력 (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="vp_P")
+            P = st.number_input("Pressure (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="vp_P")
             T = t_sat(P)
-        st.caption(f"유효 범위 {VP_T_MIN:.0f}–{VP_T_MAX:.0f} K · {VP_P_MIN:.3f}–{VP_P_MAX:.1f} MPa · 문헌값 선형 보간")
+        st.caption(f"Valid range {VP_T_MIN:.0f}–{VP_T_MAX:.0f} K · {VP_P_MIN:.3f}–{VP_P_MAX:.1f} MPa · linear interpolation of literature data")
     with left.container(border=True):
         m1, m2 = st.columns(2)
-        m1.metric("온도", f"{T:.1f} K")
-        m2.metric("포화 증기압", f"{P:.4f} MPa")
+        m1.metric("Temperature", f"{T:.1f} K")
+        m2.metric("Saturation pressure", f"{P:.4f} MPa")
     with right.container(border=True, height="stretch"):
         fig = line_chart(VP_T, VP_P, "Temperature (K)", "Pressure (MPa)", point=(T, P))
         st.plotly_chart(fig, width="stretch", key="vp_chart")
 
 
 # =====================================================================
-# 페이지 2: 밀도
+# Page 2: density
 # =====================================================================
 def page_density():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        unit = st.radio("온도 단위", ["K", "°C"], horizontal=True, key="den_unit")
+        st.markdown("**Input**")
+        unit = st.radio("Temperature unit", ["K", "°C"], horizontal=True, key="den_unit")
         if unit == "K":
-            T_K = st.number_input("온도 (K)", DEN_T_MIN, DEN_T_MAX, 298.15, step=1.0, format="%.2f", key="den_TK")
+            T_K = st.number_input("Temperature (K)", DEN_T_MIN, DEN_T_MAX, 298.15, step=1.0, format="%.2f", key="den_TK")
         else:
-            T_C = st.number_input("온도 (°C)", DEN_T_MIN - 273.15, DEN_T_MAX - 273.15, 25.0, step=1.0, format="%.1f", key="den_TC")
+            T_C = st.number_input("Temperature (°C)", DEN_T_MIN - 273.15, DEN_T_MAX - 273.15, 25.0, step=1.0, format="%.1f", key="den_TC")
             T_K = T_C + 273.15
         rho = rho_nh3(T_K)
-        st.caption(f"유효 범위 {DEN_T_MIN - 273.15:.0f}–{DEN_T_MAX - 273.15:.0f} °C · 문헌값 선형 보간")
+        st.caption(f"Valid range {DEN_T_MIN - 273.15:.0f}–{DEN_T_MAX - 273.15:.0f} °C · linear interpolation of literature data")
     with left.container(border=True):
         m1, m2 = st.columns(2)
-        m1.metric("온도", f"{T_K:.2f} K")
-        m2.metric("밀도", f"{rho:.4f} g/L")
+        m1.metric("Temperature", f"{T_K:.2f} K")
+        m2.metric("Density", f"{rho:.4f} g/L")
     with right.container(border=True, height="stretch"):
         fig = line_chart(DEN_T, DEN_RHO, "Temperature (K)", "Density (g/L)", point=(T_K, rho))
         st.plotly_chart(fig, width="stretch", key="den_chart")
 
 
 # =====================================================================
-# 페이지 3: 비열 (Shomate)
+# Page 3: heat capacity (Shomate)
 # =====================================================================
 def page_specific_heat():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        T = st.number_input("온도 (K)", 200.0, 1400.0, 300.0, step=10.0, format="%.0f", key="sh_T")
-        st.caption("Shomate 방정식 (NIST) · 200–1400 K")
+        st.markdown("**Input**")
+        T = st.number_input("Temperature (K)", 200.0, 1400.0, 300.0, step=10.0, format="%.0f", key="sh_T")
+        st.caption("Shomate equation (NIST) · 200–1400 K")
     Cp, dH, S = shomate(T)
     with left.container(border=True):
         m1, m2, m3 = st.columns(3)
@@ -429,27 +429,27 @@ def page_specific_heat():
                 fig.add_vline(x=T, line_dash="dot", line_color=ACCENT, opacity=0.6)
                 fig.add_hline(y=yv, line_dash="dot", line_color=ACCENT, opacity=0.6)
                 st.plotly_chart(fig, width="stretch", key=f"sh_chart_{key}")
-    with st.expander("Shomate 방정식 · 계수 · 출처", icon=":material/functions:"):
+    with st.expander("Shomate equation · coefficients · source", icon=":material/functions:"):
         st.markdown(SHOMATE_MD)
 
 
 # =====================================================================
-# 페이지 4: 이슬점 · 거품점
+# Page 4: dew and bubble points
 # =====================================================================
 def page_pure_nh3():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        known = st.radio("알고 있는 값", ["압력", "온도"], horizontal=True, key="pure_known")
-        if known == "압력":
-            P = st.number_input("압력 (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="pure_P")
+        st.markdown("**Input**")
+        known = st.radio("Known quantity", ["Pressure", "Temperature"], horizontal=True, key="pure_known")
+        if known == "Pressure":
+            P = st.number_input("Pressure (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="pure_P")
             T = t_sat(P)
-            result = [("이슬점 온도", f"{T:.2f} K"), ("거품점 온도", f"{T:.2f} K")]
+            result = [("Dew-point temperature", f"{T:.2f} K"), ("Bubble-point temperature", f"{T:.2f} K")]
         else:
-            T = st.number_input("온도 (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="pure_T")
+            T = st.number_input("Temperature (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="pure_T")
             P = p_sat(T)
-            result = [("이슬점 압력", f"{P:.4f} MPa"), ("거품점 압력", f"{P:.4f} MPa")]
-        st.caption("순수 물질은 거품점과 이슬점이 같습니다 (증기압 곡선).")
+            result = [("Dew-point pressure", f"{P:.4f} MPa"), ("Bubble-point pressure", f"{P:.4f} MPa")]
+        st.caption("For a pure substance the bubble and dew points coincide (vapour-pressure curve).")
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
@@ -473,30 +473,30 @@ def page_nh3_h2o():
         except ValueError:
             return np.nan
 
-    st.caption("출처: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)")
+    st.caption("Source: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)")
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key="h2o_known")
-        xn = st.number_input("NH₃ 질량분율 (0–1)", 0.0, 1.0, 0.5, step=0.01, format="%.2f", key="h2o_x")
-        if known == "온도":
-            T = st.number_input("온도 (K)", 220.0, 560.0, 300.0, step=1.0, format="%.1f", key="h2o_T")
+        st.markdown("**Input**")
+        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key="h2o_known")
+        xn = st.number_input("NH₃ mass fraction (0–1)", 0.0, 1.0, 0.5, step=0.01, format="%.2f", key="h2o_x")
+        if known == "Temperature":
+            T = st.number_input("Temperature (K)", 220.0, 560.0, 300.0, step=1.0, format="%.1f", key="h2o_T")
             P_b, P_d = pressure_at(T, xn, sp_b), pressure_at(T, xn, sp_d)
-            result = [("거품점 압력", _fmt(P_b, "MPa")), ("이슬점 압력", _fmt(P_d, "MPa"))]
+            result = [("Bubble-point pressure", _fmt(P_b, "MPa")), ("Dew-point pressure", _fmt(P_d, "MPa"))]
             marks = [(xn, T)]
         else:
-            P = st.number_input("압력 (MPa)", 0.0, 10.0, 1.0, step=0.1, format="%.2f", key="h2o_P")
+            P = st.number_input("Pressure (MPa)", 0.0, 10.0, 1.0, step=0.1, format="%.2f", key="h2o_P")
             T_b = float(sp_b(xn, P, grid=False))
             T_d = float(sp_d(xn, P, grid=False))
-            result = [("거품점 온도", _fmt(T_b, "K")), ("이슬점 온도", _fmt(T_d, "K"))]
+            result = [("Bubble-point temperature", _fmt(T_b, "K")), ("Dew-point temperature", _fmt(T_d, "K"))]
             marks = [(xn, T_b), (xn, T_d)]
-        st.caption("유효 범위 220–560 K · 0–10 MPa · 2차원 스플라인 보간")
+        st.caption("Valid range 220–560 K · 0–10 MPa · 2-D spline interpolation")
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
         m2.metric(*result[1])
         if any(v == "—" for _, v in result):
-            st.warning("이 조건에서는 문헌 데이터 범위를 벗어나 값을 찾을 수 없어요.")
+            st.warning("This condition lies outside the literature data range; no value could be found.")
     with right.container(border=True, height="stretch"):
         n = max(len(p_b), len(p_d), 2)
         colors = px.colors.sample_colorscale(LINE_SCALE, [0.85 * i / max(n - 1, 1) for i in range(n)])
@@ -510,13 +510,13 @@ def page_nh3_h2o():
                             line=dict(color=colors[i], width=2, dash="dot"))
         pts = [(a, b) for a, b in marks if not np.isnan(b)]
         if pts:
-            fig.add_scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", name="입력 조건",
+            fig.add_scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", name="Input condition",
                             marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")))
         fig.update_layout(height=460, margin=dict(l=10, r=10, t=10, b=10),
                           xaxis_title="NH₃ mass fraction", yaxis_title="Temperature (K)",
                           legend=dict(title="Pressure", orientation="v"))
         st.plotly_chart(fig, width="stretch", key="h2o_chart")
-        st.caption("실선 = 거품점 · 점선 = 이슬점")
+        st.caption("Solid = bubble point · dotted = dew point")
 
 
 def page_binary(name, cfg):
@@ -524,34 +524,34 @@ def page_binary(name, cfg):
     T_axis, x_axis, dew_grid, bub_grid = binary_grid(
         cfg["file"], cfg["mw"], cfg["dew_method"], cfg["bubble_method"], cfg["T_range"]
     )
-    st.caption(f"출처: [{cfg['ref'][0]}]({cfg['ref'][1]}) · 몰분율 → 질량분율 환산 · 1000×1000 격자 내삽")
+    st.caption(f"Source: [{cfg['ref'][0]}]({cfg['ref'][1]}) · mole → mass fraction conversion · 1000×1000 grid interpolation")
 
-    # ---- 상단: 입력 · 결과 · 문헌 P-x 그래프
+    # ---- top: inputs, results, literature P-x chart
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**조건 입력**")
-        known = st.radio("알고 있는 값", ["온도", "압력"], horizontal=True, key=f"bin_known_{cfg['file']}")
-        x_nh3 = st.number_input("NH₃ 질량분율 (0–1)", 0.0, 1.0, cfg["x_default"], step=0.01, format="%.2f", key=f"bin_x_{cfg['file']}")
+        st.markdown("**Input**")
+        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key=f"bin_known_{cfg['file']}")
+        x_nh3 = st.number_input("NH₃ mass fraction (0–1)", 0.0, 1.0, cfg["x_default"], step=0.01, format="%.2f", key=f"bin_x_{cfg['file']}")
         xi = int(np.abs(x_axis - x_nh3).argmin())
-        if known == "온도":
-            T = st.number_input("온도 (K)", float(T_axis[0]), float(T_axis[-1]), cfg["T_default"], step=1.0, format="%.1f", key=f"bin_T_{cfg['file']}")
+        if known == "Temperature":
+            T = st.number_input("Temperature (K)", float(T_axis[0]), float(T_axis[-1]), cfg["T_default"], step=1.0, format="%.1f", key=f"bin_T_{cfg['file']}")
             ti = int(np.abs(T_axis - T).argmin())
             p_dew, p_bub = float(dew_grid[ti, xi]), float(bub_grid[ti, xi])
-            result = [("이슬점 압력", _fmt(p_dew, "MPa")), ("거품점 압력", _fmt(p_bub, "MPa"))]
+            result = [("Dew-point pressure", _fmt(p_dew, "MPa")), ("Bubble-point pressure", _fmt(p_bub, "MPa"))]
             marks = [(x_nh3, T)]
         else:
-            P = st.number_input("압력 (MPa)", 0.0, 40.0, 10.0, step=0.5, format="%.2f", key=f"bin_P_{cfg['file']}")
+            P = st.number_input("Pressure (MPa)", 0.0, 40.0, 10.0, step=0.5, format="%.2f", key=f"bin_P_{cfg['file']}")
             T_dew = _nearest_T(dew_grid[:, xi], P, T_axis)
             T_bub = _nearest_T(bub_grid[:, xi], P, T_axis)
-            result = [("이슬점 온도", _fmt(T_dew, "K")), ("거품점 온도", _fmt(T_bub, "K"))]
+            result = [("Dew-point temperature", _fmt(T_dew, "K")), ("Bubble-point temperature", _fmt(T_bub, "K"))]
             marks = [(x_nh3, T_dew), (x_nh3, T_bub)]
-        st.caption(f"유효 범위 {T_axis[0]:.1f}–{T_axis[-1]:.1f} K · 격자에서 가장 가까운 값")
+        st.caption(f"Valid range {T_axis[0]:.1f}–{T_axis[-1]:.1f} K · nearest grid value")
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
         m2.metric(*result[1])
         if any(v == "—" for _, v in result):
-            st.warning("이 조건에서는 문헌 데이터 범위를 벗어나 값을 찾을 수 없어요.")
+            st.warning("This condition lies outside the literature data range; no value could be found.")
     with right.container(border=True, height="stretch"):
         temps = sorted(df["T_Kel"].unique())
         n = max(len(temps), 2)
@@ -567,12 +567,12 @@ def page_binary(name, cfg):
                           xaxis_title="NH₃ mass fraction", yaxis_title="Pressure (MPa)",
                           xaxis=dict(range=[0, 1]), legend=dict(title="Temperature"))
         st.plotly_chart(fig, width="stretch", key=f"bin_px_{cfg['file']}")
-        st.caption("● 이슬점 · ◆ 거품점 (문헌 실측값)")
+        st.caption("● dew point · ◆ bubble point (literature measurements)")
 
-    # ---- 하단: 내삽 히트맵
+    # ---- bottom: interpolated heat maps
     with st.container(border=True):
-        st.markdown(f"**{name} · 내삽 상평형도** (색 = 압력, MPa)")
-        step = 5  # 표시용 다운샘플 (계산 격자는 1000×1000 그대로)
+        st.markdown(f"**{name} · interpolated phase diagram** (colour = pressure, MPa)")
+        step = 5  # display down-sampling (the computed grid stays 1000×1000)
         fig = make_subplots(rows=1, cols=2, subplot_titles=("P_dew", "P_bubble"), horizontal_spacing=0.1)
         fig.add_trace(go.Heatmap(z=dew_grid[::step, ::step], x=x_axis[::step], y=T_axis[::step], coloraxis="coloraxis",
                                  hovertemplate="x=%{x:.3f}<br>T=%{y:.1f} K<br>P=%{z:.2f} MPa<extra>dew</extra>"), row=1, col=1)
@@ -582,7 +582,7 @@ def page_binary(name, cfg):
         for c_ in (1, 2):
             if pts:
                 fig.add_trace(go.Scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", showlegend=(c_ == 1),
-                                         name="입력 조건", marker=dict(size=13, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white"))),
+                                         name="Input condition", marker=dict(size=13, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white"))),
                               row=1, col=c_)
         fig.update_layout(height=430, margin=dict(l=10, r=10, t=40, b=10),
                           coloraxis=dict(colorscale="Plasma", cmin=0, cmax=40, colorbar=dict(title="P (MPa)")))
@@ -591,32 +591,32 @@ def page_binary(name, cfg):
         fig.update_yaxes(title_text="Temperature (K)", range=list(cfg["ylim"]))
         st.plotly_chart(fig, width="stretch", key=f"bin_heat_{cfg['file']}")
 
-    # ---- 부가 정보
+    # ---- extras
     c1, c2 = st.columns(2)
     with c1:
-        with st.expander("가공된 문헌 데이터 보기", icon=":material/table_chart:"):
+        with st.expander("Processed literature data", icon=":material/table_chart:"):
             st.dataframe(df, hide_index=True, width="stretch")
     with c2:
-        with st.expander("몰분율 → 질량분율 환산 과정", icon=":material/calculate:"):
+        with st.expander("Mole → mass fraction conversion", icon=":material/calculate:"):
             st.markdown(CONVERSION_MD.replace("__SYM__", cfg["sym"]).replace("__MW__", f"{cfg['mw']:g}"))
         key = cfg["file"]
-        if st.button("내삽 격자 CSV 생성 (약 45 MB)", key=f"gen_{key}", icon=":material/dataset:"):
+        if st.button("Build interpolation-grid CSV (about 45 MB)", key=f"gen_{key}", icon=":material/dataset:"):
             X, TT = np.meshgrid(x_axis, T_axis)
             st.session_state[f"csv_{key}"] = pd.DataFrame(
                 {"T_Kel": TT.ravel(), "x_nh3": X.ravel(), "DewP": dew_grid.ravel(), "BubbleP": bub_grid.ravel()}
             ).to_csv(index=False).encode("utf-8")
         if f"csv_{key}" in st.session_state:
-            st.download_button("⬇ CSV 다운로드", st.session_state[f"csv_{key}"],
+            st.download_button("⬇ Download CSV", st.session_state[f"csv_{key}"],
                                file_name=key.replace(".csv", "") + "_interpolated.csv", mime="text/csv", key=f"dl_{key}")
 
 
 def page_dew_bubble():
     sub = st.segmented_control(
-        "혼합물", ["순수 NH₃", "NH₃ + H₂O", "NH₃ + H₂", "NH₃ + N₂", "NH₃ + CH₄"],
-        default="순수 NH₃", key="db_sub",
+        "Mixture", ["Pure NH₃", "NH₃ + H₂O", "NH₃ + H₂", "NH₃ + N₂", "NH₃ + CH₄"],
+        default="Pure NH₃", key="db_sub",
     )
-    sub = sub or "순수 NH₃"
-    if sub == "순수 NH₃":
+    sub = sub or "Pure NH₃"
+    if sub == "Pure NH₃":
         page_pure_nh3()
     elif sub == "NH₃ + H₂O":
         page_nh3_h2o()
@@ -625,30 +625,119 @@ def page_dew_bubble():
 
 
 # =====================================================================
-# 헤더 · 사이드바 · 라우팅
+# Header · sidebar · landing page · routing
 # =====================================================================
+PAGES = {
+    "Home": None,
+    "Vapor Pressure": page_vapor_pressure,
+    "Density": page_density,
+    "Heat Capacity": page_specific_heat,
+    "Dew & Bubble Point": page_dew_bubble,
+    "NH₃–H₂ Blend LHV": render_lhv_page,
+    "EOS Recommendation": render_eos_page,
+}
+
+SERVICES = [  # (page, title, description, icon)
+    ("Vapor Pressure", "Vapor pressure of NH₃",
+     "Saturation pressure versus temperature, 240–405 K, interpolated from literature data.", ":material/thermostat:"),
+    ("Density", "Density of NH₃ gas",
+     "Gas density at atmospheric pressure, −35 to 400 °C.", ":material/scale:"),
+    ("Heat Capacity", "Heat capacity (Shomate)",
+     "Cp°, H° − H°₂₉₈ and S° of ammonia gas, 200–1400 K (NIST Shomate equation).", ":material/local_fire_department:"),
+    ("Dew & Bubble Point", "Dew and bubble points",
+     "Pure NH₃ and the binaries NH₃ + H₂O, H₂, N₂ and CH₄ from literature VLE data.", ":material/water_drop:"),
+    ("NH₃–H₂ Blend LHV", "NH₃–H₂ fuel-blend heating value",
+     "Lower heating value, density and volumetric energy of ammonia–hydrogen blends.", ":material/bolt:"),
+    ("EOS Recommendation", "EOS recommendation",
+     "Which equation of state and kij to use for each binary and condition, with Aspen Plus-ready input.", ":material/functions:"),
+]
+
+LAST_UPDATE = "November 2026"
+UPDATES = [
+    "EOS recommendation v5.4 — full re-evaluation on Aspen TDE (NIST) V14 data; Aspen-selectable variants "
+    "(PR-BM, RKS-BM, RK-ASPEN, SR-POLAR); NRTL-RK activity-coefficient row for NH₃ + H₂O; "
+    "independent dew-line (vapour-composition) check for NH₃ + N₂ and NH₃ + CH₄.",
+    "English interface, light theme and a redesigned landing page.",
+]
+
+
+def _goto(page):
+    st.session_state["prop"] = page
+
+
+def page_home():
+    st.markdown(
+        "The **SENLAB Ammonia Properties Database** is an open, literature-based collection of thermophysical "
+        "property data for ammonia and its mixtures with water, hydrogen, nitrogen and methane. It was established by "
+        "the Sustainable Energy Network Laboratory (SENLAB) at Seoul National University to support research, "
+        "education and engineering of ammonia as a fuel.\n\n"
+        "Data are collected from peer-reviewed journals and NIST sources (ThermoData Engine, Chemistry WebBook). "
+        "Where measurements are unavailable, evaluated extrapolations are provided and clearly flagged, and "
+        "equation-of-state parameters regressed on the literature data are supplied in Aspen Plus-ready form."
+    )
+    st.link_button("Learn more about SENLAB", "https://sensr.snu.ac.kr/", icon=":material/open_in_new:")
+
+    st.markdown("#### Online Services")
+    for row in (SERVICES[:3], SERVICES[3:]):
+        cols = st.columns(3, gap="medium")
+        for col, (page, title, desc, icon) in zip(cols, row):
+            with col.container(border=True, height="stretch"):
+                st.markdown(f"**{title}**")
+                st.caption(desc)
+                st.button("Open", key=f"home_{page}", icon=icon, on_click=_goto, args=(page,), width="stretch")
+
+    st.markdown("#### Database contains")
+    c1, c2, c3 = st.columns(3, gap="medium")
+    with c1.container(border=True, height="stretch"):
+        st.markdown("**Pure ammonia**")
+        st.markdown(
+            "- Vapor pressure, 240–405 K\n"
+            "- Gas density, −35 to 400 °C\n"
+            "- Cp°, H° − H°₂₉₈, S°, 200–1400 K (Shomate)"
+        )
+    with c2.container(border=True, height="stretch"):
+        st.markdown("**Binary mixtures**")
+        st.markdown(
+            "- NH₃ + H₂O dew and bubble lines, 220–560 K, ≤ 10 MPa\n"
+            "- NH₃ + H₂, N₂, CH₄ dew and bubble lines (Reamer & Sage, Lentz & Weber)\n"
+            "- NH₃–H₂ fuel-blend LHV and density, −50 to 130 °C"
+        )
+    with c3.container(border=True, height="stretch"):
+        st.markdown("**EOS recommendations**")
+        st.markdown(
+            "- 4 binaries, 17 temperature–pressure bands\n"
+            "- 13 models: Thermopack EOS + Aspen variants (PR-BM, RKS-BM, RK-ASPEN, SR-POLAR) + NRTL-RK\n"
+            "- Regressed kij in Aspen PRKBV form, dew-line checks, extrapolation flags"
+        )
+
+    st.markdown("#### Updates")
+    st.caption(f"Last major update to the site: {LAST_UPDATE}")
+    st.markdown("\n".join(f"- {u}" for u in UPDATES))
+
+
 hl, hr = st.columns([6, 1], vertical_alignment="center")
 with hl:
     st.title(":material/science: Thermophysical Properties of Ammonia Systems")
-    st.caption("SENLAB · Sustainable Energy Network Lab. — 암모니아 및 혼합물(H₂O, H₂, N₂, CH₄)의 주요 물성을 문헌 데이터 기반으로 검색하고 시각화합니다.")
+    st.caption("SENLAB Ammonia Properties Database · Sustainable Energy Network Lab., Seoul National University — "
+               "thermophysical properties of ammonia and its mixtures (H₂O, H₂, N₂, CH₄) from literature data.")
 with hr:
     st.link_button("About Lab", "https://sensr.snu.ac.kr/", icon=":material/open_in_new:", width="stretch")
 
-with st.expander("이 데이터베이스에 대해 · 사용 방법", icon=":material/info:"):
+with st.expander("About this database · how to use", icon=":material/info:"):
     a, b = st.columns(2)
     a.markdown("""
 **What's included**
-- 증기압 (Vapor Pressure) — 특정 온도에서 액체와 평형을 이루는 포화 증기의 압력
-- 밀도 (Density) — 온도에 따른 단위 부피당 질량
-- 비열 (Specific Heat) — Shomate 방정식 기반 Cp°, ΔH, S°
-- 이슬점 / 거품점 (Dew / Bubble Point) — 순수 NH₃ 및 H₂O·H₂·N₂·CH₄ 이성분계
-- NH₃·H₂ 혼소 연료 발열량 · EOS 추천
+- Vapor pressure — saturation pressure of NH₃ at a given temperature
+- Density — NH₃ gas density versus temperature
+- Heat capacity — Cp°, ΔH and S° from the Shomate equation
+- Dew / bubble points — pure NH₃ and the H₂O, H₂, N₂, CH₄ binaries
+- NH₃–H₂ fuel-blend heating value · EOS recommendation
 """)
     b.markdown("""
 **How to use**
-1. 아래에서 물성을 선택하고
-2. 왼쪽 카드에 온도·압력·조성 조건을 입력하면
-3. 값(카드)과 그래프(오른쪽)가 즉시 갱신됩니다. 그래프 위 ◆ 가 입력 조건입니다.
+1. Pick a property in the menu below (or a service card on the Home page)
+2. Enter the temperature, pressure or composition in the left card
+3. The values (cards) and the chart (right) update immediately; ◆ on the chart marks your input
 """)
 
 with st.sidebar:
@@ -657,28 +746,24 @@ with st.sidebar:
 [Sustainable Energy Network Lab. Homepage](https://sensr.snu.ac.kr/)
 
 ### Contributors
-- 고우진 (woojingo@snu.ac.kr)
-- 민채림 (asd578300@snu.ac.kr)
-- 정건우 (gw.jeong@snu.ac.kr)
-- 강태현 (kang990925@pusan.ac.kr)
+- Woojin Go (woojingo@snu.ac.kr)
+- Chaerim Min (asd578300@snu.ac.kr)
+- Geonwoo Jeong (gw.jeong@snu.ac.kr)
+- Taehyun Kang (kang990925@pusan.ac.kr)
 
 ### Supervisor
-- 서유택 (yutaek.seo@snu.ac.kr)
+- Yutaek Seo (yutaek.seo@snu.ac.kr)
 """)
 
-PAGES = {
-    "증기압": page_vapor_pressure,
-    "밀도": page_density,
-    "비열 (Shomate)": page_specific_heat,
-    "이슬점 · 거품점": page_dew_bubble,
-    "NH₃·H₂ 혼소 발열량": render_lhv_page,
-    "EOS 추천 (이성분계)": render_eos_page,
-}
-
-st.caption("물성 선택")
-prop = st.pills("물성", list(PAGES), default="증기압", label_visibility="collapsed", key="prop")
+st.caption("Select a property")
+prop = st.pills("Property", list(PAGES), default="Home", label_visibility="collapsed", key="prop")
 if prop is None:
-    st.info("위에서 물성을 하나 선택하세요.", icon=":material/touch_app:")
+    st.info("Select a property above.", icon=":material/touch_app:")
     st.stop()
 
-PAGES[prop]()
+if prop == "Home":
+    page_home()
+else:
+    if prop in ("Vapor Pressure", "Density", "Heat Capacity", "Dew & Bubble Point"):
+        st.markdown(f"#### {prop}")
+    PAGES[prop]()

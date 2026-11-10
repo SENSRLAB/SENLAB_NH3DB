@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-암모니아·수소 혼소 연료 발열량(LHV)·밀도 계산기
-- 연료 상태: 기체 / 액체
-  · 기체: NH3 증기 + H2 기체 혼합물 → 조성·온도에 따른 LHV·밀도
-  · 액체: 순수 액체 NH3 (H2는 -240°C 이하에서만 액체라 저장 시 H2 비율 무의미)
-- 출력: 표준 LHV(헤드라인) + 밀도 / 유효 LHV / 부피당 에너지 + CSV 다운로드
+Ammonia–hydrogen fuel-blend heating value (LHV) and density calculator
+- Fuel state: vapour / liquid
+  · vapour: NH3 vapour + H2 gas mixture -> LHV and density as a function of composition and temperature
+  · liquid: pure liquid NH3 (H2 is liquid only below -240 C, so an H2 fraction is meaningless in storage)
+- Output: standard LHV (headline) + density / effective LHV / volumetric energy + CSV download
 
-데이터: NIST 순물질 물성 (nh3_h2_blend_data.csv, -50~130°C)
-※ app.py에서 render_lhv_page() 를 호출하면 됩니다.
+Data: NIST pure-component properties (nh3_h2_blend_data.csv, -50 to 130 C)
+Call render_lhv_page() from app.py.
 """
 
 import os
@@ -16,17 +16,17 @@ import pandas as pd
 import numpy as np
 
 # ============================================================
-# 1) 상수
+# 1) Constants
 # ============================================================
 LHV_NH3_STD = 18.6      # MJ/kg
 LHV_H2_STD  = 120.0     # MJ/kg
-H_REF_NH3   = 1629.0    # kJ/kg  (NH3 25°C 포화증기 엔탈피)
-H_REF_H2    = 3931.5    # kJ/kg  (H2 25°C 엔탈피)
+H_REF_NH3   = 1629.0    # kJ/kg  (NH3 saturated-vapour enthalpy at 25 C)
+H_REF_H2    = 3931.5    # kJ/kg  (H2 enthalpy at 25 C)
 M_NH3       = 17.031    # g/mol
 M_H2        = 2.016     # g/mol
 
 # ============================================================
-# 2) 데이터
+# 2) Data
 # ============================================================
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,13 +40,13 @@ def _interp(df, T, col):
     return float(np.interp(T, df["T_C"], df[col]))
 
 # ============================================================
-# 3) 계산
+# 3) Calculation
 # ============================================================
 def compute_blend(df, w_H2, T, x):
     """
-    w_H2 : 수소 질량분율 (0~1)
-    T    : 온도 (°C)
-    x    : 0 = 액체상태(순수 NH3 기준), 1 = 기체 혼합물
+    w_H2 : hydrogen mass fraction (0-1)
+    T    : temperature (C)
+    x    : 0 = liquid state (pure NH3 basis), 1 = vapour mixture
     """
     w_NH3 = 1.0 - w_H2
     rho_liq = _interp(df, T, "rho_liq_NH3")
@@ -57,7 +57,7 @@ def compute_blend(df, w_H2, T, x):
     h_H2    = _interp(df, T, "h_H2_kJkg")
     P_sat   = _interp(df, T, "P_sat_bar")
 
-    # NH3 상태 (x=0 액체, x=1 증기)
+    # NH3 state (x=0 liquid, x=1 vapour)
     v_NH3   = (1 - x) / rho_liq + x / rho_vap
     rho_NH3 = 1.0 / v_NH3
     h_NH3   = (1 - x) * h_liq + x * h_vap
@@ -81,10 +81,10 @@ def compute_blend(df, w_H2, T, x):
             "rho_mix": rho_mix, "vol_energy": vol_energy, "P_sat": P_sat}
 
 # ============================================================
-# 보조 함수
+# Helpers
 # ============================================================
 def _slider_input(label, lo, hi, default, step, key):
-    """슬라이더 + 숫자입력 동기화."""
+    """Slider and number input kept in sync."""
     sk, nk = f"{key}__s", f"{key}__n"
     if sk not in st.session_state:
         st.session_state[sk] = default
@@ -105,10 +105,10 @@ def _slider_input(label, lo, hi, default, step, key):
     return st.session_state[sk]
 
 def _temp_input():
-    t_unit = st.radio("온도 단위", ["°C", "K"], horizontal=True)
+    t_unit = st.radio("Temperature unit", ["°C", "K"], horizontal=True)
     if t_unit == "°C":
-        return _slider_input("온도 (°C)", -50.0, 130.0, 25.0, 1.0, "t_c")
-    return _slider_input("온도 (K)", 223.15, 403.15, 298.15, 1.0, "t_k") - 273.15
+        return _slider_input("Temperature (°C)", -50.0, 130.0, 25.0, 1.0, "t_c")
+    return _slider_input("Temperature (K)", 223.15, 403.15, 298.15, 1.0, "t_k") - 273.15
 
 def _mole_to_mass(y_H2):
     den = y_H2 * M_H2 + (1 - y_H2) * M_NH3
@@ -119,7 +119,7 @@ def _mass_to_mole(w_H2):
     return (w_H2 / M_H2) / den if den > 0 else 0.0
 
 def _styled_axes(fig, x_title, y1_title, y1_color, y2_title, y2_color, title):
-    """Plotly 공통 스타일 (검은 축·아래 범례)."""
+    """Common Plotly styling (black axes, legend below)."""
     axis_common = dict(showline=True, linecolor="black", linewidth=1.5,
                        ticks="outside", tickcolor="black",
                        tickfont=dict(size=14, color="black"))
@@ -140,156 +140,157 @@ def _styled_axes(fig, x_title, y1_title, y1_color, y2_title, y2_color, title):
     return fig
 
 # ============================================================
-# 4) 페이지 UI
+# 4) Page UI
 # ============================================================
 def render_lhv_page():
-    # 글자 크기 18px (이 페이지)
+    # 18 px base font on this page
     st.markdown("<style>html { font-size: 18px; }</style>", unsafe_allow_html=True)
 
-    st.markdown("## NH₃·H₂ 혼소 연료 발열량 계산기")
-    st.caption("연료 상태 선택 후 수소 비율·온도 입력 시 발열량과 밀도가 계산됩니다.")
+    st.markdown("## NH₃–H₂ Fuel-Blend Heating Value Calculator")
+    st.caption("Choose the fuel state, then enter the hydrogen fraction and temperature to get the heating value and density.")
 
     df = load_data()
 
-    # ----- 연료 상태 토글 -----
-    mode = st.radio("연료 상태", ["기체(Vapor)", "액체(Liquid)"],
+    # ----- fuel state -----
+    mode = st.radio("Fuel state", ["Vapour (combustion)", "Liquid (storage)"],
                     horizontal=True, index=0,
-                    help="연소 시엔 NH₃·H₂ 기체 혼합물, 저장 시엔 액체 암모니아입니다.")
-    is_gas = mode.startswith("기체")   # 라벨이 바뀌어도 안전하게 판단
+                    help="An NH₃–H₂ gas mixture at the burner; liquid ammonia in storage.")
+    is_gas = mode.startswith("Vapour")
 
     if is_gas:
-        # 조성
-        basis = st.radio("수소 비율 입력 기준", ["질량분율", "몰분율"], horizontal=True)
-        frac_pct = _slider_input(f"수소 비율 ({basis}, %)", 0.0, 100.0, 0.0, 0.1, "h2")
+        # composition
+        basis = st.radio("Hydrogen fraction basis", ["mass fraction", "mole fraction"], horizontal=True)
+        frac_pct = _slider_input(f"Hydrogen fraction ({basis}, %)", 0.0, 100.0, 0.0, 0.1, "h2")
         frac = frac_pct / 100.0
-        if basis == "몰분율":
+        if basis == "mole fraction":
             w_H2 = _mole_to_mass(frac)
-            conv = f"→ 질량분율 H₂ {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}%"
+            conv = f"→ mass fraction H₂ {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}%"
         else:
             w_H2 = frac
             y = _mass_to_mole(w_H2)
-            conv = f"→ 몰분율 H₂ {y*100:.1f}% / NH₃ {(1-y)*100:.1f}%"
-        st.caption(f"암모니아 {basis}: **{100-frac_pct:.1f}%**   ·   {conv}")
+            conv = f"→ mole fraction H₂ {y*100:.1f}% / NH₃ {(1-y)*100:.1f}%"
+        st.caption(f"Ammonia {basis}: **{100-frac_pct:.1f}%**   ·   {conv}")
         T = _temp_input()
-        x = 1.0  # 기체 혼합물
-    else:  # 액체 (저장)
-        st.info("액체 상태에서는 **순수 암모니아**만 존재함.\n\n"
-                "수소의 임계온도는 −240 °C로 해당 온도 범위(-50 °C~130 °C)에서 액체로 존재할 수 없어, **H₂ 비율은 고려하지 않음.**")
+        x = 1.0  # vapour mixture
+    else:  # liquid (storage)
+        st.info("In the liquid state only **pure ammonia** is present.\n\n"
+                "Hydrogen's critical temperature is −240 °C, so it cannot be liquid anywhere in this range (−50 to 130 °C); "
+                "**the H₂ fraction is therefore not considered.**")
         w_H2 = 0.0
         T = _temp_input()
-        x = 0.0  # 순수 액체 NH3
+        x = 0.0  # pure liquid NH3
 
-    # ----- 계산 -----
+    # ----- calculation -----
     r = compute_blend(df, w_H2, T, x)
 
-    # ----- 출력 -----
-    st.markdown("### 결과")
-    st.caption("대표 KPI — 질량당 LHV · 부피당 에너지")
+    # ----- output -----
+    st.markdown("### Results")
+    st.caption("Key figures — LHV per mass · energy per volume")
     k1, k2 = st.columns(2)
-    k1.metric("표준 LHV (질량당)", f"{r['lhv_std']:.2f} MJ/kg",
-              help="연료 1 kg을 태울 때 나오는 에너지. 조성에 따라 정해지며 온도와는 무관함.")
-    k2.metric("부피당 에너지", f"{r['vol_energy']:.3f} MJ/L",
-              help="단위 부피당 에너지. 표준 LHV × 밀도.")
+    k1.metric("Standard LHV (per mass)", f"{r['lhv_std']:.2f} MJ/kg",
+              help="Energy released by burning 1 kg of fuel. Fixed by the composition, independent of temperature.")
+    k2.metric("Volumetric energy", f"{r['vol_energy']:.3f} MJ/L",
+              help="Energy per unit volume: standard LHV × density.")
 
-    st.caption("보조 지표")
+    st.caption("Secondary figures")
     s1, s2 = st.columns(2)
-    s1.metric("밀도", f"{r['rho_mix']:.2f} kg/m³")
-    s2.metric("유효 LHV", f"{r['lhv_eff']:.2f} MJ/kg",
-              help="표준 LHV의 온도·상태 보정값 (25 °C 기체 기준).")
+    s1.metric("Density", f"{r['rho_mix']:.2f} kg/m³")
+    s2.metric("Effective LHV", f"{r['lhv_eff']:.2f} MJ/kg",
+              help="Standard LHV corrected for the fuel temperature and state (reference: vapour at 25 °C).")
 
     if is_gas:
         st.caption(
-            f"입력 요약 — 기체 · H₂(질량) {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}% · "
-            f"{T:.1f} °C · (NH₃ 포화압력 ≈ {r['P_sat']:.2f} bar)"
+            f"Input summary — vapour · H₂ (mass) {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}% · "
+            f"{T:.1f} °C · (NH₃ saturation pressure ≈ {r['P_sat']:.2f} bar)"
         )
     else:
-        st.caption(f"입력 요약 — 액체 저장 · 순수 NH₃ · {T:.1f} °C · "
-                   f"(포화압력 ≈ {r['P_sat']:.2f} bar)")
+        st.caption(f"Input summary — liquid storage · pure NH₃ · {T:.1f} °C · "
+                   f"(saturation pressure ≈ {r['P_sat']:.2f} bar)")
 
-    # ----- 결과 CSV 다운로드 -----
+    # ----- CSV download -----
     rows = [
-        ("연료 상태", "기체(연소)" if is_gas else "액체(저장)"),
-        ("수소 질량분율 (%)", f"{w_H2*100:.2f}"),
-        ("암모니아 질량분율 (%)", f"{(1-w_H2)*100:.2f}"),
-        ("온도 (C)", f"{T:.1f}"),
-        ("표준 LHV (MJ/kg)", f"{r['lhv_std']:.3f}"),
-        ("유효 LHV (MJ/kg)", f"{r['lhv_eff']:.3f}"),
-        ("밀도 (kg/m3)", f"{r['rho_mix']:.4f}"),
-        ("부피당 에너지 (MJ/L)", f"{r['vol_energy']:.4f}"),
-        ("NH3 포화압력 (bar)", f"{r['P_sat']:.3f}"),
+        ("Fuel state", "vapour (combustion)" if is_gas else "liquid (storage)"),
+        ("H2 mass fraction (%)", f"{w_H2*100:.2f}"),
+        ("NH3 mass fraction (%)", f"{(1-w_H2)*100:.2f}"),
+        ("Temperature (C)", f"{T:.1f}"),
+        ("Standard LHV (MJ/kg)", f"{r['lhv_std']:.3f}"),
+        ("Effective LHV (MJ/kg)", f"{r['lhv_eff']:.3f}"),
+        ("Density (kg/m3)", f"{r['rho_mix']:.4f}"),
+        ("Volumetric energy (MJ/L)", f"{r['vol_energy']:.4f}"),
+        ("NH3 saturation pressure (bar)", f"{r['P_sat']:.3f}"),
     ]
-    csv_str = "항목,값\n" + "\n".join(f"{k},{v}" for k, v in rows)
-    st.download_button("⬇ 결과 CSV 다운로드", data=csv_str.encode("utf-8-sig"),
+    csv_str = "item,value\n" + "\n".join(f"{k},{v}" for k, v in rows)
+    st.download_button("⬇ Download results (CSV)", data=csv_str.encode("utf-8-sig"),
                        file_name="nh3_h2_lhv_result.csv", mime="text/csv")
 
-    # ----- 가정 · 출처 -----
-    with st.expander("계산 방법 · 가정 · 데이터 출처"):
+    # ----- assumptions and sources -----
+    with st.expander("Method · assumptions · data sources"):
         st.markdown(
             """
-**연료 상태**
-- **기체(연소)**: NH₃ 증기 + H₂가 섞인 기체 혼합물. 실제 버너로 가는 혼소 연료 상태입니다. 밀도는 각 온도의 **NH₃ 포화압력 기준** 기체 혼합 밀도(이상혼합)이며, 운전 압력이 다르면 기체 밀도는 압력에 비례해 달라집니다.
-- **액체(저장)**: 순수 액체 암모니아. 수소는 임계온도(−240 °C) 때문에 이 온도 범위에서 액체가 될 수 없고, 액체와 기체는 한 상으로 섞이지 않으므로 **저장 상태는 순수 NH₃**입니다.
+**Fuel state**
+- **Vapour (combustion)**: a gas mixture of NH₃ vapour and H₂ — the blended fuel as it reaches the burner. The density is the ideal-mixture gas density **at the NH₃ saturation pressure of each temperature**; at another operating pressure the gas density scales with pressure.
+- **Liquid (storage)**: pure liquid ammonia. Hydrogen cannot be liquid in this temperature range (critical temperature −240 °C) and liquid and gas do not mix into one phase, so **the stored state is pure NH₃**.
 
-**표준 LHV** — 성분 LHV의 질량가중 평균 (H₂ 120, NH₃ 18.6 MJ/kg). 조성에만 의존하며 온도·상태와 무관합니다.
+**Standard LHV** — mass-weighted average of the component LHVs (H₂ 120, NH₃ 18.6 MJ/kg). Depends on the composition only, not on temperature or state.
 
-**유효 LHV** — 표준값에 연료의 온도·상태(엔탈피)를 보정 (25 °C 기체 기준).
+**Effective LHV** — the standard value corrected for the fuel temperature and state (enthalpy), referenced to vapour at 25 °C.
 
-**밀도 / 부피당 에너지** — 기체는 이상혼합(부피 가산), 부피당 에너지 = 표준 LHV × 밀도.
+**Density / volumetric energy** — ideal mixing for the gas (volume additivity); volumetric energy = standard LHV × density.
 
-**데이터 출처** — NIST Thermophysical Properties of Fluid Systems (NIST Chemistry WebBook). 순물질(NH₃, H₂)을 온도별 선형보간.
+**Data source** — NIST Thermophysical Properties of Fluid Systems (NIST Chemistry WebBook); pure components (NH₃, H₂) interpolated linearly in temperature.
 
-**유효 범위 · 주의** — −50 ~ 130 °C. 임계점(약 132 °C) 근처는 정확도 저하 가능. 실제 NH₃–H₂ 혼합물의 상평형(VLE)·압력 의존성은 단순화되어 있습니다.
+**Validity and caveats** — −50 to 130 °C. Accuracy degrades near the critical point (about 132 °C). The real NH₃–H₂ phase equilibrium (VLE) and pressure dependence are simplified.
             """
         )
 
-    # ----- 그래프 -----
+    # ----- charts -----
     if is_gas:
-        with st.expander("📈 수소 비율에 따른 변화 (마우스로 확대·값 확인)"):
+        with st.expander("📈 Effect of the hydrogen fraction (zoom and hover for values)"):
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots
             fr = np.linspace(0, 1, 101)
             lhv_list = [compute_blend(df, w, T, 1.0)["lhv_std"] for w in fr]
             vol_list = [compute_blend(df, w, T, 1.0)["vol_energy"] for w in fr]
             fig = make_subplots(specs=[[{"secondary_y": True}]])
-            fig.add_trace(go.Scatter(x=fr*100, y=lhv_list, name="표준 LHV",
+            fig.add_trace(go.Scatter(x=fr*100, y=lhv_list, name="Standard LHV",
                           line=dict(color="#3B9DD6", width=2),
                           hovertemplate="H2 %{x:.0f}% → %{y:.2f} MJ/kg<extra></extra>"),
                           secondary_y=False)
-            fig.add_trace(go.Scatter(x=fr*100, y=vol_list, name="부피당 에너지",
+            fig.add_trace(go.Scatter(x=fr*100, y=vol_list, name="Volumetric energy",
                           line=dict(color="#E08A3C", width=2, dash="dash"),
                           hovertemplate="H2 %{x:.0f}% → %{y:.3f} MJ/L<extra></extra>"),
                           secondary_y=True)
             _styled_axes(fig, "H2 mass fraction (%)",
                          "Standard LHV (MJ/kg)", "#3B9DD6",
                          "Volumetric energy (MJ/L)", "#E08A3C",
-                         f"기체 · {T:.0f} °C")
-            st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
-            st.caption("H₂↑ → 질량당 LHV↑, 하지만 가벼워져 부피당 에너지↓ (트레이드오프).")
+                         f"Vapour · {T:.0f} °C")
+            st.plotly_chart(fig, width="stretch", config={"scrollZoom": True})
+            st.caption("More H₂ raises the LHV per mass but lowers the energy per volume (lighter fuel) — a trade-off.")
     else:
-        with st.expander("📈 온도에 따른 액체 NH₃ 변화 (마우스로 확대·값 확인)"):
+        with st.expander("📈 Liquid NH₃ versus temperature (zoom and hover for values)"):
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots
             ts = np.linspace(-50, 130, 91)
             rho_list = [compute_blend(df, 0.0, t, 0.0)["rho_mix"] for t in ts]
             vol_list = [compute_blend(df, 0.0, t, 0.0)["vol_energy"] for t in ts]
             fig = make_subplots(specs=[[{"secondary_y": True}]])
-            fig.add_trace(go.Scatter(x=ts, y=rho_list, name="밀도",
+            fig.add_trace(go.Scatter(x=ts, y=rho_list, name="Density",
                           line=dict(color="#3B9DD6", width=2),
                           hovertemplate="%{x:.0f}°C → %{y:.1f} kg/m³<extra></extra>"),
                           secondary_y=False)
-            fig.add_trace(go.Scatter(x=ts, y=vol_list, name="부피당 에너지",
+            fig.add_trace(go.Scatter(x=ts, y=vol_list, name="Volumetric energy",
                           line=dict(color="#E08A3C", width=2, dash="dash"),
                           hovertemplate="%{x:.0f}°C → %{y:.2f} MJ/L<extra></extra>"),
                           secondary_y=True)
             _styled_axes(fig, "Temperature (°C)",
                          "Density (kg/m³)", "#3B9DD6",
                          "Volumetric energy (MJ/L)", "#E08A3C",
-                         "액체 NH₃ (저장)")
-            st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
-            st.caption("저장 온도가 오르면 액체 NH₃가 팽창해 밀도·부피에너지가 감소.")
+                         "Liquid NH₃ (storage)")
+            st.plotly_chart(fig, width="stretch", config={"scrollZoom": True})
+            st.caption("A warmer storage temperature expands the liquid NH₃, lowering its density and volumetric energy.")
 
 
-# 단독 실행용
+# stand-alone run
 if __name__ == "__main__":
-    st.set_page_config(page_title="혼소 연료 LHV 계산기", layout="centered")
+    st.set_page_config(page_title="Fuel-blend LHV calculator", layout="centered")
     render_lhv_page()
