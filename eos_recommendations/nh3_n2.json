@@ -1,1393 +1,1507 @@
 {
- "schema_version": "1.1",
- "system": "NH3-N2",
- "display_name": "NH₃ + N₂",
- "solvent": "NH3",
- "solute": "N2",
- "status": "validated",
- "generated": "2026-11-04",
- "method": "EOS/BIP evaluation v5 (re-evaluated Nov 2026): the reference value is a local interpolation (ln x = a + b/T + c·ln(P−Psat) [+ d·ln²]) when the case is bracketed by measurements, otherwise a Krichevsky–Kasarnovsky physical extrapolation (ln(f₂/x) = A + B/T + V∞(P−Psat)/RT, validated by lowest-pressure leave-out). Each EOS has its BIP regressed on the band sample (≤30 points, 3:1 train/validation; thermopack 9 models: single kij/eps_kij; in-house Aspen variants: PR-BM·RKS-BM single kij, RK-ASPEN kaij+kbij, SR-POLAR kij+lij) and is ranked by the case x-AARD. The in-house implementations reproduce thermopack PR/SRK bubble pressures within 1e-4 in classic-α mode (polar α parameters set to 0 — no NH3 vapour-pressure gain with thermopack critical constants). v5.1: 1-parameter regressions stabilised (grid scan + validation-selected candidate; bubble-branch guard near the critical region); rows that cannot compute every case are flagged and ranked after full-coverage rows",
- "source": {
-  "bkp_file": "NH3_N2.bkp (Aspen Plus V14, extracted 2026-11-04)",
-  "n_datasets": 5,
-  "n_points": 81,
-  "provenance": "Aspen Plus V14 TDE (NIST) literature binary VLE — Cannon, Robson & English (Douglas MSSD; 20.7/48.3 bar, 200–283 K; the TDE 'X' label is in fact the solute N2 fraction and was corrected) + Reamer & Sage 1959 bubble line (laboratory nh3+n2.csv mole fractions, LAB augmentation; 277.6–394.3 K, 34.5–413.7 bar) + two dilute 293 K TXY sets (2013, 2015; no pressure column, so P = Psat·x_NH3/y_NH3 was reconstructed and rows below the 1e-5 quantisation noise floor were dropped). Reamer dew-line (y-only) sets are not used for the x regression"
- },
- "excluded_eos": [
-  {
-   "eos": "GERG-2008",
-   "reason": "NH3 is not a GERG-2008 component"
+  "schema_version": "1.1",
+  "system": "NH3-N2",
+  "display_name": "NH₃ + N₂",
+  "solvent": "NH3",
+  "solute": "N2",
+  "status": "validated",
+  "generated": "2026-11-04",
+  "method": "EOS/BIP evaluation v5 (re-evaluated Nov 2026): the reference value is a local interpolation (ln x = a + b/T + c·ln(P−Psat) [+ d·ln²]) when the case is bracketed by measurements, otherwise a Krichevsky–Kasarnovsky physical extrapolation (ln(f₂/x) = A + B/T + V∞(P−Psat)/RT, validated by lowest-pressure leave-out). Each EOS has its BIP regressed on the band sample (≤30 points, 3:1 train/validation; thermopack 9 models: single kij/eps_kij; in-house Aspen variants: PR-BM·RKS-BM single kij, RK-ASPEN kaij+kbij, SR-POLAR kij+lij) and is ranked by the case x-AARD. The in-house implementations reproduce thermopack PR/SRK bubble pressures within 1e-4 in classic-α mode (polar α parameters set to 0 — no NH3 vapour-pressure gain with thermopack critical constants). v5.1: 1-parameter regressions stabilised (grid scan + validation-selected candidate; bubble-branch guard near the critical region); rows that cannot compute every case are flagged and ranked after full-coverage rows",
+  "source": {
+    "bkp_file": "NH3_N2.bkp (Aspen Plus V14, extracted 2026-11-04)",
+    "n_datasets": 5,
+    "n_points": 81,
+    "provenance": "Aspen Plus V14 TDE (NIST) literature binary VLE — Cannon, Robson & English (Douglas MSSD; 20.7/48.3 bar, 200–283 K; the TDE 'X' label is in fact the solute N2 fraction and was corrected) + Reamer & Sage 1959 bubble line (laboratory nh3+n2.csv mole fractions, LAB augmentation; 277.6–394.3 K, 34.5–413.7 bar) + two dilute 293 K TXY sets (2013, 2015; no pressure column, so P = Psat·x_NH3/y_NH3 was reconstructed and rows below the 1e-5 quantisation noise floor were dropped). Reamer dew-line (y-only) sets are not used for the x regression",
+    "bkp_file_ko": "NH3_N2.bkp (Aspen Plus V14, 2026-11-04 추출)",
+    "provenance_ko": "Aspen Plus V14 TDE(NIST) 문헌 이성분 VLE — Cannon, Robson & English(Douglas MSS; 20.7/48.3 bar, 200–283 K; TDE X 라벨이 실제로는 용질 N2 분율이라 보정) + Reamer & Sage 1959 기포선(연구실 nh3+n2.csv 몰분율, LAB 증강; 277.6–394.3 K, 34.5–413.7 bar) + 293 K 희박 TXY 세트 2개(2013·2015; 압력 미기재라 P = Psat·x_NH3/y_NH3로 재구성, x < 1e-5 정량화 잡음 행 제외). Reamer 이슬선(y-only) 세트는 x 회귀 미사용"
   },
-  {
-   "eos": "VdW",
-   "reason": "Thermopack numerical abort"
-  }
- ],
- "condition_bands": [
-  {
-   "band_id": "B1",
-   "label": "Cryogenic band (~255 K)",
-   "T_K": [
-    240.0,
-    265.0
-   ],
-   "P_bar": [
-    25.0,
-    40.0
-   ],
-   "cases": [
+  "excluded_eos": [
     {
-     "T_K": 255.0,
-     "P_bar": 25.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
-     "x_ref": 0.00119
+      "eos": "GERG-2008",
+      "reason": "NH3 is not a GERG-2008 component",
+      "reason_ko": "NH3는 GERG-2008 구성 성분이 아님"
     },
     {
-     "T_K": 255.0,
-     "P_bar": 40.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
-     "x_ref": 0.001865
+      "eos": "VdW",
+      "reason": "Thermopack numerical abort",
+      "reason_ko": "Thermopack 수치 계산 중단"
     }
-   ],
-   "warnings": [],
-   "ranking": [
+  ],
+  "condition_bands": [
     {
-     "eos": "SAFT-VR Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.0903459997960825,
-     "use_fitted": true,
-     "x_aard_base": 0.9398,
-     "x_aard_fit": 0.0152,
-     "validation_improvement_pct": 92.9,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 1
+      "band_id": "B1",
+      "label": "Cryogenic band (~255 K)",
+      "T_K": [
+        240.0,
+        265.0
+      ],
+      "P_bar": [
+        25.0,
+        40.0
+      ],
+      "cases": [
+        {
+          "T_K": 255.0,
+          "P_bar": 25.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
+          "x_ref": 0.00119,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 3%)"
+        },
+        {
+          "T_K": 255.0,
+          "P_bar": 40.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 3%)",
+          "x_ref": 0.001865,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 3%)"
+        }
+      ],
+      "warnings": [],
+      "ranking": [
+        {
+          "eos": "SAFT-VR Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.0903459997960825,
+          "use_fitted": true,
+          "x_aard_base": 0.9398,
+          "x_aard_fit": 0.0152,
+          "validation_improvement_pct": 92.9,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 1
+        },
+        {
+          "eos": "PC-SAFT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.3051317597313088,
+          "use_fitted": true,
+          "x_aard_base": 3.5589,
+          "x_aard_fit": 0.0156,
+          "validation_improvement_pct": 98.2,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 2
+        },
+        {
+          "eos": "SAFT-VRQ Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.10184186259012773,
+          "use_fitted": true,
+          "x_aard_base": 1.0411,
+          "x_aard_fit": 0.0167,
+          "validation_improvement_pct": 93.6,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 3
+        },
+        {
+          "eos": "PR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.19698146275952544,
+          "use_fitted": true,
+          "x_aard_base": 1.8199,
+          "x_aard_fit": 0.0178,
+          "validation_improvement_pct": 96.4,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 4
+        },
+        {
+          "eos": "tcPR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.1738406796400749,
+          "use_fitted": true,
+          "x_aard_base": 1.4131,
+          "x_aard_fit": 0.0185,
+          "validation_improvement_pct": 95.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 5
+        },
+        {
+          "eos": "PT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.17792453724311771,
+          "use_fitted": true,
+          "x_aard_base": 1.3988,
+          "x_aard_fit": 0.0197,
+          "validation_improvement_pct": 95.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 6
+        },
+        {
+          "eos": "SRK",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.18590383260876223,
+          "use_fitted": true,
+          "x_aard_base": 1.4018,
+          "x_aard_fit": 0.0204,
+          "validation_improvement_pct": 95.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 7
+        },
+        {
+          "eos": "SW",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.13429404017114666,
+          "use_fitted": true,
+          "x_aard_base": 0.8457,
+          "x_aard_fit": 0.0211,
+          "validation_improvement_pct": 92.0,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 8
+        },
+        {
+          "eos": "PR-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.05666081160188639,
+          "use_fitted": true,
+          "x_aard_base": 0.2219,
+          "x_aard_fit": 0.0235,
+          "validation_improvement_pct": 75.0,
+          "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
+          "engine": "custom PR+bm+vdw",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 9,
+          "note_ko": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현"
+        },
+        {
+          "eos": "SR-POLAR",
+          "bip_name": "kij,lij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4303,
+          "x_aard_fit": 0.0245,
+          "validation_improvement_pct": 85.9,
+          "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
+          "engine": "custom SRK+srpolar+srpolar",
+          "bip_params": {
+            "kij": 0.0023395118564367304,
+            "lij": -0.16310487389564488
+          },
+          "bip_display": "kij=+0.0023, lij=-0.1631",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 10,
+          "note_ko": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)"
+        },
+        {
+          "eos": "RK-ASPEN",
+          "bip_name": "kaij,kbij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4303,
+          "x_aard_fit": 0.0247,
+          "validation_improvement_pct": 86.0,
+          "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
+          "engine": "custom SRK+mathias+aspen",
+          "bip_params": {
+            "kaij": -0.1612976892673579,
+            "kbij": 0.0
+          },
+          "bip_display": "kaij=-0.1613, kbij=+0.0000",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 11,
+          "note_ko": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)"
+        },
+        {
+          "eos": "RKS-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.15469239996460094,
+          "use_fitted": true,
+          "x_aard_base": 0.4192,
+          "x_aard_fit": 0.0247,
+          "validation_improvement_pct": 85.6,
+          "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
+          "engine": "custom SRK+bm+vdw",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 12,
+          "note_ko": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)"
+        },
+        {
+          "eos": "CPA",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": null,
+          "use_fitted": false,
+          "x_aard_base": 0.5293,
+          "x_aard_fit": null,
+          "validation_improvement_pct": null,
+          "note": "No settable BIP for this pair in this Thermopack build",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 13,
+          "note_ko": "이 Thermopack 빌드에서는 이 성분 쌍의 BIP를 설정할 수 없음"
+        }
+      ],
+      "n_samples": 8,
+      "label_ko": "극저온 대역 (약 255 K)"
     },
     {
-     "eos": "PC-SAFT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.3051317597313088,
-     "use_fitted": true,
-     "x_aard_base": 3.5589,
-     "x_aard_fit": 0.0156,
-     "validation_improvement_pct": 98.2,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 2
+      "band_id": "B2",
+      "label": "Low-temperature band (~275 K)",
+      "T_K": [
+        265.0,
+        290.0
+      ],
+      "P_bar": [
+        10.0,
+        50.0
+      ],
+      "cases": [
+        {
+          "T_K": 275.0,
+          "P_bar": 10.0,
+          "scored": true,
+          "interp_status": "EXTRAPOLATION (P* below sample range 20.7–413.7 bar; KK-referenced on 20 T-local points, R²=0.98, V∞=33 cm³/mol, leave-lowest-P-out 5%)",
+          "x_ref": 0.000393,
+          "interp_status_ko": "외삽 (P*가 표본 범위 20.7–413.7 bar 아래; T-국소 20점으로 KK 기준값 산출, R²=0.98, V∞=33 cm³/mol, 최저압 제외 검증 5%)"
+        },
+        {
+          "T_K": 275.0,
+          "P_bar": 30.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 4%)",
+          "x_ref": 0.001692,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO 오차 4%)"
+        },
+        {
+          "T_K": 275.0,
+          "P_bar": 50.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=12, LOO error 2%)",
+          "x_ref": 0.002899,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=12, LOO 오차 2%)"
+        }
+      ],
+      "warnings": [
+        "1/3 case reference values are KK extrapolations outside the measured range — see case details",
+        "Independent dew-line (y-only) check: Reamer & Sage 1959 dew lines, 8 points (9.8–202.3 bar) → vapour NH₃ fraction error of the Aspen pick SR-POLAR: 4.6% (PR with kij = 0: 23.5%)"
+      ],
+      "ranking": [
+        {
+          "eos": "SR-POLAR",
+          "bip_name": "kij,lij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.3961,
+          "x_aard_fit": 0.0368,
+          "validation_improvement_pct": 81.9,
+          "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
+          "engine": "custom SRK+srpolar+srpolar",
+          "bip_params": {
+            "kij": 0.002297136545181276,
+            "lij": -0.17889303207397428
+          },
+          "bip_display": "kij=+0.0023, lij=-0.1789",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 1,
+          "note_ko": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)"
+        },
+        {
+          "eos": "PR-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.06416993559138338,
+          "use_fitted": true,
+          "x_aard_base": 0.2218,
+          "x_aard_fit": 0.0417,
+          "validation_improvement_pct": 67.7,
+          "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
+          "engine": "custom PR+bm+vdw",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 2,
+          "note_ko": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현"
+        },
+        {
+          "eos": "SW",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.14688767100622385,
+          "use_fitted": true,
+          "x_aard_base": 0.8621,
+          "x_aard_fit": 0.0473,
+          "validation_improvement_pct": 98.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 3
+        },
+        {
+          "eos": "RKS-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.1659075867569484,
+          "use_fitted": true,
+          "x_aard_base": 0.3855,
+          "x_aard_fit": 0.0479,
+          "validation_improvement_pct": 80.0,
+          "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
+          "engine": "custom SRK+bm+vdw",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 4,
+          "note_ko": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)"
+        },
+        {
+          "eos": "SRK",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.20766818662255243,
+          "use_fitted": true,
+          "x_aard_base": 1.4386,
+          "x_aard_fit": 0.0495,
+          "validation_improvement_pct": 99.0,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 5
+        },
+        {
+          "eos": "PT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.1946807365020455,
+          "use_fitted": true,
+          "x_aard_base": 1.407,
+          "x_aard_fit": 0.0504,
+          "validation_improvement_pct": 98.8,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 6
+        },
+        {
+          "eos": "RK-ASPEN",
+          "bip_name": "kaij,kbij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.3961,
+          "x_aard_fit": 0.0572,
+          "validation_improvement_pct": 91.3,
+          "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
+          "engine": "custom SRK+mathias+aspen",
+          "bip_params": {
+            "kaij": -0.43446718803229867,
+            "kbij": -0.06267072252693565
+          },
+          "bip_display": "kaij=-0.4345, kbij=-0.0627",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 7,
+          "note_ko": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)"
+        },
+        {
+          "eos": "PR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.21111535276485266,
+          "use_fitted": true,
+          "x_aard_base": 1.7777,
+          "x_aard_fit": 0.0601,
+          "validation_improvement_pct": 99.7,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 8
+        },
+        {
+          "eos": "tcPR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.17793069339331732,
+          "use_fitted": true,
+          "x_aard_base": 1.3089,
+          "x_aard_fit": 0.0615,
+          "validation_improvement_pct": 98.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 9
+        },
+        {
+          "eos": "SAFT-VRQ Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.08815097287618184,
+          "use_fitted": true,
+          "x_aard_base": 0.8586,
+          "x_aard_fit": 0.076,
+          "validation_improvement_pct": 97.9,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 10
+        },
+        {
+          "eos": "PC-SAFT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.2973700108511584,
+          "use_fitted": true,
+          "x_aard_base": 3.0214,
+          "x_aard_fit": 0.0859,
+          "validation_improvement_pct": 99.6,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 11
+        },
+        {
+          "eos": "SAFT-VR Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.07829357224132764,
+          "use_fitted": true,
+          "x_aard_base": 0.8379,
+          "x_aard_fit": 0.0919,
+          "validation_improvement_pct": 98.0,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 12
+        },
+        {
+          "eos": "CPA",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": null,
+          "use_fitted": false,
+          "x_aard_base": 0.5555,
+          "x_aard_fit": null,
+          "validation_improvement_pct": null,
+          "note": "No settable BIP for this pair in this Thermopack build",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 13,
+          "note_ko": "이 Thermopack 빌드에서는 이 성분 쌍의 BIP를 설정할 수 없음"
+        }
+      ],
+      "n_samples": 20,
+      "dew_line_check": {
+        "n_points": 8,
+        "sources": [
+          "Reamer & Sage 1959 dew lines"
+        ],
+        "P_bar": [
+          9.8,
+          202.3
+        ],
+        "model": [
+          "SR-POLAR"
+        ],
+        "y_aard_pct": 4.6,
+        "y_aad": 0.0084,
+        "y_aard_pct_kij0_PR": 23.5,
+        "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does",
+        "sources_ko": [
+          "Reamer&Sage 1959 이슬선"
+        ],
+        "note_ko": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+      },
+      "label_ko": "저온 대역 (약 275 K)",
+      "warnings_ko": [
+        "1/3 케이스 기준값이 실측 범위 밖 외삽(KK) — 케이스 상세 참고",
+        "이슬선(y-only) 독립 검증: Reamer&Sage 1959 이슬선 8점(9.8–202.3 bar) → Aspen 1위 SR-POLAR의 기상 NH₃ 분율 오차 4.6% (kij=0 PR이면 23.5%)"
+      ]
     },
     {
-     "eos": "SAFT-VRQ Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.10184186259012773,
-     "use_fitted": true,
-     "x_aard_base": 1.0411,
-     "x_aard_fit": 0.0167,
-     "validation_improvement_pct": 93.6,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 3
+      "band_id": "B3",
+      "label": "Ambient band (~305 K)",
+      "T_K": [
+        290.0,
+        322.5
+      ],
+      "P_bar": [
+        30.0,
+        50.0
+      ],
+      "cases": [
+        {
+          "T_K": 305.0,
+          "P_bar": 30.0,
+          "scored": true,
+          "interp_status": "EXTRAPOLATION (sparse local data; KK-referenced on 14 T-local points, R²=0.99, V∞=32 cm³/mol, leave-lowest-P-out 0%)",
+          "x_ref": 0.002437,
+          "interp_status_ko": "외삽 (국소 데이터 희소; T-국소 14점으로 KK 기준값 산출, R²=0.99, V∞=32 cm³/mol, 최저압 제외 검증 0%)"
+        },
+        {
+          "T_K": 305.0,
+          "P_bar": 50.0,
+          "scored": true,
+          "interp_status": "EXTRAPOLATION (sparse local data; KK-referenced on 14 T-local points, R²=0.99, V∞=32 cm³/mol, leave-lowest-P-out 0%)",
+          "x_ref": 0.00504,
+          "interp_status_ko": "외삽 (국소 데이터 희소; T-국소 14점으로 KK 기준값 산출, R²=0.99, V∞=32 cm³/mol, 최저압 제외 검증 0%)"
+        }
+      ],
+      "warnings": [
+        "2/2 case reference values are KK extrapolations outside the measured range — see case details",
+        "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 16 points (22.6–268 bar) → vapour NH₃ fraction error of the Aspen pick PR: 4.0% (PR with kij = 0: 14.1%)"
+      ],
+      "ranking": [
+        {
+          "eos": "SAFT-VR Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.050672746774550095,
+          "use_fitted": true,
+          "x_aard_base": 0.2724,
+          "x_aard_fit": 0.0395,
+          "validation_improvement_pct": 97.5,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 1
+        },
+        {
+          "eos": "PC-SAFT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.2668990395009914,
+          "use_fitted": true,
+          "x_aard_base": 1.5102,
+          "x_aard_fit": 0.043,
+          "validation_improvement_pct": 99.5,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 2
+        },
+        {
+          "eos": "PR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.21443271636968278,
+          "use_fitted": true,
+          "x_aard_base": 1.0138,
+          "x_aard_fit": 0.0666,
+          "validation_improvement_pct": 98.9,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 3
+        },
+        {
+          "eos": "tcPR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.16684492395434955,
+          "use_fitted": true,
+          "x_aard_base": 0.6296,
+          "x_aard_fit": 0.0717,
+          "validation_improvement_pct": 99.2,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 4
+        },
+        {
+          "eos": "SRK",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.21907825743513099,
+          "use_fitted": true,
+          "x_aard_base": 0.8363,
+          "x_aard_fit": 0.0748,
+          "validation_improvement_pct": 99.1,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 5
+        },
+        {
+          "eos": "PT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.20038757762002915,
+          "use_fitted": true,
+          "x_aard_base": 0.7921,
+          "x_aard_fit": 0.0776,
+          "validation_improvement_pct": 99.2,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 6
+        },
+        {
+          "eos": "SW",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.14328058723423012,
+          "use_fitted": true,
+          "x_aard_base": 0.4068,
+          "x_aard_fit": 0.0892,
+          "validation_improvement_pct": 99.1,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 7
+        },
+        {
+          "eos": "SR-POLAR",
+          "bip_name": "kij,lij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4863,
+          "x_aard_fit": 0.0932,
+          "validation_improvement_pct": 99.2,
+          "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
+          "engine": "custom SRK+srpolar+srpolar",
+          "bip_params": {
+            "kij": 0.003177734375000003,
+            "lij": -0.3089062499999995
+          },
+          "bip_display": "kij=+0.0032, lij=-0.3089",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 8,
+          "note_ko": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)"
+        },
+        {
+          "eos": "RK-ASPEN",
+          "bip_name": "kaij,kbij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4863,
+          "x_aard_fit": 0.1093,
+          "validation_improvement_pct": 98.4,
+          "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
+          "engine": "custom SRK+mathias+aspen",
+          "bip_params": {
+            "kaij": -0.321056919859307,
+            "kbij": -0.004734703542781061
+          },
+          "bip_display": "kaij=-0.3211, kbij=-0.0047",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 9,
+          "note_ko": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)"
+        },
+        {
+          "eos": "RKS-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.28848640939719544,
+          "use_fitted": true,
+          "x_aard_base": 0.4786,
+          "x_aard_fit": 0.1155,
+          "validation_improvement_pct": 97.5,
+          "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
+          "engine": "custom SRK+bm+vdw",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 10,
+          "note_ko": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)"
+        },
+        {
+          "eos": "PR-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.14868472567919075,
+          "use_fitted": true,
+          "x_aard_base": 0.3901,
+          "x_aard_fit": 0.1352,
+          "validation_improvement_pct": 92.9,
+          "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
+          "engine": "custom PR+bm+vdw",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 11,
+          "note_ko": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현"
+        },
+        {
+          "eos": "CPA",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": null,
+          "use_fitted": false,
+          "x_aard_base": 0.1701,
+          "x_aard_fit": null,
+          "validation_improvement_pct": null,
+          "note": "No settable BIP for this pair in this Thermopack build",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 12,
+          "note_ko": "이 Thermopack 빌드에서는 이 성분 쌍의 BIP를 설정할 수 없음"
+        },
+        {
+          "eos": "SAFT-VRQ Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.009369937379351056,
+          "use_fitted": true,
+          "x_aard_base": 0.2696,
+          "x_aard_fit": 0.2085,
+          "validation_improvement_pct": 19.5,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 2,
+          "cases_n": 2,
+          "rank": 13
+        }
+      ],
+      "n_samples": 14,
+      "dew_line_check": {
+        "n_points": 16,
+        "sources": [
+          "Glowka 1992 isopleth dew points",
+          "Reamer & Sage 1959 dew lines"
+        ],
+        "P_bar": [
+          22.6,
+          268.0
+        ],
+        "model": [
+          "PR"
+        ],
+        "y_aard_pct": 4.0,
+        "y_aad": 0.0105,
+        "y_aard_pct_kij0_PR": 14.1,
+        "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does",
+        "sources_ko": [
+          "Glowka 1992 등조성 이슬점",
+          "Reamer&Sage 1959 이슬선"
+        ],
+        "note_ko": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+      },
+      "label_ko": "상온 대역 (약 305 K)",
+      "warnings_ko": [
+        "2/2 케이스 기준값이 실측 범위 밖 외삽(KK) — 케이스 상세 참고",
+        "이슬선(y-only) 독립 검증: Glowka 1992 등조성 이슬점 · Reamer&Sage 1959 이슬선 16점(22.6–268 bar) → Aspen 1위 PR의 기상 NH₃ 분율 오차 4.0% (kij=0 PR이면 14.1%)"
+      ]
     },
     {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.19698146275952544,
-     "use_fitted": true,
-     "x_aard_base": 1.8199,
-     "x_aard_fit": 0.0178,
-     "validation_improvement_pct": 96.4,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 4
-    },
-    {
-     "eos": "tcPR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.1738406796400749,
-     "use_fitted": true,
-     "x_aard_base": 1.4131,
-     "x_aard_fit": 0.0185,
-     "validation_improvement_pct": 95.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 5
-    },
-    {
-     "eos": "PT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.17792453724311771,
-     "use_fitted": true,
-     "x_aard_base": 1.3988,
-     "x_aard_fit": 0.0197,
-     "validation_improvement_pct": 95.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 6
-    },
-    {
-     "eos": "SRK",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.18590383260876223,
-     "use_fitted": true,
-     "x_aard_base": 1.4018,
-     "x_aard_fit": 0.0204,
-     "validation_improvement_pct": 95.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 7
-    },
-    {
-     "eos": "SW",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.13429404017114666,
-     "use_fitted": true,
-     "x_aard_base": 0.8457,
-     "x_aard_fit": 0.0211,
-     "validation_improvement_pct": 92.0,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 8
-    },
-    {
-     "eos": "PR-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.05666081160188639,
-     "use_fitted": true,
-     "x_aard_base": 0.2219,
-     "x_aard_fit": 0.0235,
-     "validation_improvement_pct": 75.0,
-     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
-     "engine": "custom PR+bm+vdw",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 9
-    },
-    {
-     "eos": "SR-POLAR",
-     "bip_name": "kij,lij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4303,
-     "x_aard_fit": 0.0245,
-     "validation_improvement_pct": 85.9,
-     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
-     "engine": "custom SRK+srpolar+srpolar",
-     "bip_params": {
-      "kij": 0.0023395118564367304,
-      "lij": -0.16310487389564488
-     },
-     "bip_display": "kij=+0.0023, lij=-0.1631",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 10
-    },
-    {
-     "eos": "RK-ASPEN",
-     "bip_name": "kaij,kbij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4303,
-     "x_aard_fit": 0.0247,
-     "validation_improvement_pct": 86.0,
-     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
-     "engine": "custom SRK+mathias+aspen",
-     "bip_params": {
-      "kaij": -0.1612976892673579,
-      "kbij": 0.0
-     },
-     "bip_display": "kaij=-0.1613, kbij=+0.0000",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 11
-    },
-    {
-     "eos": "RKS-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.15469239996460094,
-     "use_fitted": true,
-     "x_aard_base": 0.4192,
-     "x_aard_fit": 0.0247,
-     "validation_improvement_pct": 85.6,
-     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
-     "engine": "custom SRK+bm+vdw",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 12
-    },
-    {
-     "eos": "CPA",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": null,
-     "use_fitted": false,
-     "x_aard_base": 0.5293,
-     "x_aard_fit": null,
-     "validation_improvement_pct": null,
-     "note": "No settable BIP for this pair in this Thermopack build",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 13
+      "band_id": "B4",
+      "label": "Mid-temperature band (~340 K)",
+      "T_K": [
+        322.5,
+        355.0
+      ],
+      "P_bar": [
+        100.0,
+        300.0
+      ],
+      "cases": [
+        {
+          "T_K": 340.0,
+          "P_bar": 100.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 1%)",
+          "x_ref": 0.016237,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO 오차 1%)"
+        },
+        {
+          "T_K": 340.0,
+          "P_bar": 200.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=11, LOO error 1%)",
+          "x_ref": 0.037982,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=11, LOO 오차 1%)"
+        },
+        {
+          "T_K": 340.0,
+          "P_bar": 300.0,
+          "scored": true,
+          "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 1%)",
+          "x_ref": 0.058023,
+          "interp_status_ko": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO 오차 1%)"
+        }
+      ],
+      "warnings": [
+        "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 18 points (38.1–308.4 bar) → vapour NH₃ fraction error of the Aspen pick RK-ASPEN: 2.4% (PR with kij = 0: 10.9%)"
+      ],
+      "ranking": [
+        {
+          "eos": "SAFT-VRQ Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.02068697596335116,
+          "use_fitted": true,
+          "x_aard_base": 0.0761,
+          "x_aard_fit": 0.0277,
+          "validation_improvement_pct": 67.4,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 1
+        },
+        {
+          "eos": "SAFT-VR Mie",
+          "bip_name": "eps_kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.015046887889532103,
+          "use_fitted": true,
+          "x_aard_base": 0.0506,
+          "x_aard_fit": 0.0297,
+          "validation_improvement_pct": 66.3,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 2
+        },
+        {
+          "eos": "PC-SAFT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.21931734055950844,
+          "use_fitted": true,
+          "x_aard_base": 0.9637,
+          "x_aard_fit": 0.0323,
+          "validation_improvement_pct": 97.9,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 3
+        },
+        {
+          "eos": "RK-ASPEN",
+          "bip_name": "kaij,kbij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4763,
+          "x_aard_fit": 0.0358,
+          "validation_improvement_pct": 95.2,
+          "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
+          "engine": "custom SRK+mathias+aspen",
+          "bip_params": {
+            "kaij": -0.4618438711495205,
+            "kbij": 7.9376220703125e-05
+          },
+          "bip_display": "kaij=-0.4618, kbij=+0.0001",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 4,
+          "note_ko": "Aspen RK-ASPEN(RK + Mathias α, 2-파라미터 혼합규칙 kaij·kbij) 자체 구현(극성 α=0)"
+        },
+        {
+          "eos": "RKS-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.4478672681756514,
+          "use_fitted": true,
+          "x_aard_base": 0.4696,
+          "x_aard_fit": 0.0359,
+          "validation_improvement_pct": 95.1,
+          "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
+          "engine": "custom SRK+bm+vdw",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 5,
+          "note_ko": "Aspen RKS-BM(SRK + Boston-Mathias α) 자체 구현 — Aspen 'SRK' 물성법과 VLE 동일(부피보정은 상평형에 무영향)"
+        },
+        {
+          "eos": "tcPR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.13794969041724728,
+          "use_fitted": true,
+          "x_aard_base": 0.4321,
+          "x_aard_fit": 0.0364,
+          "validation_improvement_pct": 94.5,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 6
+        },
+        {
+          "eos": "PT",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.1933894708390219,
+          "use_fitted": true,
+          "x_aard_base": 0.6869,
+          "x_aard_fit": 0.0405,
+          "validation_improvement_pct": 95.8,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 7
+        },
+        {
+          "eos": "SW",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.1221516678385174,
+          "use_fitted": true,
+          "x_aard_base": 0.3141,
+          "x_aard_fit": 0.0407,
+          "validation_improvement_pct": 92.6,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 8
+        },
+        {
+          "eos": "PR",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.20575561823851105,
+          "use_fitted": true,
+          "x_aard_base": 0.8556,
+          "x_aard_fit": 0.0417,
+          "validation_improvement_pct": 96.5,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 9
+        },
+        {
+          "eos": "SR-POLAR",
+          "bip_name": "kij,lij",
+          "bip_default": null,
+          "bip_fitted": null,
+          "use_fitted": true,
+          "x_aard_base": 0.4763,
+          "x_aard_fit": 0.0425,
+          "validation_improvement_pct": 97.4,
+          "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
+          "engine": "custom SRK+srpolar+srpolar",
+          "bip_params": {
+            "kij": -0.8354524090972408,
+            "lij": 0.3688562106140204
+          },
+          "bip_display": "kij=-0.8355, lij=+0.3689",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 10,
+          "note_ko": "Aspen SR-POLAR(SRK + 비대칭 혼합규칙 kij·lij) 자체 구현(극성 α 파라미터=0)"
+        },
+        {
+          "eos": "SRK",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": 0.21665531533512744,
+          "use_fitted": true,
+          "x_aard_base": 0.7461,
+          "x_aard_fit": 0.0431,
+          "validation_improvement_pct": 95.2,
+          "note": "",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 11
+        },
+        {
+          "eos": "PR-BM",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": -0.27654209699216353,
+          "use_fitted": true,
+          "x_aard_base": 0.4021,
+          "x_aard_fit": 0.0447,
+          "validation_improvement_pct": 98.3,
+          "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
+          "engine": "custom PR+bm+vdw",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 12,
+          "note_ko": "Aspen PR-BM(PR + Boston-Mathias 초임계 α) 자체 구현"
+        },
+        {
+          "eos": "CPA",
+          "bip_name": "kij",
+          "bip_default": 0.0,
+          "bip_fitted": null,
+          "use_fitted": false,
+          "x_aard_base": 0.0473,
+          "x_aard_fit": null,
+          "validation_improvement_pct": null,
+          "note": "No settable BIP for this pair in this Thermopack build",
+          "engine": "thermopack",
+          "cases_ok": 3,
+          "cases_n": 3,
+          "rank": 13,
+          "note_ko": "이 Thermopack 빌드에서는 이 성분 쌍의 BIP를 설정할 수 없음"
+        }
+      ],
+      "n_samples": 12,
+      "dew_line_check": {
+        "n_points": 18,
+        "sources": [
+          "Glowka 1992 isopleth dew points",
+          "Reamer & Sage 1959 dew lines"
+        ],
+        "P_bar": [
+          38.1,
+          308.4
+        ],
+        "model": [
+          "RK-ASPEN"
+        ],
+        "y_aard_pct": 2.4,
+        "y_aad": 0.0105,
+        "y_aard_pct_kij0_PR": 10.9,
+        "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does",
+        "sources_ko": [
+          "Glowka 1992 등조성 이슬점",
+          "Reamer&Sage 1959 이슬선"
+        ],
+        "note_ko": "x 회귀에 쓰지 않은 기상 조성(y_NH3) 실측으로 Aspen 1위 모델을 독립 검증(v5.4). y는 저압에서 NH3 증기압이 지배하므로 kij 판별력은 x보다 약함"
+      },
+      "label_ko": "중온 대역 (약 340 K)",
+      "warnings_ko": [
+        "이슬선(y-only) 독립 검증: Glowka 1992 등조성 이슬점 · Reamer&Sage 1959 이슬선 18점(38.1–308.4 bar) → Aspen 1위 RK-ASPEN의 기상 NH₃ 분율 오차 2.4% (kij=0 PR이면 10.9%)"
+      ]
     }
-   ],
-   "n_samples": 8
+  ],
+  "aspen_kij_T": {
+    "SAFT-VR Mie": {
+      "kaij": 1.2024512715852214,
+      "kbij": -0.0023859882302105593,
+      "kcij": -128.57315146727595,
+      "max_abs_dev": 0.001280706493684114,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.0903,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.0783,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.0507,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.015,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "PC-SAFT": {
+      "kaij": 2.2565790997340445,
+      "kbij": -0.003874751040306702,
+      "kcij": -245.6050669765767,
+      "max_abs_dev": 0.0010976292223200401,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.3051,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.2974,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.2669,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.2193,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "SAFT-VRQ Mie": {
+      "kaij": -1.44773775845102,
+      "kbij": 0.0019931025308980096,
+      "kcij": 266.2372863497562,
+      "max_abs_dev": 0.02338913449937835,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.1018,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.0882,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.0094,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.0207,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "PR": {
+      "kaij": 1.4133209402099576,
+      "kbij": -0.001998946021028353,
+      "kcij": -179.68048702241092,
+      "max_abs_dev": 8.160785265054482e-07,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.197,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.2111,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.2144,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.2058,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "tcPR": {
+      "kaij": 1.8530804893449517,
+      "kbij": -0.003077904609314714,
+      "kcij": -227.78765546978968,
+      "max_abs_dev": 0.00017485075945108952,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.1738,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.1779,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.1668,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.1379,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "PT": {
+      "kaij": 1.4552853787797904,
+      "kbij": -0.002057476193587982,
+      "kcij": -191.3620567767025,
+      "max_abs_dev": 6.20011635572848e-05,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.1779,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.1947,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.2004,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.1934,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "SRK": {
+      "kaij": 1.512464222949614,
+      "kbij": -0.0020381422052751894,
+      "kcij": -205.04066913450686,
+      "max_abs_dev": 0.0003262801847933594,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.1859,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.2077,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.2191,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.2167,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "SW": {
+      "kaij": 1.8907323793183197,
+      "kbij": -0.00305155451158265,
+      "kcij": -248.940971881784,
+      "max_abs_dev": 4.6252009869712785e-05,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": 0.1343,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": 0.1469,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": 0.1433,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": 0.1222,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "PR-BM": {
+      "kaij": 5.895739800744225,
+      "kbij": -0.011550442992844101,
+      "kcij": -766.0539444977753,
+      "max_abs_dev": 0.0058929491255673705,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": -0.0567,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": -0.0642,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": -0.1487,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": -0.2765,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    },
+    "RKS-BM": {
+      "kaij": 7.115367315674115,
+      "kbij": -0.014290137461626794,
+      "kcij": -923.5325275449472,
+      "max_abs_dev": 0.012283387476487995,
+      "n_bands": 4,
+      "T_range_K": [
+        240.0,
+        355.0
+      ],
+      "band_values": [
+        {
+          "T_K": 252.5,
+          "kij": -0.1547,
+          "band": "Cryogenic band (~255 K)",
+          "band_ko": "극저온 대역 (약 255 K)"
+        },
+        {
+          "T_K": 277.5,
+          "kij": -0.1659,
+          "band": "Low-temperature band (~275 K)",
+          "band_ko": "저온 대역 (약 275 K)"
+        },
+        {
+          "T_K": 306.2,
+          "kij": -0.2885,
+          "band": "Ambient band (~305 K)",
+          "band_ko": "상온 대역 (약 305 K)"
+        },
+        {
+          "T_K": 338.8,
+          "kij": -0.4479,
+          "band": "Mid-temperature band (~340 K)",
+          "band_ko": "중온 대역 (약 340 K)"
+        }
+      ],
+      "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants",
+      "form_ko": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV 형식; 밴드 상수들의 보간식"
+    }
   },
-  {
-   "band_id": "B2",
-   "label": "Low-temperature band (~275 K)",
-   "T_K": [
-    265.0,
-    290.0
-   ],
-   "P_bar": [
-    10.0,
-    50.0
-   ],
-   "cases": [
-    {
-     "T_K": 275.0,
-     "P_bar": 10.0,
-     "scored": true,
-     "interp_status": "EXTRAPOLATION (P* below sample range 20.7–413.7 bar; KK-referenced on 20 T-local points, R²=0.98, V∞=33 cm³/mol, leave-lowest-P-out 5%)",
-     "x_ref": 0.000393
-    },
-    {
-     "T_K": 275.0,
-     "P_bar": 30.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 4%)",
-     "x_ref": 0.001692
-    },
-    {
-     "T_K": 275.0,
-     "P_bar": 50.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=12, LOO error 2%)",
-     "x_ref": 0.002899
-    }
-   ],
-   "warnings": [
-    "1/3 case reference values are KK extrapolations outside the measured range — see case details",
-    "Independent dew-line (y-only) check: Reamer & Sage 1959 dew lines, 8 points (9.8–202.3 bar) → vapour NH₃ fraction error of the Aspen pick SR-POLAR: 4.6% (PR with kij = 0: 23.5%)"
-   ],
-   "ranking": [
-    {
-     "eos": "SR-POLAR",
-     "bip_name": "kij,lij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.3961,
-     "x_aard_fit": 0.0368,
-     "validation_improvement_pct": 81.9,
-     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
-     "engine": "custom SRK+srpolar+srpolar",
-     "bip_params": {
-      "kij": 0.002297136545181276,
-      "lij": -0.17889303207397428
-     },
-     "bip_display": "kij=+0.0023, lij=-0.1789",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 1
-    },
-    {
-     "eos": "PR-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.06416993559138338,
-     "use_fitted": true,
-     "x_aard_base": 0.2218,
-     "x_aard_fit": 0.0417,
-     "validation_improvement_pct": 67.7,
-     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
-     "engine": "custom PR+bm+vdw",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 2
-    },
-    {
-     "eos": "SW",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.14688767100622385,
-     "use_fitted": true,
-     "x_aard_base": 0.8621,
-     "x_aard_fit": 0.0473,
-     "validation_improvement_pct": 98.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 3
-    },
-    {
-     "eos": "RKS-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.1659075867569484,
-     "use_fitted": true,
-     "x_aard_base": 0.3855,
-     "x_aard_fit": 0.0479,
-     "validation_improvement_pct": 80.0,
-     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
-     "engine": "custom SRK+bm+vdw",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 4
-    },
-    {
-     "eos": "SRK",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.20766818662255243,
-     "use_fitted": true,
-     "x_aard_base": 1.4386,
-     "x_aard_fit": 0.0495,
-     "validation_improvement_pct": 99.0,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 5
-    },
-    {
-     "eos": "PT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.1946807365020455,
-     "use_fitted": true,
-     "x_aard_base": 1.407,
-     "x_aard_fit": 0.0504,
-     "validation_improvement_pct": 98.8,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 6
-    },
-    {
-     "eos": "RK-ASPEN",
-     "bip_name": "kaij,kbij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.3961,
-     "x_aard_fit": 0.0572,
-     "validation_improvement_pct": 91.3,
-     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
-     "engine": "custom SRK+mathias+aspen",
-     "bip_params": {
-      "kaij": -0.43446718803229867,
-      "kbij": -0.06267072252693565
-     },
-     "bip_display": "kaij=-0.4345, kbij=-0.0627",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 7
-    },
-    {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.21111535276485266,
-     "use_fitted": true,
-     "x_aard_base": 1.7777,
-     "x_aard_fit": 0.0601,
-     "validation_improvement_pct": 99.7,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 8
-    },
-    {
-     "eos": "tcPR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.17793069339331732,
-     "use_fitted": true,
-     "x_aard_base": 1.3089,
-     "x_aard_fit": 0.0615,
-     "validation_improvement_pct": 98.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 9
-    },
-    {
-     "eos": "SAFT-VRQ Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.08815097287618184,
-     "use_fitted": true,
-     "x_aard_base": 0.8586,
-     "x_aard_fit": 0.076,
-     "validation_improvement_pct": 97.9,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 10
-    },
-    {
-     "eos": "PC-SAFT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.2973700108511584,
-     "use_fitted": true,
-     "x_aard_base": 3.0214,
-     "x_aard_fit": 0.0859,
-     "validation_improvement_pct": 99.6,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 11
-    },
-    {
-     "eos": "SAFT-VR Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.07829357224132764,
-     "use_fitted": true,
-     "x_aard_base": 0.8379,
-     "x_aard_fit": 0.0919,
-     "validation_improvement_pct": 98.0,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 12
-    },
-    {
-     "eos": "CPA",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": null,
-     "use_fitted": false,
-     "x_aard_base": 0.5555,
-     "x_aard_fit": null,
-     "validation_improvement_pct": null,
-     "note": "No settable BIP for this pair in this Thermopack build",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 13
-    }
-   ],
-   "n_samples": 20,
-   "dew_line_check": {
-    "n_points": 8,
-    "sources": [
-     "Reamer & Sage 1959 dew lines"
-    ],
-    "P_bar": [
-     9.8,
-     202.3
-    ],
-    "model": [
-     "SR-POLAR"
-    ],
-    "y_aard_pct": 4.6,
-    "y_aad": 0.0084,
-    "y_aard_pct_kij0_PR": 23.5,
-    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
-   }
-  },
-  {
-   "band_id": "B3",
-   "label": "Ambient band (~305 K)",
-   "T_K": [
-    290.0,
-    322.5
-   ],
-   "P_bar": [
-    30.0,
-    50.0
-   ],
-   "cases": [
-    {
-     "T_K": 305.0,
-     "P_bar": 30.0,
-     "scored": true,
-     "interp_status": "EXTRAPOLATION (sparse local data; KK-referenced on 14 T-local points, R²=0.99, V∞=32 cm³/mol, leave-lowest-P-out 0%)",
-     "x_ref": 0.002437
-    },
-    {
-     "T_K": 305.0,
-     "P_bar": 50.0,
-     "scored": true,
-     "interp_status": "EXTRAPOLATION (sparse local data; KK-referenced on 14 T-local points, R²=0.99, V∞=32 cm³/mol, leave-lowest-P-out 0%)",
-     "x_ref": 0.00504
-    }
-   ],
-   "warnings": [
-    "2/2 case reference values are KK extrapolations outside the measured range — see case details",
-    "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 16 points (22.6–268 bar) → vapour NH₃ fraction error of the Aspen pick PR: 4.0% (PR with kij = 0: 14.1%)"
-   ],
-   "ranking": [
-    {
-     "eos": "SAFT-VR Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.050672746774550095,
-     "use_fitted": true,
-     "x_aard_base": 0.2724,
-     "x_aard_fit": 0.0395,
-     "validation_improvement_pct": 97.5,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 1
-    },
-    {
-     "eos": "PC-SAFT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.2668990395009914,
-     "use_fitted": true,
-     "x_aard_base": 1.5102,
-     "x_aard_fit": 0.043,
-     "validation_improvement_pct": 99.5,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 2
-    },
-    {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.21443271636968278,
-     "use_fitted": true,
-     "x_aard_base": 1.0138,
-     "x_aard_fit": 0.0666,
-     "validation_improvement_pct": 98.9,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 3
-    },
-    {
-     "eos": "tcPR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.16684492395434955,
-     "use_fitted": true,
-     "x_aard_base": 0.6296,
-     "x_aard_fit": 0.0717,
-     "validation_improvement_pct": 99.2,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 4
-    },
-    {
-     "eos": "SRK",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.21907825743513099,
-     "use_fitted": true,
-     "x_aard_base": 0.8363,
-     "x_aard_fit": 0.0748,
-     "validation_improvement_pct": 99.1,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 5
-    },
-    {
-     "eos": "PT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.20038757762002915,
-     "use_fitted": true,
-     "x_aard_base": 0.7921,
-     "x_aard_fit": 0.0776,
-     "validation_improvement_pct": 99.2,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 6
-    },
-    {
-     "eos": "SW",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.14328058723423012,
-     "use_fitted": true,
-     "x_aard_base": 0.4068,
-     "x_aard_fit": 0.0892,
-     "validation_improvement_pct": 99.1,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 7
-    },
-    {
-     "eos": "SR-POLAR",
-     "bip_name": "kij,lij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4863,
-     "x_aard_fit": 0.0932,
-     "validation_improvement_pct": 99.2,
-     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
-     "engine": "custom SRK+srpolar+srpolar",
-     "bip_params": {
-      "kij": 0.003177734375000003,
-      "lij": -0.3089062499999995
-     },
-     "bip_display": "kij=+0.0032, lij=-0.3089",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 8
-    },
-    {
-     "eos": "RK-ASPEN",
-     "bip_name": "kaij,kbij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4863,
-     "x_aard_fit": 0.1093,
-     "validation_improvement_pct": 98.4,
-     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
-     "engine": "custom SRK+mathias+aspen",
-     "bip_params": {
-      "kaij": -0.321056919859307,
-      "kbij": -0.004734703542781061
-     },
-     "bip_display": "kaij=-0.3211, kbij=-0.0047",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 9
-    },
-    {
-     "eos": "RKS-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.28848640939719544,
-     "use_fitted": true,
-     "x_aard_base": 0.4786,
-     "x_aard_fit": 0.1155,
-     "validation_improvement_pct": 97.5,
-     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
-     "engine": "custom SRK+bm+vdw",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 10
-    },
-    {
-     "eos": "PR-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.14868472567919075,
-     "use_fitted": true,
-     "x_aard_base": 0.3901,
-     "x_aard_fit": 0.1352,
-     "validation_improvement_pct": 92.9,
-     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
-     "engine": "custom PR+bm+vdw",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 11
-    },
-    {
-     "eos": "CPA",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": null,
-     "use_fitted": false,
-     "x_aard_base": 0.1701,
-     "x_aard_fit": null,
-     "validation_improvement_pct": null,
-     "note": "No settable BIP for this pair in this Thermopack build",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 12
-    },
-    {
-     "eos": "SAFT-VRQ Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.009369937379351056,
-     "use_fitted": true,
-     "x_aard_base": 0.2696,
-     "x_aard_fit": 0.2085,
-     "validation_improvement_pct": 19.5,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 2,
-     "cases_n": 2,
-     "rank": 13
-    }
-   ],
-   "n_samples": 14,
-   "dew_line_check": {
-    "n_points": 16,
-    "sources": [
-     "Glowka 1992 isopleth dew points",
-     "Reamer & Sage 1959 dew lines"
-    ],
-    "P_bar": [
-     22.6,
-     268.0
-    ],
-    "model": [
-     "PR"
-    ],
-    "y_aard_pct": 4.0,
-    "y_aad": 0.0105,
-    "y_aard_pct_kij0_PR": 14.1,
-    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
-   }
-  },
-  {
-   "band_id": "B4",
-   "label": "Mid-temperature band (~340 K)",
-   "T_K": [
-    322.5,
-    355.0
-   ],
-   "P_bar": [
-    100.0,
-    300.0
-   ],
-   "cases": [
-    {
-     "T_K": 340.0,
-     "P_bar": 100.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=8, LOO error 1%)",
-     "x_ref": 0.016237
-    },
-    {
-     "T_K": 340.0,
-     "P_bar": 200.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=11, LOO error 1%)",
-     "x_ref": 0.037982
-    },
-    {
-     "T_K": 340.0,
-     "P_bar": 300.0,
-     "scored": true,
-     "interp_status": "INTERP (T-local ±10 K, P 0.3–3·P*; n=10, LOO error 1%)",
-     "x_ref": 0.058023
-    }
-   ],
-   "warnings": [
-    "Independent dew-line (y-only) check: Glowka 1992 isopleth dew points · Reamer & Sage 1959 dew lines, 18 points (38.1–308.4 bar) → vapour NH₃ fraction error of the Aspen pick RK-ASPEN: 2.4% (PR with kij = 0: 10.9%)"
-   ],
-   "ranking": [
-    {
-     "eos": "SAFT-VRQ Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.02068697596335116,
-     "use_fitted": true,
-     "x_aard_base": 0.0761,
-     "x_aard_fit": 0.0277,
-     "validation_improvement_pct": 67.4,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 1
-    },
-    {
-     "eos": "SAFT-VR Mie",
-     "bip_name": "eps_kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.015046887889532103,
-     "use_fitted": true,
-     "x_aard_base": 0.0506,
-     "x_aard_fit": 0.0297,
-     "validation_improvement_pct": 66.3,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 2
-    },
-    {
-     "eos": "PC-SAFT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.21931734055950844,
-     "use_fitted": true,
-     "x_aard_base": 0.9637,
-     "x_aard_fit": 0.0323,
-     "validation_improvement_pct": 97.9,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 3
-    },
-    {
-     "eos": "RK-ASPEN",
-     "bip_name": "kaij,kbij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4763,
-     "x_aard_fit": 0.0358,
-     "validation_improvement_pct": 95.2,
-     "note": "In-house implementation of Aspen RK-ASPEN (RK + Mathias α, two-parameter mixing rule kaij·kbij; polar α = 0)",
-     "engine": "custom SRK+mathias+aspen",
-     "bip_params": {
-      "kaij": -0.4618438711495205,
-      "kbij": 7.9376220703125e-05
-     },
-     "bip_display": "kaij=-0.4618, kbij=+0.0001",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 4
-    },
-    {
-     "eos": "RKS-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.4478672681756514,
-     "use_fitted": true,
-     "x_aard_base": 0.4696,
-     "x_aard_fit": 0.0359,
-     "validation_improvement_pct": 95.1,
-     "note": "In-house implementation of Aspen RKS-BM (SRK + Boston–Mathias α) — identical VLE to the Aspen 'SRK' method (volume translation does not affect phase equilibrium)",
-     "engine": "custom SRK+bm+vdw",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 5
-    },
-    {
-     "eos": "tcPR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.13794969041724728,
-     "use_fitted": true,
-     "x_aard_base": 0.4321,
-     "x_aard_fit": 0.0364,
-     "validation_improvement_pct": 94.5,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 6
-    },
-    {
-     "eos": "PT",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.1933894708390219,
-     "use_fitted": true,
-     "x_aard_base": 0.6869,
-     "x_aard_fit": 0.0405,
-     "validation_improvement_pct": 95.8,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 7
-    },
-    {
-     "eos": "SW",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.1221516678385174,
-     "use_fitted": true,
-     "x_aard_base": 0.3141,
-     "x_aard_fit": 0.0407,
-     "validation_improvement_pct": 92.6,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 8
-    },
-    {
-     "eos": "PR",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.20575561823851105,
-     "use_fitted": true,
-     "x_aard_base": 0.8556,
-     "x_aard_fit": 0.0417,
-     "validation_improvement_pct": 96.5,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 9
-    },
-    {
-     "eos": "SR-POLAR",
-     "bip_name": "kij,lij",
-     "bip_default": null,
-     "bip_fitted": null,
-     "use_fitted": true,
-     "x_aard_base": 0.4763,
-     "x_aard_fit": 0.0425,
-     "validation_improvement_pct": 97.4,
-     "note": "In-house implementation of Aspen SR-POLAR (SRK + asymmetric mixing rule kij·lij; polar α parameters = 0)",
-     "engine": "custom SRK+srpolar+srpolar",
-     "bip_params": {
-      "kij": -0.8354524090972408,
-      "lij": 0.3688562106140204
-     },
-     "bip_display": "kij=-0.8355, lij=+0.3689",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 10
-    },
-    {
-     "eos": "SRK",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": 0.21665531533512744,
-     "use_fitted": true,
-     "x_aard_base": 0.7461,
-     "x_aard_fit": 0.0431,
-     "validation_improvement_pct": 95.2,
-     "note": "",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 11
-    },
-    {
-     "eos": "PR-BM",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": -0.27654209699216353,
-     "use_fitted": true,
-     "x_aard_base": 0.4021,
-     "x_aard_fit": 0.0447,
-     "validation_improvement_pct": 98.3,
-     "note": "In-house implementation of Aspen PR-BM (PR + Boston–Mathias supercritical α)",
-     "engine": "custom PR+bm+vdw",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 12
-    },
-    {
-     "eos": "CPA",
-     "bip_name": "kij",
-     "bip_default": 0.0,
-     "bip_fitted": null,
-     "use_fitted": false,
-     "x_aard_base": 0.0473,
-     "x_aard_fit": null,
-     "validation_improvement_pct": null,
-     "note": "No settable BIP for this pair in this Thermopack build",
-     "engine": "thermopack",
-     "cases_ok": 3,
-     "cases_n": 3,
-     "rank": 13
-    }
-   ],
-   "n_samples": 12,
-   "dew_line_check": {
-    "n_points": 18,
-    "sources": [
-     "Glowka 1992 isopleth dew points",
-     "Reamer & Sage 1959 dew lines"
-    ],
-    "P_bar": [
-     38.1,
-     308.4
-    ],
-    "model": [
-     "RK-ASPEN"
-    ],
-    "y_aard_pct": 2.4,
-    "y_aad": 0.0105,
-    "y_aard_pct_kij0_PR": 10.9,
-    "note": "Independent check of the Aspen pick against measured vapour compositions (y_NH3) that were not used in the x regression (v5.4). At low pressure y is dominated by the NH3 vapour pressure, so it discriminates kij less than x does"
-   }
-  }
- ],
- "aspen_kij_T": {
-  "SAFT-VR Mie": {
-   "kaij": 1.2024512715852214,
-   "kbij": -0.0023859882302105593,
-   "kcij": -128.57315146727595,
-   "max_abs_dev": 0.001280706493684114,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.0903,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.0783,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.0507,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.015,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "PC-SAFT": {
-   "kaij": 2.2565790997340445,
-   "kbij": -0.003874751040306702,
-   "kcij": -245.6050669765767,
-   "max_abs_dev": 0.0010976292223200401,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.3051,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.2974,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.2669,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.2193,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "SAFT-VRQ Mie": {
-   "kaij": -1.44773775845102,
-   "kbij": 0.0019931025308980096,
-   "kcij": 266.2372863497562,
-   "max_abs_dev": 0.02338913449937835,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.1018,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.0882,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.0094,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.0207,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "PR": {
-   "kaij": 1.4133209402099576,
-   "kbij": -0.001998946021028353,
-   "kcij": -179.68048702241092,
-   "max_abs_dev": 8.160785265054482e-07,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.197,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.2111,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.2144,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.2058,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "tcPR": {
-   "kaij": 1.8530804893449517,
-   "kbij": -0.003077904609314714,
-   "kcij": -227.78765546978968,
-   "max_abs_dev": 0.00017485075945108952,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.1738,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.1779,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.1668,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.1379,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "PT": {
-   "kaij": 1.4552853787797904,
-   "kbij": -0.002057476193587982,
-   "kcij": -191.3620567767025,
-   "max_abs_dev": 6.20011635572848e-05,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.1779,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.1947,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.2004,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.1934,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "SRK": {
-   "kaij": 1.512464222949614,
-   "kbij": -0.0020381422052751894,
-   "kcij": -205.04066913450686,
-   "max_abs_dev": 0.0003262801847933594,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.1859,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.2077,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.2191,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.2167,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "SW": {
-   "kaij": 1.8907323793183197,
-   "kbij": -0.00305155451158265,
-   "kcij": -248.940971881784,
-   "max_abs_dev": 4.6252009869712785e-05,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": 0.1343,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": 0.1469,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": 0.1433,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": 0.1222,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "PR-BM": {
-   "kaij": 5.895739800744225,
-   "kbij": -0.011550442992844101,
-   "kcij": -766.0539444977753,
-   "max_abs_dev": 0.0058929491255673705,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": -0.0567,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": -0.0642,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": -0.1487,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": -0.2765,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  },
-  "RKS-BM": {
-   "kaij": 7.115367315674115,
-   "kbij": -0.014290137461626794,
-   "kcij": -923.5325275449472,
-   "max_abs_dev": 0.012283387476487995,
-   "n_bands": 4,
-   "T_range_K": [
-    240.0,
-    355.0
-   ],
-   "band_values": [
-    {
-     "T_K": 252.5,
-     "kij": -0.1547,
-     "band": "Cryogenic band (~255 K)"
-    },
-    {
-     "T_K": 277.5,
-     "kij": -0.1659,
-     "band": "Low-temperature band (~275 K)"
-    },
-    {
-     "T_K": 306.2,
-     "kij": -0.2885,
-     "band": "Ambient band (~305 K)"
-    },
-    {
-     "T_K": 338.8,
-     "kij": -0.4479,
-     "band": "Mid-temperature band (~340 K)"
-    }
-   ],
-   "form": "kij = kaij + kbij*T + kcij/T (T in K) — Aspen PRKBV/RKSKBV form; interpolation of the band constants"
-  }
- }
+  "method_ko": "EOS/BIP 평가 v5 (2026-11 재평가): 기준값은 케이스가 실측에 둘러싸이면 국소 보간(ln x = a + b/T + c·ln(P−Psat) [+ d·ln²]), 아니면 Krichevsky–Kasarnovsky 물리 외삽(ln(f₂/x) = A + B/T + V∞(P−Psat)/RT, 최저압 leave-out 검증). 각 EOS는 밴드 표본(≤30점, 3:1 train/validation)으로 BIP를 회귀(thermopack 9종: 단일 kij/eps_kij; 자체 구현 Aspen 변형: PR-BM·RKS-BM 단일 kij, RK-ASPEN kaij+kbij, SR-POLAR kij+lij)하고 케이스 x-AARD로 순위. 자체 구현은 classic α 모드가 thermopack PR/SRK 기포압을 1e-4 이내로 재현함을 확인(극성 α 파라미터는 0 — thermopack 임계상수 기준으로는 NH3 증기압 개선 없음)"
 }
