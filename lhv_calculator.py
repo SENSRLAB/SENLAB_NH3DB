@@ -15,6 +15,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+from i18n import t
+from i18n import radio as radio_i18n
+
 # ============================================================
 # 1) Constants
 # ============================================================
@@ -105,10 +108,10 @@ def _slider_input(label, lo, hi, default, step, key):
     return st.session_state[sk]
 
 def _temp_input():
-    t_unit = st.radio("Temperature unit", ["°C", "K"], horizontal=True)
+    t_unit = st.radio(t("p.temp_unit"), ["°C", "K"], horizontal=True, key="lhv_tunit")
     if t_unit == "°C":
-        return _slider_input("Temperature (°C)", -50.0, 130.0, 25.0, 1.0, "t_c")
-    return _slider_input("Temperature (K)", 223.15, 403.15, 298.15, 1.0, "t_k") - 273.15
+        return _slider_input(t("p.temperature_C"), -50.0, 130.0, 25.0, 1.0, "t_c")
+    return _slider_input(t("p.temperature_K"), 223.15, 403.15, 298.15, 1.0, "t_k") - 273.15
 
 def _mole_to_mass(y_H2):
     den = y_H2 * M_H2 + (1 - y_H2) * M_NH3
@@ -146,36 +149,35 @@ def render_lhv_page():
     # 18 px base font on this page
     st.markdown("<style>html { font-size: 18px; }</style>", unsafe_allow_html=True)
 
-    st.markdown("## NH₃–H₂ Fuel-Blend Heating Value Calculator")
-    st.caption("Choose the fuel state, then enter the hydrogen fraction and temperature to get the heating value and density.")
+    st.markdown(t("lhv.title"))
+    st.caption(t("lhv.caption"))
 
     df = load_data()
 
-    # ----- fuel state -----
-    mode = st.radio("Fuel state", ["Vapour (combustion)", "Liquid (storage)"],
-                    horizontal=True, index=0,
-                    help="An NH₃–H₂ gas mixture at the burner; liquid ammonia in storage.")
-    is_gas = mode.startswith("Vapour")
+    # ----- fuel state (stable option keys; the labels follow the interface language) -----
+    mode = radio_i18n("lhv.state", ["gas", "liq"], {"gas": "lhv.state.gas", "liq": "lhv.state.liq"},
+                      key="lhv_mode", horizontal=True, help=t("lhv.state.help"))
+    is_gas = mode == "gas"
 
     if is_gas:
         # composition
-        basis = st.radio("Hydrogen fraction basis", ["mass fraction", "mole fraction"], horizontal=True)
-        frac_pct = _slider_input(f"Hydrogen fraction ({basis}, %)", 0.0, 100.0, 0.0, 0.1, "h2")
+        basis = radio_i18n("lhv.basis", ["mass", "mole"], {"mass": "lhv.basis.mass", "mole": "lhv.basis.mole"},
+                           key="lhv_basis", horizontal=True)
+        basis_label = t("lhv.basis.mass") if basis == "mass" else t("lhv.basis.mole")
+        frac_pct = _slider_input(t("lhv.h2_fraction", basis=basis_label), 0.0, 100.0, 0.0, 0.1, "h2")
         frac = frac_pct / 100.0
-        if basis == "mole fraction":
+        if basis == "mole":
             w_H2 = _mole_to_mass(frac)
-            conv = f"→ mass fraction H₂ {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}%"
+            conv = t("lhv.conv_mass", h2=w_H2 * 100, nh3=(1 - w_H2) * 100)
         else:
             w_H2 = frac
             y = _mass_to_mole(w_H2)
-            conv = f"→ mole fraction H₂ {y*100:.1f}% / NH₃ {(1-y)*100:.1f}%"
-        st.caption(f"Ammonia {basis}: **{100-frac_pct:.1f}%**   ·   {conv}")
+            conv = t("lhv.conv_mole", h2=y * 100, nh3=(1 - y) * 100)
+        st.caption(t("lhv.nh3_fraction", basis=basis_label, pct=100 - frac_pct, conv=conv))
         T = _temp_input()
         x = 1.0  # vapour mixture
     else:  # liquid (storage)
-        st.info("In the liquid state only **pure ammonia** is present.\n\n"
-                "Hydrogen's critical temperature is −240 °C, so it cannot be liquid anywhere in this range (−50 to 130 °C); "
-                "**the H₂ fraction is therefore not considered.**")
+        st.info(t("lhv.liquid_info"))
         w_H2 = 0.0
         T = _temp_input()
         x = 0.0  # pure liquid NH3
@@ -184,110 +186,87 @@ def render_lhv_page():
     r = compute_blend(df, w_H2, T, x)
 
     # ----- output -----
-    st.markdown("### Results")
-    st.caption("Key figures — LHV per mass · energy per volume")
+    st.markdown(t("lhv.results"))
+    st.caption(t("lhv.kpi_caption"))
     k1, k2 = st.columns(2)
-    k1.metric("Standard LHV (per mass)", f"{r['lhv_std']:.2f} MJ/kg",
-              help="Energy released by burning 1 kg of fuel. Fixed by the composition, independent of temperature.")
-    k2.metric("Volumetric energy", f"{r['vol_energy']:.3f} MJ/L",
-              help="Energy per unit volume: standard LHV × density.")
+    k1.metric(t("lhv.std_lhv"), f"{r['lhv_std']:.2f} MJ/kg", help=t("lhv.std_lhv_help"))
+    k2.metric(t("lhv.vol_energy"), f"{r['vol_energy']:.3f} MJ/L", help=t("lhv.vol_energy_help"))
 
-    st.caption("Secondary figures")
+    st.caption(t("lhv.secondary"))
     s1, s2 = st.columns(2)
-    s1.metric("Density", f"{r['rho_mix']:.2f} kg/m³")
-    s2.metric("Effective LHV", f"{r['lhv_eff']:.2f} MJ/kg",
-              help="Standard LHV corrected for the fuel temperature and state (reference: vapour at 25 °C).")
+    s1.metric(t("lhv.density"), f"{r['rho_mix']:.2f} kg/m³")
+    s2.metric(t("lhv.eff_lhv"), f"{r['lhv_eff']:.2f} MJ/kg", help=t("lhv.eff_lhv_help"))
 
     if is_gas:
-        st.caption(
-            f"Input summary — vapour · H₂ (mass) {w_H2*100:.1f}% / NH₃ {(1-w_H2)*100:.1f}% · "
-            f"{T:.1f} °C · (NH₃ saturation pressure ≈ {r['P_sat']:.2f} bar)"
-        )
+        st.caption(t("lhv.summary_gas", h2=w_H2 * 100, nh3=(1 - w_H2) * 100, T=T, psat=r["P_sat"]))
     else:
-        st.caption(f"Input summary — liquid storage · pure NH₃ · {T:.1f} °C · "
-                   f"(saturation pressure ≈ {r['P_sat']:.2f} bar)")
+        st.caption(t("lhv.summary_liq", T=T, psat=r["P_sat"]))
 
     # ----- CSV download -----
     rows = [
-        ("Fuel state", "vapour (combustion)" if is_gas else "liquid (storage)"),
-        ("H2 mass fraction (%)", f"{w_H2*100:.2f}"),
-        ("NH3 mass fraction (%)", f"{(1-w_H2)*100:.2f}"),
-        ("Temperature (C)", f"{T:.1f}"),
-        ("Standard LHV (MJ/kg)", f"{r['lhv_std']:.3f}"),
-        ("Effective LHV (MJ/kg)", f"{r['lhv_eff']:.3f}"),
-        ("Density (kg/m3)", f"{r['rho_mix']:.4f}"),
-        ("Volumetric energy (MJ/L)", f"{r['vol_energy']:.4f}"),
-        ("NH3 saturation pressure (bar)", f"{r['P_sat']:.3f}"),
+        (t("lhv.csv.state"), t("lhv.csv.gas") if is_gas else t("lhv.csv.liq")),
+        (t("lhv.csv.h2"), f"{w_H2*100:.2f}"),
+        (t("lhv.csv.nh3"), f"{(1-w_H2)*100:.2f}"),
+        (t("lhv.csv.T"), f"{T:.1f}"),
+        (t("lhv.csv.std"), f"{r['lhv_std']:.3f}"),
+        (t("lhv.csv.eff"), f"{r['lhv_eff']:.3f}"),
+        (t("lhv.csv.rho"), f"{r['rho_mix']:.4f}"),
+        (t("lhv.csv.vol"), f"{r['vol_energy']:.4f}"),
+        (t("lhv.csv.psat"), f"{r['P_sat']:.3f}"),
     ]
-    csv_str = "item,value\n" + "\n".join(f"{k},{v}" for k, v in rows)
-    st.download_button("⬇ Download results (CSV)", data=csv_str.encode("utf-8-sig"),
+    csv_str = t("lhv.csv.header") + "\n" + "\n".join(f"{k},{v}" for k, v in rows)
+    st.download_button(t("lhv.download"), data=csv_str.encode("utf-8-sig"),
                        file_name="nh3_h2_lhv_result.csv", mime="text/csv")
 
     # ----- assumptions and sources -----
-    with st.expander("Method · assumptions · data sources"):
-        st.markdown(
-            """
-**Fuel state**
-- **Vapour (combustion)**: a gas mixture of NH₃ vapour and H₂ — the blended fuel as it reaches the burner. The density is the ideal-mixture gas density **at the NH₃ saturation pressure of each temperature**; at another operating pressure the gas density scales with pressure.
-- **Liquid (storage)**: pure liquid ammonia. Hydrogen cannot be liquid in this temperature range (critical temperature −240 °C) and liquid and gas do not mix into one phase, so **the stored state is pure NH₃**.
-
-**Standard LHV** — mass-weighted average of the component LHVs (H₂ 120, NH₃ 18.6 MJ/kg). Depends on the composition only, not on temperature or state.
-
-**Effective LHV** — the standard value corrected for the fuel temperature and state (enthalpy), referenced to vapour at 25 °C.
-
-**Density / volumetric energy** — ideal mixing for the gas (volume additivity); volumetric energy = standard LHV × density.
-
-**Data source** — NIST Thermophysical Properties of Fluid Systems (NIST Chemistry WebBook); pure components (NH₃, H₂) interpolated linearly in temperature.
-
-**Validity and caveats** — −50 to 130 °C. Accuracy degrades near the critical point (about 132 °C). The real NH₃–H₂ phase equilibrium (VLE) and pressure dependence are simplified.
-            """
-        )
+    with st.expander(t("lhv.method_expander")):
+        st.markdown(t("lhv.method_md"))
 
     # ----- charts -----
     if is_gas:
-        with st.expander("📈 Effect of the hydrogen fraction (zoom and hover for values)"):
+        with st.expander(t("lhv.chart_gas")):
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots
             fr = np.linspace(0, 1, 101)
             lhv_list = [compute_blend(df, w, T, 1.0)["lhv_std"] for w in fr]
             vol_list = [compute_blend(df, w, T, 1.0)["vol_energy"] for w in fr]
             fig = make_subplots(specs=[[{"secondary_y": True}]])
-            fig.add_trace(go.Scatter(x=fr*100, y=lhv_list, name="Standard LHV",
+            fig.add_trace(go.Scatter(x=fr*100, y=lhv_list, name=t("lhv.series_std"),
                           line=dict(color="#3B9DD6", width=2),
                           hovertemplate="H2 %{x:.0f}% → %{y:.2f} MJ/kg<extra></extra>"),
                           secondary_y=False)
-            fig.add_trace(go.Scatter(x=fr*100, y=vol_list, name="Volumetric energy",
+            fig.add_trace(go.Scatter(x=fr*100, y=vol_list, name=t("lhv.series_vol"),
                           line=dict(color="#E08A3C", width=2, dash="dash"),
                           hovertemplate="H2 %{x:.0f}% → %{y:.3f} MJ/L<extra></extra>"),
                           secondary_y=True)
             _styled_axes(fig, "H2 mass fraction (%)",
                          "Standard LHV (MJ/kg)", "#3B9DD6",
                          "Volumetric energy (MJ/L)", "#E08A3C",
-                         f"Vapour · {T:.0f} °C")
+                         t("lhv.chart_gas_title", T=T))
             st.plotly_chart(fig, width="stretch", config={"scrollZoom": True})
-            st.caption("More H₂ raises the LHV per mass but lowers the energy per volume (lighter fuel) — a trade-off.")
+            st.caption(t("lhv.gas_note"))
     else:
-        with st.expander("📈 Liquid NH₃ versus temperature (zoom and hover for values)"):
+        with st.expander(t("lhv.chart_liq")):
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots
             ts = np.linspace(-50, 130, 91)
-            rho_list = [compute_blend(df, 0.0, t, 0.0)["rho_mix"] for t in ts]
-            vol_list = [compute_blend(df, 0.0, t, 0.0)["vol_energy"] for t in ts]
+            rho_list = [compute_blend(df, 0.0, t_, 0.0)["rho_mix"] for t_ in ts]
+            vol_list = [compute_blend(df, 0.0, t_, 0.0)["vol_energy"] for t_ in ts]
             fig = make_subplots(specs=[[{"secondary_y": True}]])
-            fig.add_trace(go.Scatter(x=ts, y=rho_list, name="Density",
+            fig.add_trace(go.Scatter(x=ts, y=rho_list, name=t("lhv.series_rho"),
                           line=dict(color="#3B9DD6", width=2),
                           hovertemplate="%{x:.0f}°C → %{y:.1f} kg/m³<extra></extra>"),
                           secondary_y=False)
-            fig.add_trace(go.Scatter(x=ts, y=vol_list, name="Volumetric energy",
+            fig.add_trace(go.Scatter(x=ts, y=vol_list, name=t("lhv.series_vol"),
                           line=dict(color="#E08A3C", width=2, dash="dash"),
                           hovertemplate="%{x:.0f}°C → %{y:.2f} MJ/L<extra></extra>"),
                           secondary_y=True)
             _styled_axes(fig, "Temperature (°C)",
                          "Density (kg/m³)", "#3B9DD6",
                          "Volumetric energy (MJ/L)", "#E08A3C",
-                         "Liquid NH₃ (storage)")
+                         t("lhv.chart_liq_title"))
             st.plotly_chart(fig, width="stretch", config={"scrollZoom": True})
-            st.caption("A warmer storage temperature expands the liquid NH₃, lowering its density and volumetric energy.")
+            st.caption(t("lhv.liq_note"))
 
 
 # stand-alone run

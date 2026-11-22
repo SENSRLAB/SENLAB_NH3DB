@@ -14,6 +14,8 @@ from plotly.subplots import make_subplots
 from scipy.interpolate import RectBivariateSpline, griddata
 from scipy.optimize import brentq
 
+from i18n import LANGS, get_lang, set_lang, t
+from i18n import radio as radio_i18n
 from lhv_calculator import render_lhv_page
 from eos_recommender import render_eos_page
 
@@ -231,7 +233,7 @@ def shomate(T):
 
 
 SHOMATE_MD = r"""
-**Shomate equation** ($t = T/1000$)
+__TITLE__
 
 $$C_p^{o} = A + Bt + Ct^{2} + Dt^{3} + \frac{E}{t^{2}}$$
 
@@ -243,7 +245,7 @@ $$S^{o} = A\ln t + Bt + \frac{Ct^{2}}{2} + \frac{Dt^{3}}{3} - \frac{E}{2t^{2}} +
 |---|---|---|---|---|---|---|---|
 | 19.99563 | 49.77119 | −15.37599 | 1.921168 | 0.189174 | −53.30667 | 203.8591 | −45.89806 |
 
-Source: [NIST Chemistry WebBook](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1) · Data last reviewed June 1977
+__SOURCE__: [NIST Chemistry WebBook](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=1&Type=JANAFG&Table=on#ref-1) · Data last reviewed June 1977
 """
 
 # =====================================================================
@@ -277,7 +279,7 @@ MIX_CFG = {
 }
 
 CONVERSION_MD = r"""
-The literature reports NH₃ **mole fractions**; they were converted to **mass fractions** as follows.
+__INTRO__
 
 $$x_{NH_3} = 1 - x_{__SYM__}$$
 
@@ -300,7 +302,7 @@ def load_binary(file, mw_partner):
     return df
 
 
-@st.cache_data(show_spinner="Building the interpolation grid…")
+@st.cache_data(show_spinner=False)  # the (localised) spinner is shown by the caller
 def binary_grid(file, mw_partner, dew_method, bubble_method, T_range):
     df = load_binary(file, mw_partner)
     T_axis = np.linspace(T_range[0], T_range[1], 1000)
@@ -330,12 +332,13 @@ def _fmt(v, unit, nd=2):
     return "—" if v is None or np.isnan(v) else f"{v:.{nd}f} {unit}"
 
 
-def line_chart(x, y, x_title, y_title, point=None, name="Literature data", mode="lines+markers", height=420):
+def line_chart(x, y, x_title, y_title, point=None, name=None, mode="lines+markers", height=420):
     fig = go.Figure()
-    fig.add_scatter(x=x, y=y, mode=mode, name=name, marker=dict(size=7, color=PRIMARY), line=dict(width=2.5, color=PRIMARY))
+    fig.add_scatter(x=x, y=y, mode=mode, name=name or t("p.literature"),
+                    marker=dict(size=7, color=PRIMARY), line=dict(width=2.5, color=PRIMARY))
     if point is not None and not np.isnan(point[1]):
         fig.add_scatter(
-            x=[point[0]], y=[point[1]], mode="markers", name="Input condition",
+            x=[point[0]], y=[point[1]], mode="markers", name=t("p.input_condition"),
             marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")),
         )
     fig.update_layout(
@@ -351,25 +354,28 @@ def _nearest_T(col, P, T_axis):
     return np.nan if np.all(np.isnan(d)) else float(T_axis[np.nanargmin(d)])
 
 
+TP_LABELS = {"T": "p.temperature", "P": "p.pressure"}  # 'known quantity' radio: stable keys → i18n labels
+
+
 # =====================================================================
 # Page 1: vapour pressure
 # =====================================================================
 def page_vapor_pressure():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key="vp_known")
-        if known == "Temperature":
-            T = st.number_input("Temperature (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="vp_T")
+        st.markdown(t("p.input"))
+        known = radio_i18n("p.known", ["T", "P"], TP_LABELS, key="vp_known", horizontal=True)
+        if known == "T":
+            T = st.number_input(t("p.temperature_K"), VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="vp_T")
             P = p_sat(T)
         else:
-            P = st.number_input("Pressure (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="vp_P")
+            P = st.number_input(t("p.pressure_MPa"), VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="vp_P")
             T = t_sat(P)
-        st.caption(f"Valid range {VP_T_MIN:.0f}–{VP_T_MAX:.0f} K · {VP_P_MIN:.3f}–{VP_P_MAX:.1f} MPa · linear interpolation of literature data")
+        st.caption(t("vp.range", tmin=VP_T_MIN, tmax=VP_T_MAX, pmin=VP_P_MIN, pmax=VP_P_MAX))
     with left.container(border=True):
         m1, m2 = st.columns(2)
-        m1.metric("Temperature", f"{T:.1f} K")
-        m2.metric("Saturation pressure", f"{P:.4f} MPa")
+        m1.metric(t("p.temperature"), f"{T:.1f} K")
+        m2.metric(t("vp.psat"), f"{P:.4f} MPa")
     with right.container(border=True, height="stretch"):
         fig = line_chart(VP_T, VP_P, "Temperature (K)", "Pressure (MPa)", point=(T, P))
         st.plotly_chart(fig, width="stretch", key="vp_chart")
@@ -381,19 +387,19 @@ def page_vapor_pressure():
 def page_density():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        unit = st.radio("Temperature unit", ["K", "°C"], horizontal=True, key="den_unit")
+        st.markdown(t("p.input"))
+        unit = st.radio(t("p.temp_unit"), ["K", "°C"], horizontal=True, key="den_unit")
         if unit == "K":
-            T_K = st.number_input("Temperature (K)", DEN_T_MIN, DEN_T_MAX, 298.15, step=1.0, format="%.2f", key="den_TK")
+            T_K = st.number_input(t("p.temperature_K"), DEN_T_MIN, DEN_T_MAX, 298.15, step=1.0, format="%.2f", key="den_TK")
         else:
-            T_C = st.number_input("Temperature (°C)", DEN_T_MIN - 273.15, DEN_T_MAX - 273.15, 25.0, step=1.0, format="%.1f", key="den_TC")
+            T_C = st.number_input(t("p.temperature_C"), DEN_T_MIN - 273.15, DEN_T_MAX - 273.15, 25.0, step=1.0, format="%.1f", key="den_TC")
             T_K = T_C + 273.15
         rho = rho_nh3(T_K)
-        st.caption(f"Valid range {DEN_T_MIN - 273.15:.0f}–{DEN_T_MAX - 273.15:.0f} °C · linear interpolation of literature data")
+        st.caption(t("den.range", tmin=DEN_T_MIN - 273.15, tmax=DEN_T_MAX - 273.15))
     with left.container(border=True):
         m1, m2 = st.columns(2)
-        m1.metric("Temperature", f"{T_K:.2f} K")
-        m2.metric("Density", f"{rho:.4f} g/L")
+        m1.metric(t("p.temperature"), f"{T_K:.2f} K")
+        m2.metric(t("den.density"), f"{rho:.4f} g/L")
     with right.container(border=True, height="stretch"):
         fig = line_chart(DEN_T, DEN_RHO, "Temperature (K)", "Density (g/L)", point=(T_K, rho))
         st.plotly_chart(fig, width="stretch", key="den_chart")
@@ -405,9 +411,9 @@ def page_density():
 def page_specific_heat():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        T = st.number_input("Temperature (K)", 200.0, 1400.0, 300.0, step=10.0, format="%.0f", key="sh_T")
-        st.caption("Shomate equation (NIST) · 200–1400 K")
+        st.markdown(t("p.input"))
+        T = st.number_input(t("p.temperature_K"), 200.0, 1400.0, 300.0, step=10.0, format="%.0f", key="sh_T")
+        st.caption(t("cp.range"))
     Cp, dH, S = shomate(T)
     with left.container(border=True):
         m1, m2, m3 = st.columns(3)
@@ -429,8 +435,8 @@ def page_specific_heat():
                 fig.add_vline(x=T, line_dash="dot", line_color=ACCENT, opacity=0.6)
                 fig.add_hline(y=yv, line_dash="dot", line_color=ACCENT, opacity=0.6)
                 st.plotly_chart(fig, width="stretch", key=f"sh_chart_{key}")
-    with st.expander("Shomate equation · coefficients · source", icon=":material/functions:"):
-        st.markdown(SHOMATE_MD)
+    with st.expander(t("cp.expander"), icon=":material/functions:"):
+        st.markdown(SHOMATE_MD.replace("__TITLE__", t("cp.eq_title")).replace("__SOURCE__", t("p.source")))
 
 
 # =====================================================================
@@ -439,17 +445,17 @@ def page_specific_heat():
 def page_pure_nh3():
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        known = st.radio("Known quantity", ["Pressure", "Temperature"], horizontal=True, key="pure_known")
-        if known == "Pressure":
-            P = st.number_input("Pressure (MPa)", VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="pure_P")
+        st.markdown(t("p.input"))
+        known = radio_i18n("p.known", ["P", "T"], TP_LABELS, key="pure_known", horizontal=True)
+        if known == "P":
+            P = st.number_input(t("p.pressure_MPa"), VP_P_MIN, VP_P_MAX, 1.0, step=0.05, format="%.4f", key="pure_P")
             T = t_sat(P)
-            result = [("Dew-point temperature", f"{T:.2f} K"), ("Bubble-point temperature", f"{T:.2f} K")]
+            result = [(t("p.dew_T"), f"{T:.2f} K"), (t("p.bubble_T"), f"{T:.2f} K")]
         else:
-            T = st.number_input("Temperature (K)", VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="pure_T")
+            T = st.number_input(t("p.temperature_K"), VP_T_MIN, VP_T_MAX, 300.0, step=1.0, format="%.1f", key="pure_T")
             P = p_sat(T)
-            result = [("Dew-point pressure", f"{P:.4f} MPa"), ("Bubble-point pressure", f"{P:.4f} MPa")]
-        st.caption("For a pure substance the bubble and dew points coincide (vapour-pressure curve).")
+            result = [(t("p.dew_P"), f"{P:.4f} MPa"), (t("p.bubble_P"), f"{P:.4f} MPa")]
+        st.caption(t("dew.pure_note"))
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
@@ -473,30 +479,30 @@ def page_nh3_h2o():
         except ValueError:
             return np.nan
 
-    st.caption("Source: [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)")
+    st.caption(t("p.source") + ": [Development of thermo-physical properties of aqua ammonia for Kalina cycle system (Ganesh et al.)](https://doi.org/10.1504/IJMPT.2017.084955)")
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key="h2o_known")
-        xn = st.number_input("NH₃ mass fraction (0–1)", 0.0, 1.0, 0.5, step=0.01, format="%.2f", key="h2o_x")
-        if known == "Temperature":
-            T = st.number_input("Temperature (K)", 220.0, 560.0, 300.0, step=1.0, format="%.1f", key="h2o_T")
+        st.markdown(t("p.input"))
+        known = radio_i18n("p.known", ["T", "P"], TP_LABELS, key="h2o_known", horizontal=True)
+        xn = st.number_input(t("p.mass_fraction"), 0.0, 1.0, 0.5, step=0.01, format="%.2f", key="h2o_x")
+        if known == "T":
+            T = st.number_input(t("p.temperature_K"), 220.0, 560.0, 300.0, step=1.0, format="%.1f", key="h2o_T")
             P_b, P_d = pressure_at(T, xn, sp_b), pressure_at(T, xn, sp_d)
-            result = [("Bubble-point pressure", _fmt(P_b, "MPa")), ("Dew-point pressure", _fmt(P_d, "MPa"))]
+            result = [(t("p.bubble_P"), _fmt(P_b, "MPa")), (t("p.dew_P"), _fmt(P_d, "MPa"))]
             marks = [(xn, T)]
         else:
-            P = st.number_input("Pressure (MPa)", 0.0, 10.0, 1.0, step=0.1, format="%.2f", key="h2o_P")
+            P = st.number_input(t("p.pressure_MPa"), 0.0, 10.0, 1.0, step=0.1, format="%.2f", key="h2o_P")
             T_b = float(sp_b(xn, P, grid=False))
             T_d = float(sp_d(xn, P, grid=False))
-            result = [("Bubble-point temperature", _fmt(T_b, "K")), ("Dew-point temperature", _fmt(T_d, "K"))]
+            result = [(t("p.bubble_T"), _fmt(T_b, "K")), (t("p.dew_T"), _fmt(T_d, "K"))]
             marks = [(xn, T_b), (xn, T_d)]
-        st.caption("Valid range 220–560 K · 0–10 MPa · 2-D spline interpolation")
+        st.caption(t("dew.h2o_range"))
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
         m2.metric(*result[1])
         if any(v == "—" for _, v in result):
-            st.warning("This condition lies outside the literature data range; no value could be found.")
+            st.warning(t("p.out_of_range"))
     with right.container(border=True, height="stretch"):
         n = max(len(p_b), len(p_d), 2)
         colors = px.colors.sample_colorscale(LINE_SCALE, [0.85 * i / max(n - 1, 1) for i in range(n)])
@@ -510,68 +516,69 @@ def page_nh3_h2o():
                             line=dict(color=colors[i], width=2, dash="dot"))
         pts = [(a, b) for a, b in marks if not np.isnan(b)]
         if pts:
-            fig.add_scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", name="Input condition",
+            fig.add_scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", name=t("p.input_condition"),
                             marker=dict(size=14, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white")))
         fig.update_layout(height=460, margin=dict(l=10, r=10, t=10, b=10),
                           xaxis_title="NH₃ mass fraction", yaxis_title="Temperature (K)",
                           legend=dict(title="Pressure", orientation="v"))
         st.plotly_chart(fig, width="stretch", key="h2o_chart")
-        st.caption("Solid = bubble point · dotted = dew point")
+        st.caption(t("dew.h2o_legend"))
 
 
 def page_binary(name, cfg):
     df = load_binary(cfg["file"], cfg["mw"])
-    T_axis, x_axis, dew_grid, bub_grid = binary_grid(
-        cfg["file"], cfg["mw"], cfg["dew_method"], cfg["bubble_method"], cfg["T_range"]
-    )
-    st.caption(f"Source: [{cfg['ref'][0]}]({cfg['ref'][1]}) · mole → mass fraction conversion · 1000×1000 grid interpolation")
+    with st.spinner(t("dew.spinner")):
+        T_axis, x_axis, dew_grid, bub_grid = binary_grid(
+            cfg["file"], cfg["mw"], cfg["dew_method"], cfg["bubble_method"], cfg["T_range"]
+        )
+    st.caption(t("dew.bin_source", title=cfg["ref"][0], url=cfg["ref"][1]))
 
     # ---- top: inputs, results, literature P-x chart
     left, right = panels()
     with left.container(border=True):
-        st.markdown("**Input**")
-        known = st.radio("Known quantity", ["Temperature", "Pressure"], horizontal=True, key=f"bin_known_{cfg['file']}")
-        x_nh3 = st.number_input("NH₃ mass fraction (0–1)", 0.0, 1.0, cfg["x_default"], step=0.01, format="%.2f", key=f"bin_x_{cfg['file']}")
+        st.markdown(t("p.input"))
+        known = radio_i18n("p.known", ["T", "P"], TP_LABELS, key=f"bin_known_{cfg['file']}", horizontal=True)
+        x_nh3 = st.number_input(t("p.mass_fraction"), 0.0, 1.0, cfg["x_default"], step=0.01, format="%.2f", key=f"bin_x_{cfg['file']}")
         xi = int(np.abs(x_axis - x_nh3).argmin())
-        if known == "Temperature":
-            T = st.number_input("Temperature (K)", float(T_axis[0]), float(T_axis[-1]), cfg["T_default"], step=1.0, format="%.1f", key=f"bin_T_{cfg['file']}")
+        if known == "T":
+            T = st.number_input(t("p.temperature_K"), float(T_axis[0]), float(T_axis[-1]), cfg["T_default"], step=1.0, format="%.1f", key=f"bin_T_{cfg['file']}")
             ti = int(np.abs(T_axis - T).argmin())
             p_dew, p_bub = float(dew_grid[ti, xi]), float(bub_grid[ti, xi])
-            result = [("Dew-point pressure", _fmt(p_dew, "MPa")), ("Bubble-point pressure", _fmt(p_bub, "MPa"))]
+            result = [(t("p.dew_P"), _fmt(p_dew, "MPa")), (t("p.bubble_P"), _fmt(p_bub, "MPa"))]
             marks = [(x_nh3, T)]
         else:
-            P = st.number_input("Pressure (MPa)", 0.0, 40.0, 10.0, step=0.5, format="%.2f", key=f"bin_P_{cfg['file']}")
+            P = st.number_input(t("p.pressure_MPa"), 0.0, 40.0, 10.0, step=0.5, format="%.2f", key=f"bin_P_{cfg['file']}")
             T_dew = _nearest_T(dew_grid[:, xi], P, T_axis)
             T_bub = _nearest_T(bub_grid[:, xi], P, T_axis)
-            result = [("Dew-point temperature", _fmt(T_dew, "K")), ("Bubble-point temperature", _fmt(T_bub, "K"))]
+            result = [(t("p.dew_T"), _fmt(T_dew, "K")), (t("p.bubble_T"), _fmt(T_bub, "K"))]
             marks = [(x_nh3, T_dew), (x_nh3, T_bub)]
-        st.caption(f"Valid range {T_axis[0]:.1f}–{T_axis[-1]:.1f} K · nearest grid value")
+        st.caption(t("dew.bin_range", tmin=float(T_axis[0]), tmax=float(T_axis[-1])))
     with left.container(border=True):
         m1, m2 = st.columns(2)
         m1.metric(*result[0])
         m2.metric(*result[1])
         if any(v == "—" for _, v in result):
-            st.warning("This condition lies outside the literature data range; no value could be found.")
+            st.warning(t("p.out_of_range"))
     with right.container(border=True, height="stretch"):
         temps = sorted(df["T_Kel"].unique())
         n = max(len(temps), 2)
         colors = px.colors.sample_colorscale(LINE_SCALE, [0.85 * i / max(n - 1, 1) for i in range(n)])
         fig = go.Figure()
-        for c, t in zip(colors, temps):
-            d = df[df["T_Kel"] == t]
-            fig.add_scatter(x=d["DewP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{t:.1f} K",
-                            legendgroup=str(t), marker=dict(symbol="circle", size=8, color=c))
-            fig.add_scatter(x=d["BubbleP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{t:.1f} K (bubble)",
-                            legendgroup=str(t), showlegend=False, marker=dict(symbol="diamond", size=8, color=c))
+        for c, tk in zip(colors, temps):
+            d = df[df["T_Kel"] == tk]
+            fig.add_scatter(x=d["DewP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{tk:.1f} K",
+                            legendgroup=str(tk), marker=dict(symbol="circle", size=8, color=c))
+            fig.add_scatter(x=d["BubbleP_NH3_mass"], y=d["P_MPa"], mode="markers", name=f"{tk:.1f} K (bubble)",
+                            legendgroup=str(tk), showlegend=False, marker=dict(symbol="diamond", size=8, color=c))
         fig.update_layout(height=460, margin=dict(l=10, r=10, t=10, b=10),
                           xaxis_title="NH₃ mass fraction", yaxis_title="Pressure (MPa)",
                           xaxis=dict(range=[0, 1]), legend=dict(title="Temperature"))
         st.plotly_chart(fig, width="stretch", key=f"bin_px_{cfg['file']}")
-        st.caption("● dew point · ◆ bubble point (literature measurements)")
+        st.caption(t("dew.bin_legend"))
 
     # ---- bottom: interpolated heat maps
     with st.container(border=True):
-        st.markdown(f"**{name} · interpolated phase diagram** (colour = pressure, MPa)")
+        st.markdown(t("dew.heat_title", name=name))
         step = 5  # display down-sampling (the computed grid stays 1000×1000)
         fig = make_subplots(rows=1, cols=2, subplot_titles=("P_dew", "P_bubble"), horizontal_spacing=0.1)
         fig.add_trace(go.Heatmap(z=dew_grid[::step, ::step], x=x_axis[::step], y=T_axis[::step], coloraxis="coloraxis",
@@ -582,7 +589,7 @@ def page_binary(name, cfg):
         for c_ in (1, 2):
             if pts:
                 fig.add_trace(go.Scatter(x=[a for a, _ in pts], y=[b for _, b in pts], mode="markers", showlegend=(c_ == 1),
-                                         name="Input condition", marker=dict(size=13, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white"))),
+                                         name=t("p.input_condition"), marker=dict(size=13, symbol="diamond", color=ACCENT, line=dict(width=1.5, color="white"))),
                               row=1, col=c_)
         fig.update_layout(height=430, margin=dict(l=10, r=10, t=40, b=10),
                           coloraxis=dict(colorscale="Plasma", cmin=0, cmax=40, colorbar=dict(title="P (MPa)")))
@@ -594,29 +601,33 @@ def page_binary(name, cfg):
     # ---- extras
     c1, c2 = st.columns(2)
     with c1:
-        with st.expander("Processed literature data", icon=":material/table_chart:"):
+        with st.expander(t("dew.data_expander"), icon=":material/table_chart:"):
             st.dataframe(df, hide_index=True, width="stretch")
     with c2:
-        with st.expander("Mole → mass fraction conversion", icon=":material/calculate:"):
-            st.markdown(CONVERSION_MD.replace("__SYM__", cfg["sym"]).replace("__MW__", f"{cfg['mw']:g}"))
+        with st.expander(t("dew.conv_expander"), icon=":material/calculate:"):
+            st.markdown(CONVERSION_MD.replace("__INTRO__", t("dew.conv_md"))
+                        .replace("__SYM__", cfg["sym"]).replace("__MW__", f"{cfg['mw']:g}"))
         key = cfg["file"]
-        if st.button("Build interpolation-grid CSV (about 45 MB)", key=f"gen_{key}", icon=":material/dataset:"):
+        if st.button(t("dew.grid_button"), key=f"gen_{key}", icon=":material/dataset:"):
             X, TT = np.meshgrid(x_axis, T_axis)
             st.session_state[f"csv_{key}"] = pd.DataFrame(
                 {"T_Kel": TT.ravel(), "x_nh3": X.ravel(), "DewP": dew_grid.ravel(), "BubbleP": bub_grid.ravel()}
             ).to_csv(index=False).encode("utf-8")
         if f"csv_{key}" in st.session_state:
-            st.download_button("⬇ Download CSV", st.session_state[f"csv_{key}"],
+            st.download_button(t("dew.download"), st.session_state[f"csv_{key}"],
                                file_name=key.replace(".csv", "") + "_interpolated.csv", mime="text/csv", key=f"dl_{key}")
+
+
+DEW_SUBPAGES = ["pure", "NH₃ + H₂O", "NH₃ + H₂", "NH₃ + N₂", "NH₃ + CH₄"]
 
 
 def page_dew_bubble():
     sub = st.segmented_control(
-        "Mixture", ["Pure NH₃", "NH₃ + H₂O", "NH₃ + H₂", "NH₃ + N₂", "NH₃ + CH₄"],
-        default="Pure NH₃", key="db_sub",
+        t("dew.mixture"), DEW_SUBPAGES, format_func=lambda k: t("dew.pure") if k == "pure" else k,
+        default="pure", key="db_sub",
     )
-    sub = sub or "Pure NH₃"
-    if sub == "Pure NH₃":
+    sub = sub or "pure"
+    if sub == "pure":
         page_pure_nh3()
     elif sub == "NH₃ + H₂O":
         page_nh3_h2o()
@@ -625,145 +636,125 @@ def page_dew_bubble():
 
 
 # =====================================================================
-# Header · sidebar · landing page · routing
+# Header · language switch · sidebar · landing page · routing
 # =====================================================================
+# Page keys are language-independent (they are stored in session state / used as widget keys);
+# the displayed names come from i18n ("nav.<key>").
 PAGES = {
-    "Home": None,
-    "Vapor Pressure": page_vapor_pressure,
-    "Density": page_density,
-    "Heat Capacity": page_specific_heat,
-    "Dew & Bubble Point": page_dew_bubble,
-    "NH₃–H₂ Blend LHV": render_lhv_page,
-    "EOS Recommendation": render_eos_page,
+    "home": None,
+    "vp": page_vapor_pressure,
+    "density": page_density,
+    "cp": page_specific_heat,
+    "dew": page_dew_bubble,
+    "lhv": render_lhv_page,
+    "eos": render_eos_page,
 }
+BASIC_PAGES = ("vp", "density", "cp", "dew")  # pages that get a plain sub-heading
 
-SERVICES = [  # (page, title, description, icon)
-    ("Vapor Pressure", "Vapor pressure of NH₃",
-     "Saturation pressure versus temperature, 240–405 K, interpolated from literature data.", ":material/thermostat:"),
-    ("Density", "Density of NH₃ gas",
-     "Gas density at atmospheric pressure, −35 to 400 °C.", ":material/scale:"),
-    ("Heat Capacity", "Heat capacity (Shomate)",
-     "Cp°, H° − H°₂₉₈ and S° of ammonia gas, 200–1400 K (NIST Shomate equation).", ":material/local_fire_department:"),
-    ("Dew & Bubble Point", "Dew and bubble points",
-     "Pure NH₃ and the binaries NH₃ + H₂O, H₂, N₂ and CH₄ from literature VLE data.", ":material/water_drop:"),
-    ("NH₃–H₂ Blend LHV", "NH₃–H₂ fuel-blend heating value",
-     "Lower heating value, density and volumetric energy of ammonia–hydrogen blends.", ":material/bolt:"),
-    ("EOS Recommendation", "EOS recommendation",
-     "Which equation of state and kij to use for each binary and condition, with Aspen Plus-ready input.", ":material/functions:"),
+SERVICES = [  # (page key, icon) — title / description strings: home.svc.<key>.title / .desc
+    ("vp", ":material/thermostat:"),
+    ("density", ":material/scale:"),
+    ("cp", ":material/local_fire_department:"),
+    ("dew", ":material/water_drop:"),
+    ("lhv", ":material/bolt:"),
+    ("eos", ":material/functions:"),
 ]
 
-LAST_UPDATE = "November 2026"
-UPDATES = [
-    "EOS recommendation v5.4 — full re-evaluation on Aspen TDE (NIST) V14 data; Aspen-selectable variants "
-    "(PR-BM, RKS-BM, RK-ASPEN, SR-POLAR); NRTL-RK activity-coefficient row for NH₃ + H₂O; "
-    "independent dew-line (vapour-composition) check for NH₃ + N₂ and NH₃ + CH₄.",
-    "English interface, light theme and a redesigned landing page.",
-]
+LAST_UPDATE = {"en": "November 2026", "ko": "2026년 11월"}
+UPDATE_KEYS = ["home.update.1", "home.update.2"]
+
+CONTRIBUTORS = {  # (name in English, name in Korean, e-mail)
+    "members": [
+        ("Woojin Go", "고우진", "woojingo@snu.ac.kr"),
+        ("Chaerim Min", "민채림", "asd578300@snu.ac.kr"),
+        ("Geonwoo Jeong", "정건우", "gw.jeong@snu.ac.kr"),
+        ("Taehyun Kang", "강태현", "kang990925@pusan.ac.kr"),
+    ],
+    "supervisor": [("Yutaek Seo", "서유택", "yutaek.seo@snu.ac.kr")],
+}
 
 
 def _goto(page):
     st.session_state["prop"] = page
 
 
-def page_home():
-    st.markdown(
-        "The **SENLAB Ammonia Properties Database** is an open, literature-based collection of thermophysical "
-        "property data for ammonia and its mixtures with water, hydrogen, nitrogen and methane. It was established by "
-        "the Sustainable Energy Network Laboratory (SENLAB) at Seoul National University to support research, "
-        "education and engineering of ammonia as a fuel.\n\n"
-        "Data are collected from peer-reviewed journals and NIST sources (ThermoData Engine, Chemistry WebBook). "
-        "Where measurements are unavailable, evaluated extrapolations are provided and clearly flagged, and "
-        "equation-of-state parameters regressed on the literature data are supplied in Aspen Plus-ready form."
-    )
-    st.link_button("Learn more about SENLAB", "https://sensr.snu.ac.kr/", icon=":material/open_in_new:")
+def _on_lang_change():
+    choice = st.session_state.get("lang_sel")
+    if choice in LANGS:
+        set_lang(choice)
+    else:  # the control was de-selected — keep the current language
+        st.session_state["lang_sel"] = get_lang()
 
-    st.markdown("#### Online Services")
+
+def page_home():
+    st.markdown(t("home.intro"))
+    st.link_button(t("home.learn_more"), "https://sensr.snu.ac.kr/", icon=":material/open_in_new:")
+
+    st.markdown(f"#### {t('home.services')}")
     for row in (SERVICES[:3], SERVICES[3:]):
         cols = st.columns(3, gap="medium")
-        for col, (page, title, desc, icon) in zip(cols, row):
+        for col, (page, icon) in zip(cols, row):
             with col.container(border=True, height="stretch"):
-                st.markdown(f"**{title}**")
-                st.caption(desc)
-                st.button("Open", key=f"home_{page}", icon=icon, on_click=_goto, args=(page,), width="stretch")
+                st.markdown(f"**{t('home.svc.' + page + '.title')}**")
+                st.caption(t("home.svc." + page + ".desc"))
+                st.button(t("home.open"), key=f"home_{page}", icon=icon, on_click=_goto, args=(page,), width="stretch")
 
-    st.markdown("#### Database contains")
-    c1, c2, c3 = st.columns(3, gap="medium")
-    with c1.container(border=True, height="stretch"):
-        st.markdown("**Pure ammonia**")
-        st.markdown(
-            "- Vapor pressure, 240–405 K\n"
-            "- Gas density, −35 to 400 °C\n"
-            "- Cp°, H° − H°₂₉₈, S°, 200–1400 K (Shomate)"
-        )
-    with c2.container(border=True, height="stretch"):
-        st.markdown("**Binary mixtures**")
-        st.markdown(
-            "- NH₃ + H₂O dew and bubble lines, 220–560 K, ≤ 10 MPa\n"
-            "- NH₃ + H₂, N₂, CH₄ dew and bubble lines (Reamer & Sage, Lentz & Weber)\n"
-            "- NH₃–H₂ fuel-blend LHV and density, −50 to 130 °C"
-        )
-    with c3.container(border=True, height="stretch"):
-        st.markdown("**EOS recommendations**")
-        st.markdown(
-            "- 4 binaries, 17 temperature–pressure bands\n"
-            "- 13 models: Thermopack EOS + Aspen variants (PR-BM, RKS-BM, RK-ASPEN, SR-POLAR) + NRTL-RK\n"
-            "- Regressed kij in Aspen PRKBV form, dew-line checks, extrapolation flags"
-        )
+    st.markdown(f"#### {t('home.contains')}")
+    cols = st.columns(3, gap="medium")
+    for col, block in zip(cols, ("pure", "binary", "eos")):
+        with col.container(border=True, height="stretch"):
+            st.markdown(f"**{t('home.contains.' + block + '.title')}**")
+            st.markdown(t("home.contains." + block + ".body"))
 
-    st.markdown("#### Updates")
-    st.caption(f"Last major update to the site: {LAST_UPDATE}")
-    st.markdown("\n".join(f"- {u}" for u in UPDATES))
+    st.markdown(f"#### {t('home.updates')}")
+    st.caption(t("home.last_update", date=LAST_UPDATE.get(get_lang(), LAST_UPDATE["en"])))
+    st.markdown("\n".join(f"- {t(k)}" for k in UPDATE_KEYS))
 
 
-hl, hr = st.columns([6, 1], vertical_alignment="center")
+lang = get_lang()
+# Widget state is initialised through session state (no `default=`), so that the callbacks that set these keys
+# (_goto, _on_lang_change) do not trigger Streamlit's "default value + Session State API" warning.
+st.session_state.setdefault("lang_sel", lang)
+st.session_state.setdefault("prop", "home")
+
+hl, hm, hr = st.columns([5.2, 1.1, 1], vertical_alignment="center")
 with hl:
     st.title(":material/science: Thermophysical Properties of Ammonia Systems")
-    st.caption("SENLAB Ammonia Properties Database · Sustainable Energy Network Lab., Seoul National University — "
-               "thermophysical properties of ammonia and its mixtures (H₂O, H₂, N₂, CH₄) from literature data.")
+    st.caption(t("header.caption"))
+with hm:
+    st.segmented_control(
+        t("sidebar.language"), list(LANGS), format_func=lambda k: "EN" if k == "en" else "한국어",
+        key="lang_sel", on_change=_on_lang_change, label_visibility="collapsed", width="stretch",
+    )
 with hr:
-    st.link_button("About Lab", "https://sensr.snu.ac.kr/", icon=":material/open_in_new:", width="stretch")
+    st.link_button(t("header.about_lab"), "https://sensr.snu.ac.kr/", icon=":material/open_in_new:", width="stretch")
 
-with st.expander("About this database · how to use", icon=":material/info:"):
+with st.expander(t("header.about_title"), icon=":material/info:"):
     a, b = st.columns(2)
-    a.markdown("""
-**What's included**
-- Vapor pressure — saturation pressure of NH₃ at a given temperature
-- Density — NH₃ gas density versus temperature
-- Heat capacity — Cp°, ΔH and S° from the Shomate equation
-- Dew / bubble points — pure NH₃ and the H₂O, H₂, N₂, CH₄ binaries
-- NH₃–H₂ fuel-blend heating value · EOS recommendation
-""")
-    b.markdown("""
-**How to use**
-1. Pick a property in the menu below (or a service card on the Home page)
-2. Enter the temperature, pressure or composition in the left card
-3. The values (cards) and the chart (right) update immediately; ◆ on the chart marks your input
-""")
+    a.markdown(t("header.about_included"))
+    b.markdown(t("header.about_howto"))
 
 with st.sidebar:
-    st.markdown("""
-### SENLAB
-[Sustainable Energy Network Lab. Homepage](https://sensr.snu.ac.kr/)
+    _ni = 1 if lang == "ko" else 0
+    st.markdown(
+        "### SENLAB\n"
+        f"[{t('sidebar.homepage')}](https://sensr.snu.ac.kr/)\n\n"
+        f"### {t('sidebar.contributors')}\n"
+        + "\n".join(f"- {p[_ni]} ({p[2]})" for p in CONTRIBUTORS["members"])
+        + f"\n\n### {t('sidebar.supervisor')}\n"
+        + "\n".join(f"- {p[_ni]} ({p[2]})" for p in CONTRIBUTORS["supervisor"])
+    )
 
-### Contributors
-- Woojin Go (woojingo@snu.ac.kr)
-- Chaerim Min (asd578300@snu.ac.kr)
-- Geonwoo Jeong (gw.jeong@snu.ac.kr)
-- Taehyun Kang (kang990925@pusan.ac.kr)
-
-### Supervisor
-- Yutaek Seo (yutaek.seo@snu.ac.kr)
-""")
-
-st.caption("Select a property")
-prop = st.pills("Property", list(PAGES), default="Home", label_visibility="collapsed", key="prop")
+st.caption(t("header.select"))
+prop = st.pills(t("header.select"), list(PAGES), format_func=lambda k: t("nav." + k),
+                label_visibility="collapsed", key="prop")
 if prop is None:
-    st.info("Select a property above.", icon=":material/touch_app:")
+    st.info(t("header.select_hint"), icon=":material/touch_app:")
     st.stop()
 
-if prop == "Home":
+if prop == "home":
     page_home()
 else:
-    if prop in ("Vapor Pressure", "Density", "Heat Capacity", "Dew & Bubble Point"):
-        st.markdown(f"#### {prop}")
+    if prop in BASIC_PAGES:
+        st.markdown(f"#### {t('nav.' + prop)}")
     PAGES[prop]()
